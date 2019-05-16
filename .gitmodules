@@ -1,0 +1,3 @@
+[submodule "src/klee"]
+	path = src/klee
+	url = https://github.com/gaoxiang9430/klee.git
