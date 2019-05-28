@@ -16,17 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################*/
 
-#include <iostream>
-#include "FixLocation.h"
+#include "WeakestPrecondition.h"
 
+WeakestPrecondition::WeakestPrecondition(string){
 
-FixLocation::FixLocation(string& binaryFullPath, vector<string>& tests, Runtime& rt)
-                        :binaryFullPath(binaryFullPath), tests(tests), rt(rt){
-    std::cout << "this is the constructor of FixLocation\n";
 }
 
-vector<Location> FixLocation::generateFixLocation(){
-    std::cout << "this is the method to generate Fix Locations\n";
-    vector<Location> fixLocs;
-    return fixLocs;
+/* invoke KLEE to generate crash free constraint, to be implemented by Bo Wang*/
+Condition WeakestPrecondition::generateWPC(Location& fixLoc, Location& crashLoc, Condition& cfc){
+    Condition con = {};
+    return con;
 }

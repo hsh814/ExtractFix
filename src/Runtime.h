@@ -16,17 +16,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################*/
 
-#include <iostream>
-#include "FixLocation.h"
+#ifndef CRASH_FREE_FIX_RUNTIME_H
+#define CRASH_FREE_FIX_RUNTIME_H
+
+#include <string>
+#include <vector>
+#include "util/DataStruct.h"
+
+using std::string;
+using std::vector;
+
+class Runtime {
+public:
+    Runtime(string&, vector<string>&);
+    Location getCrashLocation();
+    Condition generateCFC();
+
+private:
+    string binaryFullPath;
+    vector<string> tests;
+};
 
 
-FixLocation::FixLocation(string& binaryFullPath, vector<string>& tests, Runtime& rt)
-                        :binaryFullPath(binaryFullPath), tests(tests), rt(rt){
-    std::cout << "this is the constructor of FixLocation\n";
-}
-
-vector<Location> FixLocation::generateFixLocation(){
-    std::cout << "this is the method to generate Fix Locations\n";
-    vector<Location> fixLocs;
-    return fixLocs;
-}
+#endif //CRASH_FREE_FIX_RUNTIME_H

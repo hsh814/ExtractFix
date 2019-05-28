@@ -23,18 +23,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 #include "../util/DataStruct.h"
+#include "../Runtime.h"
 
 using std::string;
 using std::vector;
 
 class FixLocation {
 public:
-    FixLocation(string&, vector<string>&);
+    FixLocation(string&, vector<string>&, Runtime&);
     vector<Location> generateFixLocation();
 
 private:
     string binaryFullPath;
     vector<string> tests;
+    Runtime rt;
 };
 
 #endif //CRASH_FREE_FIX_FIXLOCATION_H

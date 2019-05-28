@@ -16,17 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################*/
 
-#include <iostream>
-#include "FixLocation.h"
+#include "Runtime.h"
 
+Runtime::Runtime(string &binaryFullPath, vector<string> &tests):
+                 binaryFullPath(binaryFullPath), tests(tests){
 
-FixLocation::FixLocation(string& binaryFullPath, vector<string>& tests, Runtime& rt)
-                        :binaryFullPath(binaryFullPath), tests(tests), rt(rt){
-    std::cout << "this is the constructor of FixLocation\n";
 }
 
-vector<Location> FixLocation::generateFixLocation(){
-    std::cout << "this is the method to generate Fix Locations\n";
-    vector<Location> fixLocs;
-    return fixLocs;
+Location Runtime::getCrashLocation(){
+    Location loc = {0, 0, 0, 0, 0};
+    return loc;
+}
+
+Condition Runtime::generateCFC(){
+    Condition con = {};
+    return con;
 }

@@ -34,7 +34,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "fault_localization/FixLocation.h"
 #include "synthesis/Synthesizer.h"
 #include "util/DataStruct.h"
+#include "util/WeakestPrecondition.h"
 #include "Global.h"
+#include "Runtime.h"
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
@@ -43,10 +45,17 @@ using std::string;
 using std::vector;
 
 int repair(string binaryFullPath, vector<string> tests){
-    FixLocation fl(binaryFullPath, tests);
+    Runtime rt(binaryFullPath, tests);
+    FixLocation fl(binaryFullPath, tests, rt);
+    WeakestPrecondition wp(binaryFullPath);
+
+    Location crashLoc = rt.getCrashLocation();
+    /* generate crash free constraint at the crash location */
+    Condition cfc = rt.generateCFC();
+
     vector<Location> fixLocations = fl.generateFixLocation();
-    for (Location fixLocation: fixLocations){
-        
+    for (Location fixLoc: fixLocations){
+        Condition wpc = wp.generateWPC(fixLoc, crashLoc, cfc);
     }
 }
 
@@ -54,9 +63,9 @@ int main (int argc, char *argv[])
 {
     po::options_description parser("Usage: crash-free-fix OPTIONS\n\nSupported options");
     parser.add_options()
-            ("binary-path,P", po::value<string>()->value_name("PATH"), "the path of the project binary")
-            ("binary-name,N", po::value<string>()->value_name("PATH"), "the name of the project binary")
-            ("tests,t", po::value<vector<string>>()->multitoken()->value_name("ID..."), "the test input")
+            ("binary-path,p", po::value<string>()->value_name("PATH"), "the path of the project binary")
+            ("binary-name,n", po::value<string>()->value_name("PATH"), "the name of the project binary")
+            ("tests,t", po::value<vector<string> >()->multitoken()->value_name("ID..."), "the test input")
             ("verbose,v", "produce extended output")
             ("help,h", "produce help message and exit")
             ;
@@ -94,11 +103,11 @@ int main (int argc, char *argv[])
         BOOST_LOG_TRIVIAL(error) << "tests are not specified (use --help)";
         return ERROR_EXIT_CODE;
     }
-    tests = vm["tests"].as<vector<string>>();
+    tests = vm["tests"].as<vector<string> >();
 
 
     std::stringstream binaryFullPath;
-    binaryFullPath << config.binaryPath << "/" << config.binaryName
+    binaryFullPath << config.binaryPath << "/" << config.binaryName;
 
     int ret = repair(binaryFullPath.str(), tests);
     if (ret != 0){
