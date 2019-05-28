@@ -16,12 +16,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################*/
 
-#include "Global.h"
+#include <iostream>
+#include "FixLocation.h"
 
-struct Config config = {
-        /* verbose                  = */ false,
-        /*binaryPath                = */ nullptr,
-        /*binaryName                = */ nullptr
-};
 
-int ERROR_EXIT_CODE = 1;
+FixLocation::FixLocation(string& binaryFullPath, vector<string>& tests)
+                        :binaryFullPath(binaryFullPath), tests(tests){
+    std::cout << "this is the constructor of FixLocation\n";
+}
+
+vector<Location> FixLocation::generateFixLocation(){
+    std::cout << "this is the method to generate Fix Locations\n";
+    vector<Location> fixLocs;
+    return fixLocs;
+}

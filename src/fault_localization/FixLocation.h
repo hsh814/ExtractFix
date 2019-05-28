@@ -16,12 +16,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################*/
 
-#include "Global.h"
+#ifndef CRASH_FREE_FIX_FIXLOCATION_H
+#define CRASH_FREE_FIX_FIXLOCATION_H
 
-struct Config config = {
-        /* verbose                  = */ false,
-        /*binaryPath                = */ nullptr,
-        /*binaryName                = */ nullptr
+#include <string>
+#include <vector>
+
+#include "../util/DataStruct.h"
+
+using std::string;
+using std::vector;
+
+class FixLocation {
+public:
+    FixLocation(string&, vector<string>&);
+    vector<Location> generateFixLocation();
+
+private:
+    string binaryFullPath;
+    vector<string> tests;
 };
 
-int ERROR_EXIT_CODE = 1;
+#endif //CRASH_FREE_FIX_FIXLOCATION_H

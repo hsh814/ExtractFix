@@ -16,12 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################*/
 
-#include "Global.h"
+#include <string>
 
-struct Config config = {
-        /* verbose                  = */ false,
-        /*binaryPath                = */ nullptr,
-        /*binaryName                = */ nullptr
+#ifndef CRASH_FREE_FIX_GLOBAL_H
+#define CRASH_FREE_FIX_GLOBAL_H
+
+using std::string;
+
+struct Config {
+    bool verbose;
+    string binaryPath;
+    string binaryName;
 };
 
-int ERROR_EXIT_CODE = 1;
+extern struct Config config;
+
+extern int ERROR_EXIT_CODE;
+#endif //CRASH_FREE_FIX_GLOBAL_H
