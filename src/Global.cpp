@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 struct Config config = {
         /* verbose                  = */ false,
-        /*binaryPath                = */ nullptr,
-        /*binaryName                = */ nullptr
+        /*binaryPath                = */ "",
+        /*binaryName                = */ ""
 };
 
 int ERROR_EXIT_CODE = 1;
