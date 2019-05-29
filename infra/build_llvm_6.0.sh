@@ -6,7 +6,7 @@ pushd llvm6
 git checkout llvmorg-6.0.1
 
 mkdir build
-cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;libcxx;libcxxabi;libunwind;compiler-rt;polly' -DCMAKE_INSTALL_PREFIX=$work_dir/llvm6/build/bin -DCMAKE_BUILD_TYPE=Release ../llvm
+cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS='clang;clang-tools-extra;libcxx;libcxxabi;libunwind;compiler-rt;polly' -DCMAKE_BUILD_TYPE=Release ../llvm
 make -j2
 make install
 popd
