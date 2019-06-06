@@ -8,7 +8,7 @@ the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
@@ -55,7 +55,7 @@ int repair(string binaryFullPath, vector<string> tests){
 
     vector<Location> fixLocations = fl.generateFixLocation();
     for (Location fixLoc: fixLocations){
-        Condition wpc = wp.generateWPC(fixLoc, crashLoc, cfc);
+        vector<Condition> wpc = wp.generateWPC(fixLoc, crashLoc, cfc);
     }
 }
 
@@ -63,9 +63,9 @@ int main (int argc, char *argv[])
 {
     po::options_description parser("Usage: crash-free-fix OPTIONS\n\nSupported options");
     parser.add_options()
-            ("binary-path,p", po::value<string>()->value_name("PATH"), "the path of the project binary")
-            ("binary-name,n", po::value<string>()->value_name("PATH"), "the name of the project binary")
-            ("tests,t", po::value<vector<string> >()->multitoken()->value_name("ID..."), "the test input")
+            ("binary-path,p", po::value<string>()->value_name("Path"), "the path of the project binary")
+            ("binary-name,n", po::value<string>()->value_name("Name"), "the name of the project binary")
+            ("tests,t", po::value<vector<string> >()->multitoken()->value_name("Tests"), "the test input")
             ("verbose,v", "produce extended output")
             ("help,h", "produce help message and exit")
             ;

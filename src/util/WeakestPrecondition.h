@@ -22,13 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include<string>
 
 #include "DataStruct.h"
+#include <vector>
 
 using std::string;
+using std::vector;
 
 class WeakestPrecondition {
 public:
     explicit WeakestPrecondition(string);
-    Condition generateWPC(Location&, Location&, Condition&);
+    vector<Condition> generateWPC(Location&, Location&, Condition&);
 };
 
 
