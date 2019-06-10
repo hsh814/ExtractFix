@@ -218,6 +218,16 @@ class SynthFunction(UnknownFunctionBase):
     def get_named_vars(self):
         return self.named_vars
 
+    def formal_actual_map(self):
+        fa_map = {}
+        j = 0
+        for expr in self.formal_parameters:
+            fa_map[expr] = self.named_vars[j].variable_info.variable_name
+            # print(expr.parameter_position, ":", self.named_vars[j].variable_info.variable_name)
+            j+=1
+        return fa_map
+
+
 class UninterpretedFunction(FunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type):
         super().__init__(FunctionKinds.uninterpreted_function, function_name, function_arity,

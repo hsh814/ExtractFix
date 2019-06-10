@@ -87,8 +87,8 @@ class Solver(object):
             if not success:
                 return None
             # we now have a sufficient set of terms
-            print('Term solve complete!')
-            print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
+            # print('Term solve complete!')
+            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
 
             # Check term solver for completeness
             if verify_term_solve:
@@ -125,8 +125,8 @@ class Solver(object):
                     yield sol_or_cex
                 # return
 
-            for cex in sol_or_cex:
-                print('ADDING POINT:', [p.value_object for p in cex])
+            # for cex in sol_or_cex:
+            #     print('ADDING POINT:', [p.value_object for p in cex])
             term_solver.add_points(sol_or_cex) # Term solver can add all points at once
             unifier.add_points(sol_or_cex)
             self.add_points(sol_or_cex)

@@ -44,6 +44,7 @@ from utils import basetypes
 from exprs import exprs
 from exprs import exprtypes
 from sketch import distance
+from sketch import config
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -486,57 +487,61 @@ class FilteredGenerator(GeneratorBase):
 
 class BunchedGenerator(GeneratorBase):
     """A wrapper for a generator that generates objects in bunches"""
-    def __init__(self, generator_object, max_size, bunch_size = 16, name = None):
+    def __init__(self, generator_object, max_size, bunch_size = 16, sketch_info = None, name = None):
         super().__init__(name)
         self.generator_object = generator_object
         self.bunch_size = bunch_size
         self.max_size = max_size
         self.generator_state = None
         self.current_object_size = 0
+        self.sketch = sketch_info[0]
+        self.fa_map = sketch_info[1]
 
     def rank(self, candidates):
         candidate_size = len(candidates)
-        print("candidate_size is", str(candidate_size))
         candidate_weight = [0] * candidate_size
-        # original = ['(', '-', 'varA', 'varC', ')']
-        original = ['(', '-', '(', '-', '(', '-', '_arg_2', '_arg_1', ')',  '_arg_0', ')', '3', ')']
+        print("sketch is ", self.sketch)
+        original = self.sketch
+        #original = ['(', '-', '(', '-', '(', '-', '_arg_2', '_arg_1', ')',  '_arg_0', ')', '3', ')']
         for i in range(candidate_size):
             candidate = candidates[i]
-            candidate_list = exprs.expression_to_list(candidate)
+            candidate_list = exprs.expression_to_list(candidate, self.fa_map)
             candidate_weight[i] = distance.levenshtein_distance(original, candidate_list)
 
         ranked_candidates = []
-        max_dis = max(candidate_weight)
+        ranked_candidate_weight = []
         keys = list(dict.fromkeys(candidate_weight))
         keys.sort()
         for i in keys:
             for j in range(candidate_size):
                 if candidate_weight[j] == i:
                     ranked_candidates.append(candidates[j])
-                    print(exprs.expression_to_string(candidates[j]), str(candidate_weight[j]))
+                    ranked_candidate_weight.append(i)
+
+        for i in range(10):
+            print(exprs.expression_to_string(ranked_candidates[i]), str(ranked_candidate_weight[i]))
         print("================================================================================")
         return ranked_candidates
 
 
     def generate(self):
-        print("******************************************************************************")
         max_size = self.max_size
 
         candidates = []
-        original_len = 7
+        original_len = len(self.sketch) - self.sketch.count("(") - self.sketch.count(")")
         target_len = [original_len]
-
-        i = 1
-        while(True):
-            if original_len-i < 2:
+       
+        for i in range(1, original_len+1):
+            if original_len-i < 1:
                 j = original_len+i
-                while j < max_size:
+                while j < config.max_expression_size:
                     target_len.append(j)
                     j+=1
                 break
             target_len.append(original_len-i)
             target_len.append(original_len+i)
-            i += 1
+        # print(target_len)
+
         target_len_index = 1
         current_size = original_len # generate candidate with the same length as original statement
 
@@ -547,7 +552,7 @@ class BunchedGenerator(GeneratorBase):
 
         finished = False
         i = 0
-        while(i<10000):
+        while(i<config.candidate_size):
             retval = [None] * bunch_size
             current_index = 0
             while (current_index < bunch_size):
@@ -555,11 +560,11 @@ class BunchedGenerator(GeneratorBase):
                     retval[current_index] = next(sub_generator_state)
                 except StopIteration:
                     # can be bump up the subgenerator size?
-                    #if (target_len_index < len(target_len)):
-                    #    current_size = target_len[target_len_index]
-                    #    target_len_index += 1
-                    if(current_size < max_size):
-                        current_size += 1
+                    if (target_len_index < len(target_len)):
+                        current_size = target_len[target_len_index]
+                        target_len_index += 1
+                    #if(current_size < max_size):
+                    #    current_size += 1
                         sub_generator_object.set_size(current_size)
                         sub_generator_state = sub_generator_object.generate()
                         continue

@@ -54,6 +54,7 @@ from enumerators import enumerators
 from exprs import exprtypes
 from semantics import semantics_core
 from core import grammars
+from sketch import sketch_parser
 
 def get_pbe_valuations(constraints, synth_fun):
     valuations = []
@@ -198,7 +199,7 @@ class UnsuitableSolverException(Exception):
     def __str__(self):
         return "[ERROR]: UnsuitableSolverException %s" % self.message
 
-def lia_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+def lia_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, sketch):
     if theory != 'LIA':
         raise UnsuitableSolverException('LIA Unification Solver: Not LIA theory')
     if any([sf.range_type != exprtypes.IntType() for sf in synth_funs ]):
@@ -227,7 +228,8 @@ def lia_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
         raise UnsuitableSolverException('LIA Unification Solver: Could not massage back solution')  
     return final_solution
 
-def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+
+def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, sketch):
     if len(synth_funs) > 1:
         raise UnsuitableSolverException("DT Unification Solver: Multi-function unification not supported")
     if specification.is_multipoint:
@@ -263,7 +265,7 @@ def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
     #    print_solutions(synth_funs, final_solution)
     return final_solution
 
-def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, sketch):
     if len(synth_funs) != 1:
         raise UnsuitableSolverException("Classic esolver for multi-function disable due to bugs")
     assert len(synth_funs) == 1
@@ -295,7 +297,7 @@ def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, ver
     rewritten_solutions = rewrite_solution(synth_funs, solution, reverse_mapping=None)
     return rewritten_solutions
 
-def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, sketch):
     generator_factory = enumerators.RecursiveGeneratorFactory()
     TermSolver = termsolvers.PointlessTermSolver
 
@@ -308,7 +310,12 @@ def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, 
 
     term_generator = grammar.to_generator(generator_factory)
 
-    term_solver = TermSolver(specification.term_signature, term_generator)
+    fa_map = {}
+    for synth_fun in synth_funs:
+        fa_map.update(synth_fun.formal_actual_map())
+    sketch_info = [sketch, fa_map]
+
+    term_solver = TermSolver(specification.term_signature, term_generator, sketch_info)
     term_solver.stopping_condition = termsolvers.StoppingCondition.one_term_sufficiency
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
 
@@ -334,8 +341,10 @@ def make_solver(file_sexp):
             uf_instantiator,
             constraints,
             grammar_map,
-            forall_vars_map
+            forall_vars_map,
+            file_sexp
             ) = benchmark_tuple
+    sketch = sketch_parser.extract_sketch(file_sexp)
 
     assert len(theories) == 1
     theory = theories[0]
@@ -370,7 +379,8 @@ def make_solver(file_sexp):
             synth_funs,
             grammar_map,
             specification,
-            verifier
+            verifier,
+            sketch
             )
 
     for solver_name, solver in solvers:

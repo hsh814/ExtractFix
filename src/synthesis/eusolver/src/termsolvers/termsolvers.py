@@ -143,6 +143,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         self.term_signature = term_signature
 
         self.bunch_generator = None
+        self.sketch = None
         self.max_term_size = 128
         self.stopping_condition = StoppingCondition.term_sufficiency
         self.full_signature = BitSet.make_factory(0)()
@@ -178,7 +179,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         # 
         self.bunch_generator = enumerators.BunchedGenerator(self.term_generator,
                                                             # self.max_term_size, len(self.points) * 2)
-                                                            self.max_term_size, 1)
+                                                            self.max_term_size, 1, self.sketch)
         self.bunch_generator_state = self.bunch_generator.generate()
 
 
@@ -233,11 +234,12 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
 
 class PointlessTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, term_signature, term_generator):
+    def __init__(self, term_signature, term_generator, sketch=None):
         super().__init__(term_signature)
         self.term_generator = term_generator
         # self.eval_cache = {}
         self.monotonic_expr_id = 0
+        self.sketch = sketch
 
     def _compute_term_signature(self, term):
         # eval_cache = self.eval_cache

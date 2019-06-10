@@ -421,9 +421,9 @@ def extract_benchmark(file_sexp):
     options_data, file_sexp = filter_sexp_for('set-options', file_sexp)
 
     assert check_sats == [[]]
-    assert file_sexp == []
+    #assert file_sexp == []
 
-    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammar_map, forall_vars_map
+    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammar_map, forall_vars_map, file_sexp
 
 def get_theory_instantiator(theory):
     if theory == "LIA":
