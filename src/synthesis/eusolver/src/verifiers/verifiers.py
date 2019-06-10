@@ -315,16 +315,16 @@ class StdVerifier(VerifierBase):
             eq_cnstrs.append(_expr_to_smt(self.canon_spec, smt_ctx))
         eq_cnstr = z3.And(*[ z3.Not(ec) for ec in eq_cnstrs ], eq_cnstrs[0].ctx)
 
-        # print("----------")
-        # print(eq_cnstr)
+        #print("----------")
+        #print(eq_cnstr)
 
         smt_solver.push()
         smt_solver.add(eq_cnstr)
         r = smt_solver.check()
 
-        # print(smt_solver)
-        # print(smt_solver.model())
-        # print("----------")
+        #print(smt_solver)
+        #print(smt_solver.model())
+        #print("----------")
         smt_solver.pop()
 
         smt_solver.push()
@@ -334,6 +334,7 @@ class StdVerifier(VerifierBase):
             cex_point = model_to_point(smt_solver.model(),
                                        self.var_smt_expr_list,
                                        self.var_info_list)
+            #print("model to point is running")
             return [cex_point]
         else:
             return None

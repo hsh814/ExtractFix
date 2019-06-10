@@ -192,6 +192,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             self.restart_bunched_generator()
         while True:
             success = self.generate_more_terms()
+            # print("generate_more_terms is running", str(success))
             if not success:
                 return False
             if (self.stopping_condition == StoppingCondition.term_sufficiency
@@ -215,8 +216,13 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             if transform_term is not None:
                 term = transform_term(term)
             sig = self._compute_term_signature(term)
-            if (sig in signature_to_term or sig.is_empty()):
-                continue
+            print("gaoxiang expr: ", exprs.expression_to_string(term))
+            # print("     ", str(sig))
+            # for temp_sig in signature_to_term:
+            #     print("        ",temp_sig) 
+            # if (sig in signature_to_term or sig.is_empty()):
+            #     continue
+            # print("gaoxiang after expr: ", exprs.expression_to_string(term))
             signature_to_term[sig] = term
             self.full_signature = self.full_signature | sig
             if sig.is_full():

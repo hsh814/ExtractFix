@@ -20,6 +20,11 @@ git clone https://github.com/Z3Prover/z3.git
 pushd z3
 python scripts/mk_make.py
 cd build
-make
+make j8
 sudo make install
+popd
+
+# compile eusolver
+pushd ../src/synthesis/eusolver
+scripts/build.sh
 popd

@@ -187,6 +187,28 @@ def expression_to_string(expr):
         else:
             return expr.function_info.to_string(expr)
 
+def expression_to_list(expr):
+    """Returns a string representation of an expression"""
+    kind = expr.expr_kind
+    if (kind == _variable_expression):
+        return [expr.variable_info.variable_name]
+    elif (kind == _formal_parameter_expression):
+        return ['_arg_%d' % expr.parameter_position]
+    elif (kind == _constant_expression):
+        return [_constant_to_string(expr.value_object.value_type,
+                                    expr.value_object.value_object)]
+    else:
+        expr_list = []
+        if expr.function_info.function_name != 'let' \
+                and expr.function_info.function_name != 'ne':
+            expr_list.append('(')
+            expr_list += [expr.function_info.function_name]
+            for child in expr.children:
+                expr_list += expression_to_list(child)
+            expr_list.append(')')
+            return expr_list
+        else:
+            return [expr.function_info.to_string(expr)]
 
 def get_expression_type(expr):
     """Returns the type of the expression."""

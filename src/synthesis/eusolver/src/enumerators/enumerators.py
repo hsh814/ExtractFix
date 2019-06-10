@@ -43,6 +43,7 @@ from exprs import evaluation
 from utils import basetypes
 from exprs import exprs
 from exprs import exprtypes
+from sketch import distance
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -105,6 +106,7 @@ class LeafGenerator(GeneratorBase):
         while (current_position < self.iterable_size):
             retval = self.leaf_objects[current_position]
             current_position += 1
+            #print('xiang leaf:', exprs.expression_to_string(retval))
             yield retval
 
     def set_size(self, new_size):
@@ -140,12 +142,15 @@ class NonLeafGenerator(GeneratorBase):
     def generate(self):
         if (self.allowed_size - 1 < self.arity):
             return
-
+        # print("arity: ", str(self.arity	))
+        # for gen in self.sub_generators:
+        #     print("arity: ========= ", self.function_descriptor)
         for partition in utils.partitions(self.allowed_size - 1, self.arity):
             if not self.good_size_tuple(partition):
                 continue
             self._set_sub_generator_sizes(partition)
             for product_tuple in cartesian_product_of_generators(*self.sub_generators):
+                #print('xiang:', exprs.expression_to_string(self._instantiate(product_tuple)))
                 yield self._instantiate(product_tuple)
 
 
@@ -489,9 +494,105 @@ class BunchedGenerator(GeneratorBase):
         self.generator_state = None
         self.current_object_size = 0
 
+    def rank(self, candidates):
+        candidate_size = len(candidates)
+        print("candidate_size is", str(candidate_size))
+        candidate_weight = [0] * candidate_size
+        # original = ['(', '-', 'varA', 'varC', ')']
+        original = ['(', '-', '(', '-', '(', '-', '_arg_2', '_arg_1', ')',  '_arg_0', ')', '3', ')']
+        for i in range(candidate_size):
+            candidate = candidates[i]
+            candidate_list = exprs.expression_to_list(candidate)
+            candidate_weight[i] = distance.levenshtein_distance(original, candidate_list)
+
+        ranked_candidates = []
+        max_dis = max(candidate_weight)
+        keys = list(dict.fromkeys(candidate_weight))
+        keys.sort()
+        for i in keys:
+            for j in range(candidate_size):
+                if candidate_weight[j] == i:
+                    ranked_candidates.append(candidates[j])
+                    print(exprs.expression_to_string(candidates[j]), str(candidate_weight[j]))
+        print("================================================================================")
+        return ranked_candidates
+
+
     def generate(self):
-        current_size = 1
+        print("******************************************************************************")
         max_size = self.max_size
+
+        candidates = []
+        original_len = 7
+        target_len = [original_len]
+
+        i = 1
+        while(True):
+            if original_len-i < 2:
+                j = original_len+i
+                while j < max_size:
+                    target_len.append(j)
+                    j+=1
+                break
+            target_len.append(original_len-i)
+            target_len.append(original_len+i)
+            i += 1
+        target_len_index = 1
+        current_size = original_len # generate candidate with the same length as original statement
+
+        sub_generator_object = self.generator_object
+        bunch_size = self.bunch_size
+        sub_generator_object.set_size(current_size)
+        sub_generator_state = sub_generator_object.generate()
+
+        finished = False
+        i = 0
+        while(i<10000):
+            retval = [None] * bunch_size
+            current_index = 0
+            while (current_index < bunch_size):
+                try:
+                    retval[current_index] = next(sub_generator_state)
+                except StopIteration:
+                    # can be bump up the subgenerator size?
+                    #if (target_len_index < len(target_len)):
+                    #    current_size = target_len[target_len_index]
+                    #    target_len_index += 1
+                    if(current_size < max_size):
+                        current_size += 1
+                        sub_generator_object.set_size(current_size)
+                        sub_generator_state = sub_generator_object.generate()
+                        continue
+                    elif (not finished):
+                        finished = True
+                        self.current_object_size = current_size
+                        candidates += retval[:current_index]
+                    else:
+                        break
+                current_index += 1
+            self.current_object_size = current_size
+            if all(map(lambda f: f is None, retval)):
+                break
+            else:
+                for temp in retval:
+                    candidates.append(temp)
+            i += 1
+
+        candidates = self.rank(candidates)
+        for i in range(0, len(candidates), bunch_size):
+            retval = []
+            for j in range(bunch_size):
+                if i+j >= len(candidates):
+                    break
+                print("getting candidates: ", exprs.expression_to_string(candidates[i+j]))
+                retval.append(candidates[i+j])
+            yield retval
+        return
+
+    '''
+    def generate(self):
+        current_size = 7
+        max_size = 10 #self.max_size
         sub_generator_object = self.generator_object
         bunch_size = self.bunch_size
         sub_generator_object.set_size(current_size)
@@ -508,7 +609,6 @@ class BunchedGenerator(GeneratorBase):
                     # can be bump up the subgenerator size?
                     if (current_size < max_size):
                         current_size += 1
-                        # print(current_size)
                         sub_generator_object.set_size(current_size)
                         sub_generator_state = sub_generator_object.generate()
                         continue
@@ -523,8 +623,11 @@ class BunchedGenerator(GeneratorBase):
             if all(map(lambda f: f is None, retval)):
                 return
             else:
+                # _expr_to_str = exprs.expression_to_string
+                # for temp in retval:
+	            #     print("xiang2", _expr_to_str(temp))
                 yield retval
-
+        '''
 
     def set_size(self, new_bunch_size):
         """selects a new bunch size"""
@@ -666,18 +769,21 @@ def _generate_test_generators():
 
 def test_generators():
     start_generator = _generate_test_generators()
-    start_generator.set_size(5)
+    start_generator.set_size(3)
     for exp in start_generator.generate():
         print(exprs.expression_to_string(exp))
 
-    # tests for bunched generators
+    
+    print("===========================")
+    #tests for bunched generators
     print('Testing bunched generators....')
-    bunch_generator = BunchedGenerator(start_generator, 10, 5)
+    bunch_generator = BunchedGenerator(start_generator, 3, 5)
     for bunch in bunch_generator.generate():
         print('Bunch:')
         for exp in bunch:
             print('    %s' % exprs.expression_to_string(exp))
-
+    
+    
 if __name__ == '__main__':
     test_generators()
 

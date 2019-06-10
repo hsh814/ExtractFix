@@ -8,7 +8,7 @@ EUSOLVER_ROOT=`pwd`
 # or leave it blank if z3 modules exist in the standard python3 path
 HAVE_Z3=yes
 
-# Z3_PYTHON_PATH=$LOCAL_Z3_ROOT/thirdparty/z3/build/python
+Z3_PYTHON_PATH=${EUSOLVER_ROOT}/../../../infra/z3/build/python
 REBUILD_LOCAL_Z3=no
 
 # --------------------------------------

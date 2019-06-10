@@ -245,6 +245,7 @@ def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
     term_generator = term_grammar.to_generator(generator_factory)
     pred_generator = pred_grammar.to_generator(generator_factory)
     solver = solvers.Solver(syn_ctx)
+    print(specification.term_signature)
     term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator)
     unifier = unifiers.PointDistinctDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
     solver = solvers.Solver(syn_ctx)
@@ -255,8 +256,11 @@ def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
             verifier,
             verify_term_solve=True
             )
+    #num_solution = 10
+    #for i in range(num_solution):
     solution = next(solutions)
     final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
+    #    print_solutions(synth_funs, final_solution)
     return final_solution
 
 def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
@@ -337,9 +341,9 @@ def make_solver(file_sexp):
     theory = theories[0]
 
     solvers = [
-            ("LIA Unification", lia_unification_solver),
-            ("STD Unification", std_unification_solver),
-            ("Classic Esolver", classic_esolver),
+            #("LIA Unification", lia_unification_solver),
+            #("STD Unification", std_unification_solver),
+            #("Classic Esolver", classic_esolver),
             ("Memoryless Esolver", memoryless_esolver)
             ]
     rewritten_constraints = utils.timeout(
