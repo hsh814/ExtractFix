@@ -23,7 +23,8 @@ WeakestPrecondition::WeakestPrecondition(string){
 }
 
 /* invoke KLEE to generate crash free constraint, to be implemented by Bo Wang*/
-Condition WeakestPrecondition::generateWPC(Location& fixLoc, Location& crashLoc, Condition& cfc){
+vector<Condition> WeakestPrecondition::generateWPC(Location& fixLoc, Location& crashLoc, Condition& cfc){
+    vector<Condition> cons;
     Condition con = {};
-    return con;
+    return cons;
 }

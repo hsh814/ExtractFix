@@ -4,6 +4,10 @@ Crash free program repair
 ## Requirement
 
 1. LLVM-6.0: install LLVM-6.0 following the [instruction](https://llvm.org/docs/GettingStarted.html)
+2. Boost, install it in ubuntu using the following command:
+```
+sudo apt-get install libboost-all-dev
+```
 
 ### Installation
 ```

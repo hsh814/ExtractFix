@@ -1,0 +1,19 @@
+sketch is  ['(', '-', '(', '-', '(', '-', 'x2', 'x1', ')', 'x0', ')', '3', ')']
+(- (- (- _arg_2 _arg_0) _arg_1) 3) 0
+(- (- (- _arg_2 _arg_0) _arg_1) 4) 1
+(- (- (- _arg_2 _arg_0) _arg_1) 5) 2
+(+ (- (- _arg_2 _arg_0) _arg_1) 3) 10
+(- (- (- _arg_2 _arg_0) _arg_1) _arg_1) 10
+(- (- (- _arg_2 _arg_0) _arg_1) _arg_0) 10
+(- (- (- _arg_2 _arg_0) _arg_1) _arg_2) 10
+(- (+ (- _arg_2 _arg_0) _arg_1) 3) 10
+(- (- (+ _arg_2 _arg_0) _arg_1) 3) 10
+(- (- (- _arg_2 _arg_1) _arg_1) 3) 10
+================================================================================
+getting candidates:  (- (- (- _arg_2 _arg_0) _arg_1) 3)
+gaoxiang expr:  (- (- (- _arg_2 _arg_0) _arg_1) 3)
+getting candidates:  (- (- (- _arg_2 _arg_0) _arg_1) 4)
+gaoxiang expr:  (- (- (- _arg_2 _arg_0) _arg_1) 4)
+(define-fun cond ((x1 Int) (x0 Int) (x2 Int)) Int
+     (- (- (- x2 x1) x0) 4))
+
