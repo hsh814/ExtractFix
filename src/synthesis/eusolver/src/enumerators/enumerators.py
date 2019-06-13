@@ -518,7 +518,7 @@ class BunchedGenerator(GeneratorBase):
                     ranked_candidates.append(candidates[j])
                     ranked_candidate_weight.append(i)
 
-        for i in range(10):
+        for i in range(1000):
             print(exprs.expression_to_string(ranked_candidates[i]), str(ranked_candidate_weight[i]))
         print("================================================================================")
         return ranked_candidates

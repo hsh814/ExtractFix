@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -x
+
+require () {
+    hash "$1" 2>/dev/null || { echo "command $1 is not found"; exit 1; }
+}
+
+require opt
+
+script_path=`dirname $0`
+echo $script_path
+
+usage="Usage: ./fault_localization SUBJECT TEST OUTPUT"
+
+if [[ $# > 0 ]]; then
+    subject="$1"
+    shift
+else
+    echo "$usage"
+    exit 1
+fi
+
+if [[ $# > 0 ]]; then
+    testcase="$1"
+    shift
+else
+    echo "$usage"
+    exit 1
+fi
+
+if [[ $# > 0 ]]; then
+    output="$1"
+    shift
+else
+    echo "$usage"
+    exit 1
+fi
+
+FILE=/etc/resolv.conf
+if [ ! -f "${script_path}/libLLVMFixLoc.so" ]; then
+    echo "${script_path}/libLLVMFixLoc.so does not exist"
+    exit 1
+fi
+
+opt -load ${script_path}/libLLVMFixLoc.so -fixloc $subject > $output

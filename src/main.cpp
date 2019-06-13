@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 
-#include "fault_localization/FixLocation.h"
 #include "synthesis/Synthesizer.h"
 #include "util/DataStruct.h"
 #include "util/WeakestPrecondition.h"
@@ -46,17 +45,17 @@ using std::vector;
 
 int repair(string binaryFullPath, vector<string> tests){
     Runtime rt(binaryFullPath, tests);
-    FixLocation fl(binaryFullPath, tests, rt);
+    // FixLocation fl(binaryFullPath, tests, rt);
     WeakestPrecondition wp(binaryFullPath);
 
     Location crashLoc = rt.getCrashLocation();
     /* generate crash free constraint at the crash location */
     Condition cfc = rt.generateCFC();
 
-    vector<Location> fixLocations = fl.generateFixLocation();
+    /*vector<Location> fixLocations = fl.generateFixLocation();
     for (Location fixLoc: fixLocations){
         vector<Condition> wpc = wp.generateWPC(fixLoc, crashLoc, cfc);
-    }
+    }*/
 }
 
 int main (int argc, char *argv[])
@@ -116,3 +115,4 @@ int main (int argc, char *argv[])
     }
     return 0;
 }
+
