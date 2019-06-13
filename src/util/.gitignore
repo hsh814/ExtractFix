@@ -1,0 +1,8 @@
+*.o
+*.so
+*.a
+*.ll
+*.bc
+
+klee-last
+klee-out-*

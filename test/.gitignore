@@ -1,0 +1,9 @@
+*.bc
+*.ll
+*.o
+
+a.out
+constraints.txt
+
+klee-last
+klee-out-*
