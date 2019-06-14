@@ -25,6 +25,8 @@ include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
 add_subdirectory(fault_localization)
+add_subdirectory(tools)
+add_subdirectory(util)
 
 add_executable(main
         main.cpp

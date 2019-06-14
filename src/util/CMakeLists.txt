@@ -16,15 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-add_library( LLVMFixLoc MODULE
-  FixLocation.cpp
-)
+add_library( LLVMFuncTracer MODULE
+        FuncTracer.cpp
+        )
 
-target_compile_features(LLVMFixLoc PRIVATE cxx_range_for cxx_auto_type)
+target_compile_features(LLVMFuncTracer PRIVATE cxx_range_for cxx_auto_type)
 
 # LLVM is (typically) built with no C++ RTTI. We need to match that;
 # otherwise, we'll get linker errors about missing RTTI data.
-set_target_properties(LLVMFixLoc PROPERTIES
-    COMPILE_FLAGS "-fno-rtti"
-)
+set_target_properties(LLVMFuncTracer PROPERTIES
+        COMPILE_FLAGS "-fno-rtti"
+        )
 

@@ -37,10 +37,9 @@ else
     exit 1
 fi
 
-FILE=/etc/resolv.conf
-if [ ! -f "${script_path}/libLLVMFixLoc.so" ]; then
-    echo "${script_path}/libLLVMFixLoc.so does not exist"
+if [ ! -f "${script_path}/../fault_localization/libLLVMFixLoc.so" ]; then
+    echo "${script_path}/../fault_localization/libLLVMFixLoc.so does not exist"
     exit 1
 fi
 
-opt -load ${script_path}/libLLVMFixLoc.so -fixloc $subject > $output
+opt -load ${script_path}/../fault_localization/libLLVMFixLoc.so -fixloc $subject > /dev/null

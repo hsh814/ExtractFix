@@ -11,9 +11,3 @@ run:
 clean:
 	rm -f SymbolicInserter.so SymbolicInserter.o SymbolicInserter.dwo
 
-FuncTracer:
-	clang++ FuncTracer.cpp -c -g -O0 -fPIC `llvm-config --cxxflags` `llvm-config --includedir`
-	clang++ -o FuncTracer.so FuncTracer.o -shared `llvm-config --ldflags`
-
-runTracer:
-	opt -S -load=/home/nightwish/workspace/bug_repair/crash-free-fix/src/util/FuncTracer.so -func_tracer ../../test/get_sign.bc

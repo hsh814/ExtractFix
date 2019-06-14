@@ -1,5 +1,5 @@
 /* #########################################################################
-This file is part of Fix2Fit.
+This file is part of crash-free-fix.
 Copyright (C) 2016
 
 This is free software: you can redistribute it and/or modify
@@ -16,21 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################*/
 
-
-/*
- * Simple tool to find fix locations.
- *
- * Commands:
- *
- * COMPILE THIS PASS:
- *      clang++-4.0 FixLoc.cpp -c -g -O0 -fPIC `llvm-config-4.0 --cxxflags` `llvm-config-4.0 --includedir`; clang++-4.0 -o FixLoc.so FixLoc.o -shared `llvm-config-4.0 --ldflags`
- *
- * USE THIS PASS:
- *		opt-4.0 -S -load=../LowFat/FixLoc.so -fixloc program.ll > /dev/null
- *
- * PREPARE PROGRAM FOR ANALYSIS:
- *		clang-4.0 -O0 -S -emit-llvm program.c; opt-4.0 -S -mem2reg -inline -dce program.ll > program1.ll; mv program1.ll program.ll
- */
 
 #include <cassert>
 #include <cstdio>
@@ -95,6 +80,12 @@ struct SeenEntry
 static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Seen,
                                 Value *X, Instruction *Dst);
 
+static void printout(const char* message, Value* inst){
+    fprintf(stderr, "%s", message);
+    inst->print(errs());
+    fprintf(stderr, "\n");
+}
+
 /*
  * Suggest fix locations for X.
  *
@@ -109,8 +100,8 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
         return;
     Seen.insert(Entry);
 
-//    fprintf(stderr, "\t\tFORWARD ");
-//    X->dump();
+    // fprintf(stdout, "\t\tFORWARD ");
+    // X->print(outs()); fprintf(stdout, "\n");
 
     if (auto *Cmp = dyn_cast<ICmpInst>(X))
     {
@@ -126,9 +117,9 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
                 continue;   // Not a branch
             if (!Br->isConditional() || Br->getCondition() != Cmp)
                 continue;   // Not conditional.
-            fprintf(stderr, "\t\t\33[32mFIX LOC\33[0m (control flow) ");
-            // Cmp->dump();
-            Cmp->print(outs());
+
+            printout("\t\33[32mFIX LOC\33[0m (control flow)", Cmp);
+
             findFixLocsDataFlow(DT, Seen, Cmp->getOperand(0), Dst);
             findFixLocsDataFlow(DT, Seen, Cmp->getOperand(1), Dst);
             break;
@@ -143,7 +134,8 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
             isa<CastInst>(User) ||
             isa<PHINode>(User) ||
             isa<BinaryOperator>(User) ||
-            isa<ICmpInst>(User))
+            isa<ICmpInst>(User) ||
+            isa<LoadInst>(User))
         {
             findFixLocsForward(DT, Seen, User, Dst);
         }
@@ -168,8 +160,8 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
     if (!isa<Instruction>(X))
         return;
 
-//    fprintf(stderr, "\t\tBACKWARD ");
-//    X->dump();
+    // fprintf(stderr, "\t\tBACKWARD ");
+    // X->print(outs()); fprintf(stdout, "\n");
 
     // Find control-flow locations:
     findFixLocsForward(DT, Seen, X, Dst);
@@ -180,8 +172,7 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
         // Pointer arithmetic: ptr = ptr + k;
         if (DT.dominates(GEP, Dst))
         {
-            fprintf(stderr, "\t\t\33[32mFIX LOC\33[0m (data flow) ");
-            GEP->print(outs());
+            printout("\t\33[32mFIX LOC\33[0m (data flow)", GEP);
         }
 
         int numIdxs = GEP->getNumIndices();
@@ -196,8 +187,7 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
     {
         if (DT.dominates(BinOp, Dst))
         {
-            fprintf(stderr, "\t\t\33[32mFIX LOC\33[0m (data flow) ");
-            BinOp->print(outs());
+            printout("\t\33[32mFIX LOC\33[0m (data flow)", BinOp);
         }
         findFixLocsDataFlow(DT, Seen, BinOp->getOperand(0), Dst);
         findFixLocsDataFlow(DT, Seen, BinOp->getOperand(1), Dst);
@@ -216,28 +206,31 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
         for (size_t i = 0; i < numValues; i++)
             findFixLocsDataFlow(DT, Seen, PHI->getIncomingValue(i), Dst);
     }
+    else if(auto *load = dyn_cast<LoadInst>(X)){
+        findFixLocsDataFlow(DT, Seen, load->getOperand(0), Dst);
+    }
     else
     {
         // Not yet implemented!
-        fprintf(stderr, "\t\t\33[33mSTOP\33[0m [not yet implemented] ");
-        X->print(outs());
+        // fprintf(stderr, "\t\t\33[33mSTOP\33[0m [not yet implemented] \n");
+        // X->print(outs()); fprintf(stdout, "\n");
     }
 }
 
 static void suggestFixLocs(const DominatorTree &DT, StoreInst *Store)
 {
-    fprintf(stderr, "\n-------------------------------------------------------\n");
-    fprintf(stderr, "\t\33[31mSTORE\33[0m ");
-    Store->print(outs());
+    //fprintf(stderr, "\n-------------------------------------------------------\n");
+    //fprintf(stderr, "\t\33[31mSTORE\33[0m ");
+    // Store->print(outs()); fprintf(stdout, "\n");
     std::set<SeenEntry> Seen;
     findFixLocsDataFlow(DT, Seen, Store->getPointerOperand(), Store);
 }
 
 static void suggestFixLocs(const DominatorTree &DT, LoadInst *Load)
 {
-    fprintf(stderr, "\n-------------------------------------------------------\n");
-    fprintf(stderr, "\t\33[31mLOAD\33[0m ");
-    Load->print(outs());
+    //fprintf(stderr, "\n-------------------------------------------------------\n");
+    //fprintf(stderr, "\t\33[31mLOAD\33[0m ");
+    // Load->print(outs()); fprintf(stdout, "\n");
     std::set<SeenEntry> Seen;
     findFixLocsDataFlow(DT, Seen, Load->getPointerOperand(), Load);
 }
@@ -258,10 +251,12 @@ static void suggestFixLocs(Module &M)
         {
             for (auto &I: BB)
             {
-                if (auto *Store = dyn_cast<StoreInst>(&I))
+                if (auto *Store = dyn_cast<StoreInst>(&I)){
                     suggestFixLocs(DT, Store);
-                else if (auto *Load = dyn_cast<LoadInst>(&I))
+                }
+                else if (auto *Load = dyn_cast<LoadInst>(&I)) {
                     suggestFixLocs(DT, Load);
+                }
             }
         }
     }
