@@ -80,6 +80,12 @@ struct SeenEntry
 static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Seen,
                                 Value *X, Instruction *Dst);
 
+static void printout(const char* message, Value* inst){
+    fprintf(stderr, "%s", message);
+    inst->print(errs());
+    fprintf(stderr, "\n");
+}
+
 /*
  * Suggest fix locations for X.
  *
@@ -94,8 +100,8 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
         return;
     Seen.insert(Entry);
 
-    fprintf(stderr, "\t\tFORWARD ");
-    X->print(outs()); fprintf(stdout, "\n");
+    // fprintf(stdout, "\t\tFORWARD ");
+    // X->print(outs()); fprintf(stdout, "\n");
 
     if (auto *Cmp = dyn_cast<ICmpInst>(X))
     {
@@ -111,8 +117,9 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
                 continue;   // Not a branch
             if (!Br->isConditional() || Br->getCondition() != Cmp)
                 continue;   // Not conditional.
-            fprintf(stderr, "\t\t\33[32mFIX LOC\33[0m (control flow) ");
-            Cmp->print(outs()); fprintf(stdout, "\n");
+
+            printout("\t\33[32mFIX LOC\33[0m (control flow)", Cmp);
+
             findFixLocsDataFlow(DT, Seen, Cmp->getOperand(0), Dst);
             findFixLocsDataFlow(DT, Seen, Cmp->getOperand(1), Dst);
             break;
@@ -153,8 +160,8 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
     if (!isa<Instruction>(X))
         return;
 
-    fprintf(stderr, "\t\tBACKWARD ");
-    X->print(outs()); fprintf(stdout, "\n");
+    // fprintf(stderr, "\t\tBACKWARD ");
+    // X->print(outs()); fprintf(stdout, "\n");
 
     // Find control-flow locations:
     findFixLocsForward(DT, Seen, X, Dst);
@@ -165,8 +172,7 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
         // Pointer arithmetic: ptr = ptr + k;
         if (DT.dominates(GEP, Dst))
         {
-            fprintf(stderr, "\t\t\33[32mFIX LOC\33[0m (data flow) \n");
-            GEP->print(outs()); fprintf(stdout, "\n");
+            printout("\t\33[32mFIX LOC\33[0m (data flow)", GEP);
         }
 
         int numIdxs = GEP->getNumIndices();
@@ -181,8 +187,7 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
     {
         if (DT.dominates(BinOp, Dst))
         {
-            fprintf(stderr, "\t\t\33[32mFIX LOC\33[0m (data flow) \n");
-            BinOp->print(outs()); fprintf(stdout, "\n");
+            printout("\t\33[32mFIX LOC\33[0m (data flow)", BinOp);
         }
         findFixLocsDataFlow(DT, Seen, BinOp->getOperand(0), Dst);
         findFixLocsDataFlow(DT, Seen, BinOp->getOperand(1), Dst);
@@ -207,25 +212,25 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
     else
     {
         // Not yet implemented!
-        fprintf(stderr, "\t\t\33[33mSTOP\33[0m [not yet implemented] \n");
-        X->print(outs()); fprintf(stdout, "\n");
+        // fprintf(stderr, "\t\t\33[33mSTOP\33[0m [not yet implemented] \n");
+        // X->print(outs()); fprintf(stdout, "\n");
     }
 }
 
 static void suggestFixLocs(const DominatorTree &DT, StoreInst *Store)
 {
-    fprintf(stderr, "\n-------------------------------------------------------\n");
-    fprintf(stderr, "\t\33[31mSTORE\33[0m ");
-    Store->print(outs()); fprintf(stdout, "\n");
+    //fprintf(stderr, "\n-------------------------------------------------------\n");
+    //fprintf(stderr, "\t\33[31mSTORE\33[0m ");
+    // Store->print(outs()); fprintf(stdout, "\n");
     std::set<SeenEntry> Seen;
     findFixLocsDataFlow(DT, Seen, Store->getPointerOperand(), Store);
 }
 
 static void suggestFixLocs(const DominatorTree &DT, LoadInst *Load)
 {
-    fprintf(stderr, "\n-------------------------------------------------------\n");
-    fprintf(stderr, "\t\33[31mLOAD\33[0m ");
-    Load->print(outs()); fprintf(stdout, "\n");
+    //fprintf(stderr, "\n-------------------------------------------------------\n");
+    //fprintf(stderr, "\t\33[31mLOAD\33[0m ");
+    // Load->print(outs()); fprintf(stdout, "\n");
     std::set<SeenEntry> Seen;
     findFixLocsDataFlow(DT, Seen, Load->getPointerOperand(), Load);
 }
