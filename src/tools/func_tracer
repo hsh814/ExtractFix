@@ -27,4 +27,7 @@ if [ ! -f "${libLLVMFixLoc}" ]; then
     exit 1
 fi
 
-opt -S -load=${libLLVMFixLoc} -func_tracer $subject
+opt -S -load=${libLLVMFixLoc} -func_tracer $subject > ${subject}.ll
+clang ${subject}.ll -o ${subject}
+
+rm -rf ${subject}.ll
