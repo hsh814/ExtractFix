@@ -1,3 +1,6 @@
 [submodule "src/klee"]
 	path = src/klee
 	url = https://github.com/gaoxiang9430/klee.git
+[submodule "src/sanitizer/LowFat"]
+	path = src/sanitizer/LowFat
+	url = https://github.com/wangbo15/LowFat.git
