@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 require () {
     hash "$1" 2>/dev/null || { echo "command $1 is not found"; exit 1; }
@@ -11,7 +11,7 @@ require opt
 script_path=`dirname $0`
 echo $script_path
 
-usage="Usage: ./fault_localization SUBJECT TEST OUTPUT"
+usage="Usage: ./fault_localization SUBJECT"
 
 if [[ $# > 0 ]]; then
     subject="$1"
@@ -27,4 +27,7 @@ if [ ! -f "${libLLVMFixLoc}" ]; then
     exit 1
 fi
 
-opt -S -load=${libLLVMFixLoc} -func_tracer $subject
+opt -S -load=${libLLVMFixLoc} -func_tracer $subject > ${subject}.ll
+clang ${subject}.ll -o ${subject}
+
+rm -rf ${subject}.ll
