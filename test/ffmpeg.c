@@ -47,8 +47,9 @@ int main(){
 	
   	//klee_make_symbolic(frame, sizeof(frame), "frame");
 	//klee_assume(frame[size - 1] == 0);
-	
-	decode_dds1(1, frame, 3, 2);
+	int height = 2;
+	int width = 1 + height;
+	decode_dds1(1, frame, width, 2);
 	
 	return 0;
 }

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cassert>
 #include <cstdio>
 #include <cstring>
-
 #include <map>
 #include <set>
 #include <sstream>
@@ -61,9 +60,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "llvm/Transforms/Utils/Local.h"
 
 using namespace llvm;
+using namespace std;
 
-struct SeenEntry
-{
+
+static cl::opt<string> functionCallList("lf",
+                                        cl::desc("Specify the list of executed function by failing test"),
+                                        cl::value_desc("F1 F2 ... Fn"));
+
+static cl::opt<string> targetFunction("fun",
+                                      cl::desc("Specify the function where the crash is triggered"),
+                                      cl::value_desc("FUNCTION_NAME"));
+
+static cl::opt<int> targetNO("no",
+                             cl::desc("Specify the crash line number"),
+                             cl::value_desc("LINE_NUMBER"));
+
+struct SeenEntry{
     bool forward;
     Value *X;
 
@@ -77,13 +89,58 @@ struct SeenEntry
     }
 };
 
-static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Seen,
-                                Value *X, Instruction *Dst);
+struct FixEntry{
+    string description;
+    string funcName;
+    int lineNo;
 
-static void printout(const char* message, Value* inst){
-    fprintf(stderr, "%s", message);
-    inst->print(errs());
-    fprintf(stderr, "\n");
+    bool operator==(const FixEntry &fixEntry){
+        return funcName == fixEntry.funcName && lineNo == fixEntry.lineNo;
+    }
+
+    bool operator<(const FixEntry &fixEntry) const
+    {
+        if (funcName == fixEntry.funcName)
+            return lineNo > fixEntry.lineNo;
+        return funcName < fixEntry.funcName;
+    }
+};
+
+static bool isCrashFunction = true;
+static std::set<FixEntry> potentialFixLocs;
+static vector<int> argumentsForBackwardAnalysis;
+
+bool isFuncArgument(Function *func, Value * val){
+    int index = 0;
+    for(auto arg = func->arg_begin(); arg != func->arg_end(); ++arg, index++) {
+        if (&(*arg) == &(*val)){
+            argumentsForBackwardAnalysis.push_back(index);
+            return true;
+        }
+    }
+    return false;
+}
+
+static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Seen,
+                                Value *X, Instruction *Dst, Function* funcName);
+
+static void printout(const char* message, const string funcName, const Instruction* inst){
+    const DebugLoc debugLoc = inst->getDebugLoc();
+    // the instruction does not contain debug location
+    if (!debugLoc){
+        fprintf(stderr, "debug information is not found.");;
+    }
+    int lineNo = debugLoc.getLine();
+
+    FixEntry Entry = {message, funcName, lineNo};
+    auto i = potentialFixLocs.find(Entry);
+    if (i != potentialFixLocs.end())
+        return;
+    potentialFixLocs.insert(Entry);
+
+    // fprintf(stderr, "%s", message);
+    // inst->print(errs());
+    // fprintf(stderr, "line no: %d\n", lineNo);
 }
 
 /*
@@ -92,7 +149,7 @@ static void printout(const char* message, Value* inst){
  * Does a forward data-flow analysis.
  */
 static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &Seen,
-                               Value *X, Instruction *Dst)
+                               Value *X, Instruction *Dst, Function * func)
 {
     SeenEntry Entry = {/*forward=*/true, X};
     auto i = Seen.find(Entry);
@@ -100,8 +157,8 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
         return;
     Seen.insert(Entry);
 
-    // fprintf(stdout, "\t\tFORWARD ");
-    // X->print(outs()); fprintf(stdout, "\n");
+    // fprintf(stderr, "\t\tFORWARD ");
+    // X->print(errs()); fprintf(stderr, "\n");
 
     if (auto *Cmp = dyn_cast<ICmpInst>(X))
     {
@@ -118,26 +175,41 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
             if (!Br->isConditional() || Br->getCondition() != Cmp)
                 continue;   // Not conditional.
 
-            printout("\t\33[32mFIX LOC\33[0m (control flow)", Cmp);
+            printout("\t\33[32mFIX LOC\33[0m (control flow)", func->getName(), Cmp);
 
-            findFixLocsDataFlow(DT, Seen, Cmp->getOperand(0), Dst);
-            findFixLocsDataFlow(DT, Seen, Cmp->getOperand(1), Dst);
+            findFixLocsDataFlow(DT, Seen, Cmp->getOperand(0), Dst, func);
+            findFixLocsDataFlow(DT, Seen, Cmp->getOperand(1), Dst, func);
             break;
         }
         return;
+    }
+    else if(auto *store = dyn_cast<StoreInst>(X)){ //store instruction may affect the value of memory
+        if (!DT.dominates(store, Dst))
+        {
+            return;         // Does not dominate
+        }
+        findFixLocsDataFlow(DT, Seen, store->getOperand(0), Dst, func);
+        findFixLocsDataFlow(DT, Seen, store->getOperand(1), Dst, func);
     }
 
     // This is a forward analysis, so we look at all "users" of X.
     for (auto *User: X->users())
     {
+        if(isa<StoreInst>(User)){
+            if (isFuncArgument(func, User->getOperand(0)))
+                fprintf(stderr, "PROPAGATE ARGUMENT\n");
+        }
+
+
         if (isa<GetElementPtrInst>(User) ||
             isa<CastInst>(User) ||
             isa<PHINode>(User) ||
             isa<BinaryOperator>(User) ||
             isa<ICmpInst>(User) ||
-            isa<LoadInst>(User))
+            isa<LoadInst>(User) ||
+            isa<StoreInst>(User))
         {
-            findFixLocsForward(DT, Seen, User, Dst);
+            findFixLocsForward(DT, Seen, User, Dst, func);
         }
     }
 }
@@ -148,7 +220,7 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
  * Does a backwards data-flow analysis.
  */
 static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Seen,
-                                Value *X, Instruction *Dst)
+                                Value *X, Instruction *Dst, Function * func)
 {
     SeenEntry Entry = {/*forward=*/false, X};
     auto i = Seen.find(Entry);
@@ -161,10 +233,10 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
         return;
 
     // fprintf(stderr, "\t\tBACKWARD ");
-    // X->print(outs()); fprintf(stdout, "\n");
+    // X->print(errs()); fprintf(stderr, "\n");
 
     // Find control-flow locations:
-    findFixLocsForward(DT, Seen, X, Dst);
+    findFixLocsForward(DT, Seen, X, Dst, func);
 
     // Data-flow patching:
     if (auto *GEP = dyn_cast<GetElementPtrInst>(X))
@@ -172,29 +244,29 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
         // Pointer arithmetic: ptr = ptr + k;
         if (DT.dominates(GEP, Dst))
         {
-            printout("\t\33[32mFIX LOC\33[0m (data flow)", GEP);
+            printout("\t\33[32mFIX LOC\33[0m (data flow)", func->getName(), GEP);
         }
 
         int numIdxs = GEP->getNumIndices();
-        for (int i = 0; i < numIdxs; i++)
+        for (unsigned int j = 0; j < numIdxs; j++)
         {
-            Value *Idx = GEP->getOperand(i+1);
-            findFixLocsDataFlow(DT, Seen, Idx, Dst);
+            Value *Idx = GEP->getOperand(j+1);
+            findFixLocsDataFlow(DT, Seen, Idx, Dst, func);
         }
-        findFixLocsDataFlow(DT, Seen, GEP->getPointerOperand(), Dst);
+        findFixLocsDataFlow(DT, Seen, GEP->getPointerOperand(), Dst, func);
     }
     else if (auto *BinOp = dyn_cast<BinaryOperator>(X))
     {
         if (DT.dominates(BinOp, Dst))
         {
-            printout("\t\33[32mFIX LOC\33[0m (data flow)", BinOp);
+            printout("\t\33[32mFIX LOC\33[0m (data flow)", func->getName(), BinOp);
         }
-        findFixLocsDataFlow(DT, Seen, BinOp->getOperand(0), Dst);
-        findFixLocsDataFlow(DT, Seen, BinOp->getOperand(1), Dst);
+        findFixLocsDataFlow(DT, Seen, BinOp->getOperand(0), Dst, func);
+        findFixLocsDataFlow(DT, Seen, BinOp->getOperand(1), Dst, func);
     }
     else if (auto *Cast = dyn_cast<CastInst>(X))
     {
-        findFixLocsDataFlow(DT, Seen, Cast->getOperand(0), Dst);
+        findFixLocsDataFlow(DT, Seen, Cast->getOperand(0), Dst, func);
     }
     else if (auto *PHI = dyn_cast<PHINode>(X))
     {
@@ -203,62 +275,94 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
         // Note: Perhaps a better approach is to restrict the analysis to the
         // path of the failing test case.
         size_t numValues = PHI->getNumIncomingValues();
-        for (size_t i = 0; i < numValues; i++)
-            findFixLocsDataFlow(DT, Seen, PHI->getIncomingValue(i), Dst);
+        for (size_t j = 0; j < numValues; j++)
+            findFixLocsDataFlow(DT, Seen, PHI->getIncomingValue(j), Dst, func);
     }
     else if(auto *load = dyn_cast<LoadInst>(X)){
-        findFixLocsDataFlow(DT, Seen, load->getOperand(0), Dst);
+        findFixLocsDataFlow(DT, Seen, load->getOperand(0), Dst, func);
+    }
+    else if(auto *store = dyn_cast<StoreInst>(X)){
+        // X->print(errs());
+        if (isFuncArgument(func, store->getOperand(0)))
+            fprintf(stderr, "PROPAGATE ARGUMENT\n");
+        findFixLocsDataFlow(DT, Seen, store->getOperand(0), Dst, func);
+        findFixLocsDataFlow(DT, Seen, store->getOperand(1), Dst, func);
     }
     else
     {
         // Not yet implemented!
         // fprintf(stderr, "\t\t\33[33mSTOP\33[0m [not yet implemented] \n");
-        // X->print(outs()); fprintf(stdout, "\n");
+        // X->print(errs()); fprintf(stderr, "\n");
     }
 }
 
-static void suggestFixLocs(const DominatorTree &DT, StoreInst *Store)
+static void suggestFixLocs(const DominatorTree &DT, Instruction *inst, Function *func)
 {
-    //fprintf(stderr, "\n-------------------------------------------------------\n");
-    //fprintf(stderr, "\t\33[31mSTORE\33[0m ");
-    // Store->print(outs()); fprintf(stdout, "\n");
+    fprintf(stderr, "\n-------------------------------------------------------\n");
+    fprintf(stderr, "\t\33[31mSTORE\33[0m ");
+    inst->print(errs()); fprintf(stderr, "\n");
     std::set<SeenEntry> Seen;
-    findFixLocsDataFlow(DT, Seen, Store->getPointerOperand(), Store);
+    findFixLocsDataFlow(DT, Seen, inst, inst, func);
 }
 
-static void suggestFixLocs(const DominatorTree &DT, LoadInst *Load)
-{
-    //fprintf(stderr, "\n-------------------------------------------------------\n");
-    //fprintf(stderr, "\t\33[31mLOAD\33[0m ");
-    // Load->print(outs()); fprintf(stdout, "\n");
-    std::set<SeenEntry> Seen;
-    findFixLocsDataFlow(DT, Seen, Load->getPointerOperand(), Load);
-}
 
-/*
- * NOTE: The current code analyzes fix locations for *all* loads/stores.
- *       This needs to be changed so that it only considers the variable of
- *       interest (& not necessarily load/store for other types of errors).
- */
 static void suggestFixLocs(Module &M)
 {
-    for (auto &F: M)
-    {
-        fprintf(stderr, "\n\33[32mFUNCTION\33[0m %s\n",
-                F.getName().str().c_str());
-        DominatorTree DT(F);
-        for (auto &BB: F)
+    // parse function list
+    vector<string> funcCalls;
+    size_t pos = 0;
+    std::string token;
+    // TODO: check crash function
+    while ((pos = functionCallList.find(" ")) != std::string::npos) {
+        token = functionCallList.substr(0, pos);
+        funcCalls.push_back(token);
+        functionCallList.erase(0, pos + 1);
+    }
+    funcCalls.push_back(functionCallList);
+
+    // set<string> seenFun;
+    string callee, current_function;
+    for(long i=funcCalls.size()-1; i>=0; i--){
+        // if(seenFun.find(funcCalls[i]) != seenFun.end())
+        //     continue;
+        // seenFun.insert(funcCalls[i]);
+        current_function = funcCalls[i];
+
+        Function *F = M.getFunction(current_function);
+
+        fprintf(stderr, "\nFound \33[32mFUNCTION\33[0m %s\n",
+                F->getName().str().c_str());
+
+        DominatorTree DT(*F);
+        int index = 0;
+        for (auto &BB: *F)
         {
-            for (auto &I: BB)
-            {
-                if (auto *Store = dyn_cast<StoreInst>(&I)){
-                    suggestFixLocs(DT, Store);
+            for (auto &I: BB) {
+                index++;
+                if (isCrashFunction && index == targetNO){
+                    if (auto *inst = dyn_cast<Instruction>(&I)) {
+                        std::set<SeenEntry> Seen;
+                        findFixLocsDataFlow(DT, Seen, inst, inst, F);
+                        // suggestFixLocs(DT, dyn_cast<Instruction>(inst), F);
+                    }
+                    isCrashFunction = false;
+                    goto done;
                 }
-                else if (auto *Load = dyn_cast<LoadInst>(&I)) {
-                    suggestFixLocs(DT, Load);
+                else if(!isCrashFunction && isa<CallInst>(&I)){
+                    auto *inst = dyn_cast<CallInst>(&I);
+                    if (inst->getCalledFunction()->getName() == callee){
+                        for(int argumentIndex: argumentsForBackwardAnalysis){
+                            std::set<SeenEntry> Seen;
+                            findFixLocsDataFlow(DT, Seen, inst->getArgOperand(argumentIndex), inst, F);
+                            // suggestFixLocs(DT, inst->getArgOperand(argumentIndex), F);
+                        }
+                        goto done;
+                    }
                 }
             }
         }
+    done:
+        callee = current_function;
     }
 }
 
@@ -272,14 +376,19 @@ namespace
     {
         static char ID;
 
-        FixLoc() : ModulePass(ID) { }
+        FixLoc() : ModulePass(ID) {
+        }
 
         virtual bool runOnModule(Module &M)
         {
             suggestFixLocs(M);
+            for (FixEntry fixEntry: potentialFixLocs){
+                fprintf(stderr, "%s", fixEntry.description.c_str());
+                // inst->print(errs());
+                fprintf(stderr, "\t%s:%d\n", fixEntry.funcName.c_str(), fixEntry.lineNo);
+            }
             return true;
         }
-
     };
 
     char FixLoc::ID = 0;
@@ -288,6 +397,8 @@ namespace
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/IRReader/IRReader.h"
 #include "llvm/Support/SourceMgr.h"
+#include "llvm/Support/CommandLine.h"
+
 
 static RegisterPass<FixLoc> X("fixloc", "FixLoc pass");
 
