@@ -64,9 +64,7 @@ class FuncCallVisitor(c_ast.NodeVisitor):
 
 
 def show_func_calls(fileName, funcname):
-    ast = parse_file(fileName, use_cpp=True, cpp_args=['-E', r'-I/home/nightwish/workspace/utils/pycparser/utils/fake_libc_include',
-                                                       r'-I/home/nightwish/workspace/subjects/crash_free/libtiff_malloc/ori/libtiff',
-                                                       r'-I/home/nightwish/workspace/subjects/crash_free/libtiff_malloc/libtiff'])
+    ast = parse_file(fileName, use_cpp=True, cpp_args=['-E', r'-I'+dir_path+'/utils/fake_libc_include'])
     funcNameVisitor = FuncCallVisitor(funcname)
     funcNameVisitor.visit(ast)
 
@@ -182,11 +180,11 @@ def process_single_file(filePath, blackList):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2:
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    if len(sys.argv) == 2:
         filename = sys.argv[1]
     else:
-        filename = '/home/nightwish/workspace/subjects/crash_free/libtiff_malloc/'
-        # sys.exit("ERROR ARGUMENTS!")
+        sys.exit("usage: GSInserter [PATH_TO_SOURCR]")
 
     files = []
     if os.path.isfile(filename):
