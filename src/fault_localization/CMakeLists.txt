@@ -18,6 +18,7 @@
 
 add_library( LLVMFixLoc MODULE
   FixLocation.cpp
+  ../util/Metedata_extractor.cpp
 )
 
 target_compile_features(LLVMFixLoc PRIVATE cxx_range_for cxx_auto_type)

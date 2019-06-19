@@ -28,3 +28,13 @@ set_target_properties(LLVMFuncTracer PROPERTIES
         COMPILE_FLAGS "-fno-rtti"
         )
 
+add_library( LLVMSymbolicInserter MODULE
+        SymbolicInserter.cpp
+        Metedata_extractor.cpp
+        )
+
+target_compile_features(LLVMSymbolicInserter PRIVATE cxx_range_for cxx_auto_type)
+
+set_target_properties(LLVMSymbolicInserter PROPERTIES
+        COMPILE_FLAGS "-fno-rtti"
+        )

@@ -8,6 +8,10 @@ Crash free program repair
 ```
 sudo apt-get install libboost-all-dev
 ```
+3. Jsoncpp
+```
+sudo apt-get install libjsoncpp-dev
+```
 
 ### Installation
 ```

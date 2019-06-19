@@ -7,6 +7,11 @@ FIND_PACKAGE( Boost 1.40 COMPONENTS program_options log REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 
+# Jsoncpp
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONCPP jsoncpp)
+link_libraries(${JSONCPP_LIBRARIES})
+
 # Compiler
 set(CMAKE_CXX_FLAGS "-lboost_program_options") #added on 29 Sep 2017
 set(CMAKE_CXX_STANDARD 11) # C++11...
