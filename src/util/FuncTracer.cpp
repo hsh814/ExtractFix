@@ -49,6 +49,43 @@
 using namespace llvm;
 using namespace std;
 
+static void insertPrintf(Module *M, Instruction *I, std::string msg){
+    IRBuilder<> builder(I);
+
+    Function* funcPrintf = M->getFunction("printf");
+    if (!funcPrintf) {
+        std::vector<Type*> printfTypeVec;
+        printfTypeVec.push_back(PointerType::get(IntegerType::get(M->getContext(), 8), 0));
+        FunctionType* printfType = FunctionType::get(IntegerType::get(M->getContext(), 32), printfTypeVec, true);
+        funcPrintf = Function::Create(printfType, GlobalValue::ExternalLinkage, "printf", M);
+        funcPrintf->setCallingConv(CallingConv::C);
+    }
+
+    Constant *msgConst = ConstantDataArray::getString(M->getContext(), msg, true);
+
+    // plus one for \0
+    size_t len = msg.length() + 1;
+
+    Type *arr_type = ArrayType::get(IntegerType::get(M->getContext(), 8), len);
+    GlobalVariable *gvar_name = new GlobalVariable(*M,
+                                                   arr_type,
+                                                   true,
+                                                   GlobalValue::PrivateLinkage,
+                                                   msgConst,
+                                                   ".str");
+
+    gvar_name->setAlignment(1);
+    ConstantInt *zero = ConstantInt::get(M->getContext(), APInt(32, StringRef("0"), 10));
+
+    std::vector<Constant *> indices;
+    indices.push_back(zero);
+    indices.push_back(zero);
+    Constant *get_ele_ptr = ConstantExpr::getGetElementPtr(arr_type, gvar_name, indices);
+
+    builder.CreateCall(funcPrintf, get_ele_ptr);
+}
+
+
 namespace
 {
     struct FuncTracer : public FunctionPass
@@ -62,46 +99,26 @@ namespace
             if(F.isDeclaration()){
                 return false;
             }
-            std::string name = "CRASH_FREE_TRACER: " + F.getName().str() + "\n";
-
-            BasicBlock& BB = *(F.begin());
-            Instruction& I = *(BB.begin());
-
-            IRBuilder<> builder(&I);
-
             Module* M = F.getParent();
 
-            Function* funcPrintf = M->getFunction("printf");
-            if (!funcPrintf) {
-                std::vector<Type*> printfTypeVec;
-                printfTypeVec.push_back(PointerType::get(IntegerType::get(M->getContext(), 8), 0));
-                FunctionType* printfType = FunctionType::get(IntegerType::get(M->getContext(), 32), printfTypeVec, true);
-                funcPrintf = Function::Create(printfType, GlobalValue::ExternalLinkage, "printf", M);
-                funcPrintf->setCallingConv(CallingConv::C);
+            std::string enter = "CRASH_FREE_TRACER: IN  >>>> " + F.getName().str() + "\n";
+            std::string exit =  "CRASH_FREE_TRACER: OUT >>>> " + F.getName().str() + "\n";
+
+
+            BasicBlock& firstBB = *(F.begin());
+            Instruction& firstI = *(firstBB.begin());
+
+            insertPrintf(M, &firstI, enter);
+
+            for (auto &BB: F) {
+                for (auto &I: BB) {
+                    if(ReturnInst* returnInst = dyn_cast<ReturnInst>(&I)){
+                        insertPrintf(M, &I, exit);
+                    }
+                }
             }
 
-            Constant *msgConst = ConstantDataArray::getString(M->getContext(), name, true);
 
-            // plus one for \0
-            size_t len = name.length() + 1;
-
-            Type *arr_type = ArrayType::get(IntegerType::get(M->getContext(), 8), len);
-            GlobalVariable *gvar_name = new GlobalVariable(*M,
-                                                           arr_type,
-                                                           true,
-                                                           GlobalValue::PrivateLinkage,
-                                                           msgConst,
-                                                           ".str");
-
-            gvar_name->setAlignment(1);
-            ConstantInt *zero = ConstantInt::get(M->getContext(), APInt(32, StringRef("0"), 10));
-
-            std::vector<Constant *> indices;
-            indices.push_back(zero);
-            indices.push_back(zero);
-            Constant *get_ele_ptr = ConstantExpr::getGetElementPtr(arr_type, gvar_name, indices);
-
-            builder.CreateCall(funcPrintf, get_ele_ptr);
             return true;
         }
 
