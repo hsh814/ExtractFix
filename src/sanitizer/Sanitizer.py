@@ -18,17 +18,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-from enum import Enum
-
-class BugType(Enum):
-    """supported bug type"""
-    buffer_overflow = 1
-    integer_overflow = 2
-    null_pointer = 3
-    assertion_failure = 4
-
-    @staticmethod
-    def list():
-        return "[buffer_overflow, integer_overflow, null_pointer, assertion_failure]"
+from .. import Global
 
 
+class Sanitizer:
+    def __init__(self, source_path):
+        self.source_path = source_path
+
+    def _default_generate_crash_info(self):
+        pass
+
+
+class BufferOverflowSanitizer(Sanitizer):
+    def __init__(self, source_path):
+        Sanitizer.__init__(self, source_path)
+        self.source_path = source_path
+
+    def _default_generate_crash_info(self):
+        # TODO: call low fat
+        crash_info = Global.CrashInfo("main", 51, {})

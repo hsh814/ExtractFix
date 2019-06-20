@@ -23,13 +23,15 @@ import logging
 import sys, time
 import subprocess
 from instrumentation import GSInserter
+from Global import BugType
 
 
-def repair(source_path, test_list, compile_command, logger):
+def repair(source_path, test_list, compile_command, bug_type, logger):
     temp_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
-    logger.info("project workind directory " + temp_dir)
+    logger.info("project working directory " + temp_dir)
     subprocess.check_output(['cp', '-r', str(source_path), temp_dir])
 
+    # insert global variable for malloc, which is then used to generate crash-free-constraints
     GSInserter.insert_gs(temp_dir)
 
 
@@ -44,6 +46,9 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--compile-command', dest='compile_command', type=str, nargs=1,
                         help='the command to compile the target program', required=True)
 
+    parser.add_argument('-b', '--bug-type', dest='bug_type', type=str, nargs=1,
+                        help='the type of the crash/vulnerability(supported type: '+BugType.list()+')', required=True)
+
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose',
                         help='show debug information', required=False)
 
@@ -51,7 +56,7 @@ if __name__ == '__main__':
 
     # create logger
     logging.basicConfig()
-    logger = logging.getLogger('Crash-free-fix: ')
+    logger = logging.getLogger('Crash-free-fix ')
     if args.verbose:
         logger.setLevel(logging.DEBUG)
     else:
@@ -65,5 +70,5 @@ if __name__ == '__main__':
 
     logger.debug("run crash-free-fix on project " + str(args.source_path))
 
-    repair(args.source_path[0], test_list, args.compile_command[0], logger)
+    repair(args.source_path[0], test_list, args.compile_command[0], args.bug_type[0], logger)
 
