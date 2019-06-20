@@ -19,7 +19,7 @@
 ###########################################################################
 
 import argparse
-import logging
+import coloredlogs, logging
 import sys, time, os
 # add the current path to PYTHONPATH
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
@@ -28,22 +28,22 @@ import subprocess
 from instrumentation import GSInserter
 from Global import BugType
 from sanitizer import Sanitizer
+import runtime
 
 
 def repair(source_path, test_list, compile_command, bug_type, logger):
-    temp_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
-    logger.info("project working directory " + temp_dir)
-    subprocess.check_output(['cp', '-r', str(source_path), temp_dir])
-
+    work_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
+    logger.info("project working directory " + work_dir)
+    subprocess.check_output(['cp', '-r', str(source_path), work_dir])
 
     if bug_type == 'buffer_overflow':
         # insert global variable for malloc, which is then used to generate crash-free-constraints
-        GSInserter.insert_gs(temp_dir)
+        GSInserter.insert_gs(work_dir)
         sanitizer = Sanitizer.BufferOverflowSanitizer(bug_type, compile_command)
-        crashInfo = sanitizer.generate_crash_info()
-        logger.debug(crashInfo)
+        crash_info = sanitizer.generate_crash_info()
+        logger.debug(crash_info)
 
-    # compile(compile_command)
+    runtime.compile_llvm6(compile_command, work_dir, logger)
 
 
 if __name__ == '__main__':
@@ -66,6 +66,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # create logger
+    coloredlogs.install()
     logging.basicConfig()
     logger = logging.getLogger('Crash-free-fix ')
     if args.verbose:
@@ -78,8 +79,13 @@ if __name__ == '__main__':
         exit(1)
 
     test_list = args.tests
+    bug_type = args.bug_type[0]
+    if bug_type not in BugType.list():
+        logger.fatal("Bug type" + bug_type + " is not supported.")
+        parser.print_help(sys.stderr)
+        exit(1)
 
     logger.debug("run crash-free-fix on project " + str(args.source_path))
 
-    repair(args.source_path[0], test_list, args.compile_command[0], args.bug_type[0], logger)
+    repair(args.source_path[0], test_list, args.compile_command[0], bug_type, logger)
 
