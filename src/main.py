@@ -44,6 +44,7 @@ def repair(source_path, test_list, compile_command, bug_type, logger):
         logger.debug(crash_info)
 
     runtime.compile_llvm6(compile_command, work_dir, logger)
+    runtime.run_mem2reg(work_dir, logger, "ffmpeg")
 
 
 if __name__ == '__main__':
@@ -66,13 +67,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # create logger
-    coloredlogs.install()
+    if args.verbose:
+        level = "DEBUG"
+    else:
+        level = "INFO"
+    coloredlogs.install(level=level)
     logging.basicConfig()
     logger = logging.getLogger('Crash-free-fix ')
-    if args.verbose:
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.INFO)
 
     if not args.source_path or not args.tests or not args.compile_command:
         parser.print_help(sys.stderr)

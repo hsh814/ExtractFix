@@ -26,10 +26,26 @@ import os
 def compile_llvm6(compile_command, work_dir, logger):
     CC = "clang"
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    CFLAGS = "-I" + current_dir + "/klee/include -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone"
+    klee_include = os.path.join(current_dir, "klee", "include")
+    CFLAGS = "-I" + klee_include + " -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone"
     command = "CC="+CC+" CFLAGS=\'"+CFLAGS+"\' " + compile_command
+    logger.debug("compile command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("compile error, command line: " + command)
+
+    logger.info("clang successfully compile project")
+
+
+def run_mem2reg(work_dir, logger, binary_name):
+    binary_full_path = os.path.join(work_dir, binary_name+".bc")
+    command = "opt -mem2reg " + binary_full_path + " > " + binary_full_path
+    logger.debug("mem2reg command: " + command)
+    try:
+        subprocess.check_output(command, cwd=work_dir, shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.fatal("run mem2reg failed, command line: " + command)
+
+    logger.info("successfully run mem2reg")
 
