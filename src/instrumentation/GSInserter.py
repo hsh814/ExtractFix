@@ -98,7 +98,7 @@ def change_malloc_line(line, globalName):
             break
     post = post[idx:]
 
-    newLine = pre + 'malloc(' + globalName + post
+    newLine = pre + 'malloc(' + globalName + post + '\n'
     return newLine
 
 def get_files(target_dir, exetension):
