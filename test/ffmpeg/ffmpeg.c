@@ -2,14 +2,13 @@
 #include<stdint.h>
 #include<stdio.h>
 
-#include<klee/klee.h>
 
 #define AVERROR_INVALIDDATA -1
 
-
+/*M_SIZE_G*/ size_t LOWFAT_GLOBAL_MS_36;
 static int decode_dds1(int segments, uint8_t *frame, int width, int height)
 {
-	klee_make_symbolic(&width, sizeof(width), "width");
+    // klee_make_symbolic(&width, sizeof(width), "width");
 
     const uint8_t *frame_start = frame;
     const uint8_t *frame_end   = frame + width * height;
@@ -26,7 +25,7 @@ static int decode_dds1(int segments, uint8_t *frame, int width, int height)
 	//klee_make_symbolic(&width, sizeof(width), "width");
 	
 	frame += 2;
-	klee_assume(frame + width + 1 < frame_end);
+	// klee_assume(frame + width + 1 < frame_end);
 	frame[width + 1] =  '0'; // width + 1 < 6
 	
 	frame += 2;
@@ -35,11 +34,10 @@ static int decode_dds1(int segments, uint8_t *frame, int width, int height)
 }
 
 void* x_malloc(int n){
-	void* res = malloc(n);
-	return res;
-}
 
 
+/*M_SIZE*/ LOWFAT_GLOBAL_MS_36 = n;
+	void* res = malloc(LOWFAT_GLOBAL_MS_36);	return res;}
 int main(){
 	int size = 6;
 	//SIZE = size;

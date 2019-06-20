@@ -179,6 +179,22 @@ def process_single_file(filePath, blackList):
            file.flush()
 
 
+def insert_gs(filename):
+    files = []
+    if os.path.isfile(filename):
+        files.append(filename)
+    else:
+        files = get_files(filename, '.c')
+
+        # sys.path.extend([filename + 'libtiff/', filename + 'port/',
+        #                  '/home/nightwish/workspace/subjects/crash_free/libtiff_malloc/ori/libtiff/'])
+
+    blakList = ['tif_win32.c', 'tif_vms.c', 'tif_wince.c', 'xtiff.c', 'tif2ras.c']
+
+    for file in files:
+        process_single_file(file, blakList)
+
+
 if __name__ == "__main__":
     dir_path = os.path.dirname(os.path.realpath(__file__))
     if len(sys.argv) == 2:
@@ -186,16 +202,5 @@ if __name__ == "__main__":
     else:
         sys.exit("usage: GSInserter [PATH_TO_SOURCR]")
 
-    files = []
-    if os.path.isfile(filename):
-        files.append(filename)
-    else:
-        files = get_files(filename, '.c')
+    insert_gs(filename)
 
-    # sys.path.extend([filename + 'libtiff/', filename + 'port/',
-    #                  '/home/nightwish/workspace/subjects/crash_free/libtiff_malloc/ori/libtiff/'])
-
-    blakList = ['tif_win32.c', 'tif_vms.c', 'tif_wince.c', 'xtiff.c', 'tif2ras.c']
-
-    for file in files:
-        process_single_file(file, blakList)

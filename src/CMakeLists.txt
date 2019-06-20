@@ -33,12 +33,3 @@ add_subdirectory(fault_localization)
 add_subdirectory(tools)
 add_subdirectory(util)
 
-add_executable(main
-        main.cpp
-        synthesis/Synthesizer.cpp
-        Runtime.cpp
-        util/WeakestPrecondition.cpp
-        Global.cpp)
-
-target_link_libraries(main
-        ${Boost_LIBRARIES})

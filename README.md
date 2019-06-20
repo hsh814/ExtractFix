@@ -12,6 +12,10 @@ sudo apt-get install libboost-all-dev
 ```
 sudo apt-get install libjsoncpp-dev
 ```
+4. Pycparse
+```
+pip install pycparser
+```
 
 ### Installation
 ```
