@@ -20,6 +20,7 @@
 
 from enum import Enum
 
+
 class BugType(Enum):
     """supported bug type"""
     buffer_overflow = 1
@@ -32,3 +33,20 @@ class BugType(Enum):
         return "[buffer_overflow, integer_overflow, null_pointer, assertion_failure]"
 
 
+class CrashInfo():
+    def __init__(self, function_name, line_no, cfc):
+        self.function_name = function_name
+        self.line_no = line_no
+        self.cfc = cfc
+
+    def get_function_name(self):
+        return self.function_name
+
+    def get_line_no(self):
+        return self.line_no
+
+    def get_cfg(self):
+        return self.cfc
+
+    def __str__(self):
+        return self.function_name + ":" + str(self.line_no) + " " + self.cfc

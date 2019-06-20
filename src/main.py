@@ -20,10 +20,14 @@
 
 import argparse
 import logging
-import sys, time
+import sys, time, os
+# add the current path to PYTHONPATH
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 import subprocess
 from instrumentation import GSInserter
 from Global import BugType
+from sanitizer import Sanitizer
 
 
 def repair(source_path, test_list, compile_command, bug_type, logger):
@@ -31,8 +35,15 @@ def repair(source_path, test_list, compile_command, bug_type, logger):
     logger.info("project working directory " + temp_dir)
     subprocess.check_output(['cp', '-r', str(source_path), temp_dir])
 
-    # insert global variable for malloc, which is then used to generate crash-free-constraints
-    GSInserter.insert_gs(temp_dir)
+
+    if bug_type == 'buffer_overflow':
+        # insert global variable for malloc, which is then used to generate crash-free-constraints
+        GSInserter.insert_gs(temp_dir)
+        sanitizer = Sanitizer.BufferOverflowSanitizer(bug_type, compile_command)
+        crashInfo = sanitizer.generate_crash_info()
+        logger.debug(crashInfo)
+
+    # compile(compile_command)
 
 
 if __name__ == '__main__':

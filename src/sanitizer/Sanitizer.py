@@ -18,22 +18,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-from .. import Global
+import Global
 
 
 class Sanitizer:
-    def __init__(self, source_path):
+    def __init__(self, source_path, compile_command):
         self.source_path = source_path
+        self.compile_command = compile_command
 
     def _default_generate_crash_info(self):
         pass
 
 
 class BufferOverflowSanitizer(Sanitizer):
-    def __init__(self, source_path):
-        Sanitizer.__init__(self, source_path)
-        self.source_path = source_path
+    def __init__(self, source_path, compile_command):
+        Sanitizer.__init__(self, source_path, compile_command)
 
-    def _default_generate_crash_info(self):
+    def generate_crash_info(self):
         # TODO: call low fat
+        # here, you need to compile the project by yourself
         crash_info = Global.CrashInfo("main", 51, {})
