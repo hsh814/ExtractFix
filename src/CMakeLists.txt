@@ -32,4 +32,8 @@ link_directories(${LLVM_LIBRARY_DIRS})
 add_subdirectory(fault_localization)
 add_subdirectory(tools)
 add_subdirectory(util)
+add_subdirectory(sanitizer)
 
+configure_file(main.py main.py COPYONLY)
+configure_file(runtime.py runtime.py COPYONLY)
+configure_file(Global.py Global.py COPYONLY)

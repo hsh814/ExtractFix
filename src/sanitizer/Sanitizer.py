@@ -18,35 +18,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 
-from enum import Enum
+import Global
 
 
-class BugType(Enum):
-    """supported bug type"""
-    buffer_overflow = 1
-    integer_overflow = 2
-    null_pointer = 3
-    assertion_failure = 4
+class Sanitizer:
+    def __init__(self, source_path, compile_command):
+        self.source_path = source_path
+        self.compile_command = compile_command
 
-    @staticmethod
-    def list():
-        return "[buffer_overflow, integer_overflow, null_pointer, assertion_failure]"
+    def _default_generate_crash_info(self):
+        pass
 
 
-class CrashInfo():
-    def __init__(self, function_name, line_no, cfc):
-        self.function_name = function_name
-        self.line_no = line_no
-        self.cfc = cfc
+class BufferOverflowSanitizer(Sanitizer):
+    def __init__(self, source_path, compile_command):
+        Sanitizer.__init__(self, source_path, compile_command)
 
-    def get_function_name(self):
-        return self.function_name
-
-    def get_line_no(self):
-        return self.line_no
-
-    def get_cfg(self):
-        return self.cfc
-
-    def __str__(self):
-        return self.function_name + ":" + str(self.line_no) + " " + self.cfc
+    def generate_crash_info(self):
+        # TODO: call low fat
+        # here, you need to compile the project by yourself
+        crash_info = Global.CrashInfo("main", 51, {})

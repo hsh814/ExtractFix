@@ -9,5 +9,5 @@ run:
 	#opt -S -load=./SymbolicInserter.so -symbolic_inserter -crash_location '/ffmpeg.bc:30' ../../test/ffmpeg.bc
 
 clean:
-	rm -f SymbolicInserter.so SymbolicInserter.o SymbolicInserter.dwo
+	rm -f *.so *.o SymbolicInserter.dwo
 
