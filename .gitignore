@@ -2,3 +2,5 @@ build/
 infra/z3/
 temp/
 *.pyc
+
+**/.idea/
