@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -x
+set -x
 
 require () {
     hash "$1" 2>/dev/null || { echo "command $1 is not found"; exit 1; }
@@ -27,7 +27,7 @@ if [ ! -f "${libLLVMFixLoc}" ]; then
     exit 1
 fi
 
-opt -S -load=${libLLVMFixLoc} -func_tracer $subject > ${subject}.ll
-clang ${subject}.ll -o ${subject}
+opt -S -load=${libLLVMFixLoc} -func_tracer $subject > ${subject}_with_func_trace.ll
+llvm-as ${subject}_with_func_trace.ll -o ${subject}_with_func_trace
 
-rm -rf ${subject}.ll
+rm -rf ${subject}_with_func_trace.ll

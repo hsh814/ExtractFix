@@ -23,7 +23,7 @@ import subprocess
 import os
 
 
-def compile_llvm6(compile_command, work_dir, logger):
+def compile_to_bc_llvm6(compile_command, work_dir, logger):
     CC = "clang"
     current_dir = os.path.dirname(os.path.realpath(__file__))
     klee_include = os.path.join(current_dir, "klee", "include")
@@ -40,10 +40,12 @@ def compile_llvm6(compile_command, work_dir, logger):
 
 def run_mem2reg(work_dir, logger, binary_name):
     binary_full_path = os.path.join(work_dir, binary_name+".bc")
-    command = "opt -mem2reg " + binary_full_path + " > " + binary_full_path
+    command = "opt -S -mem2reg " + binary_full_path + " > " + binary_full_path+".ll"
+    command2 = "llvm-as " + binary_full_path+".ll" + " -o " + binary_full_path
     logger.debug("mem2reg command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
+        subprocess.check_output(command2, cwd=work_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("run mem2reg failed, command line: " + command)
 

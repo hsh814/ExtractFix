@@ -25,13 +25,13 @@ import sys, time, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 import subprocess
-from instrumentation import GSInserter
+from instrumentation import GSInserter, FuncTracer
 from Global import BugType
 from sanitizer import Sanitizer
 import runtime
 
 
-def repair(source_path, test_list, compile_command, bug_type, logger):
+def repair(source_path, binary_name, test_list, compile_command, bug_type, logger):
     work_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
     logger.info("project working directory " + work_dir)
     subprocess.check_output(['cp', '-r', str(source_path), work_dir])
@@ -43,8 +43,13 @@ def repair(source_path, test_list, compile_command, bug_type, logger):
         crash_info = sanitizer.generate_crash_info()
         logger.debug(crash_info)
 
-    runtime.compile_llvm6(compile_command, work_dir, logger)
-    runtime.run_mem2reg(work_dir, logger, "ffmpeg")
+    # compile the program to bc file and optimize it using mem2reg
+    runtime.compile_to_bc_llvm6(compile_command, work_dir, logger)
+    runtime.run_mem2reg(work_dir, logger, binary_name)
+
+    func_tracer = FuncTracer.FuncTracer()
+    cb_with_func_tracer = func_tracer.insert_function_trace(work_dir, logger, binary_name)
+
 
 
 if __name__ == '__main__':
@@ -60,6 +65,9 @@ if __name__ == '__main__':
 
     parser.add_argument('-b', '--bug-type', dest='bug_type', type=str, nargs=1,
                         help='the type of the crash/vulnerability(supported type: '+BugType.list()+')', required=True)
+
+    parser.add_argument('-n', '--binary-name', dest='binary_name', type=str, nargs=1,
+                        help='the binary name', required=False)
 
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose',
                         help='show debug information', required=False)
@@ -88,5 +96,5 @@ if __name__ == '__main__':
 
     logger.debug("run crash-free-fix on project " + str(args.source_path))
 
-    repair(args.source_path[0], test_list, args.compile_command[0], bug_type, logger)
+    repair(args.source_path[0], args.binary_name[0], test_list, args.compile_command[0], bug_type, logger)
 
