@@ -34,7 +34,7 @@ class FuncTracer:
                   " > " + binary_full_path+"_with_func_tracer.ll"
 
         command2 = "llvm-as " + binary_full_path+"_with_func_tracer.ll" + \
-                   " -o " + binary_full_path+"_with_func_tracer"
+                   " -o " + binary_full_path+"_with_func_tracer.bc"
         logger.debug("instrument with functracer command: " + command)
         try:
             subprocess.check_output(command, cwd=work_dir, shell=True)
@@ -43,4 +43,6 @@ class FuncTracer:
             logger.fatal("run functracer failed, command line: " + command)
 
         logger.info("successfully instrument with functracer")
+
+        return binary_full_path+"_with_func_tracer.bc"
 
