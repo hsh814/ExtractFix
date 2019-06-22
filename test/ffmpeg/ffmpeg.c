@@ -5,7 +5,6 @@
 
 #define AVERROR_INVALIDDATA -1
 
-/*M_SIZE_G*/ size_t LOWFAT_GLOBAL_MS_36;
 static int decode_dds1(int segments, uint8_t *frame, int width, int height)
 {
     // klee_make_symbolic(&width, sizeof(width), "width");
@@ -34,10 +33,11 @@ static int decode_dds1(int segments, uint8_t *frame, int width, int height)
 }
 
 void* x_malloc(int n){
+	void* res = malloc(n);	
+        return res;
+}
 
 
-/*M_SIZE*/ LOWFAT_GLOBAL_MS_36 = n;
-	void* res = malloc(LOWFAT_GLOBAL_MS_36);	return res;}
 int main(){
 	int size = 6;
 	//SIZE = size;

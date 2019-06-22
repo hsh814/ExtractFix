@@ -28,6 +28,7 @@ import subprocess
 from instrumentation import GSInserter, FuncTracer
 from Global import BugType
 from sanitizer import Sanitizer
+from fault_localization import FaultLocalization
 import runtime
 
 
@@ -38,18 +39,36 @@ def repair(source_path, binary_name, test_list, compile_command, bug_type, logge
 
     if bug_type == 'buffer_overflow':
         # insert global variable for malloc, which is then used to generate crash-free-constraints
-        GSInserter.insert_gs(work_dir)
+        GSInserter.insert_gs(work_dir, logger)
         sanitizer = Sanitizer.BufferOverflowSanitizer(bug_type, compile_command)
         crash_info = sanitizer.generate_crash_info()
-        logger.debug(crash_info)
+        logger.debug("crash info: "+str(crash_info))
 
     # compile the program to bc file and optimize it using mem2reg
     runtime.compile_to_bc_llvm6(compile_command, work_dir, logger)
-    runtime.run_mem2reg(work_dir, logger, binary_name)
+    # runtime.run_mem2reg(work_dir, logger, binary_name)
 
+    # instrument program by inserting function tracer
     func_tracer = FuncTracer.FuncTracer()
-    cb_with_func_tracer = func_tracer.insert_function_trace(work_dir, logger, binary_name)
+    bc_with_func_tracer = func_tracer.insert_function_trace(work_dir, logger, binary_name)
+    binary_name_with_func_tracer = runtime.compile_llvm6(bc_with_func_tracer, logger)
 
+    # run function tracer to generate function trace
+    func_trace = runtime.run(binary_name_with_func_tracer, test_list, logger)
+    func_list = process_func_trace(func_trace)
+    logger.debug("function trace" + str(func_list))
+
+    # fault localization
+    fl = FaultLocalization.FaultLocalization(work_dir, binary_name, func_list, crash_info, logger)
+    potential_funcs = fl.get_potential_fault_locs()
+
+
+def process_func_trace(func_trace):
+    retval = []
+    trace_list = func_trace.split('\n')[:-1]
+    for trace in trace_list:
+        retval.append(trace.split(' >>>> '))
+    return retval
 
 
 if __name__ == '__main__':

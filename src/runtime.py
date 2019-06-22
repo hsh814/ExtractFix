@@ -34,8 +34,9 @@ def compile_to_bc_llvm6(compile_command, work_dir, logger):
         subprocess.check_output(command, cwd=work_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("compile error, command line: " + command)
+        exit(1)
 
-    logger.info("clang successfully compile project")
+    logger.info("clang successfully generate bc file")
 
 
 def run_mem2reg(work_dir, logger, binary_name):
@@ -48,6 +49,37 @@ def run_mem2reg(work_dir, logger, binary_name):
         subprocess.check_output(command2, cwd=work_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("run mem2reg failed, command line: " + command)
+        exit(1)
 
     logger.info("successfully run mem2reg")
+
+
+def compile_llvm6(binary_name, logger):
+    binary_name_with_func_tracer = binary_name[:binary_name.find(".")]
+    command = "clang " + binary_name + " -o " + binary_name_with_func_tracer
+    logger.debug("compile command: " + command)
+    try:
+        subprocess.check_output(command, shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.fatal("compile error, command line: " + command)
+        exit(1)
+
+    logger.info("clang successfully compile project")
+
+    return binary_name_with_func_tracer
+
+
+def run(binary_name, test_list, logger):
+    # TODO: assume the first test is the failing test
+    command = binary_name + " " + test_list[0]
+    logger.debug("compile command: " + command)
+    try:
+        result = subprocess.check_output(command, shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.fatal("run " + command + "failed")
+        exit(1)
+
+    logger.info("successfully run " + command)
+
+    return result
 

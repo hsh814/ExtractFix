@@ -79,6 +79,9 @@ static cl::opt<int> targetNO("no",
                              cl::desc("Specify the crash line number"),
                              cl::value_desc("LINE_NUMBER"));
 
+static cl::opt<bool> verbose("v",
+                             cl::desc("debug mode"));
+
 struct SeenEntry{
     bool forward;
     Value *X;
@@ -137,7 +140,7 @@ static void recordFixLoc(const char* message, const string funcName,
                          const Instruction* inst, set<FixEntry> &pFixLocs){
     const DebugLoc debugLoc = inst->getDebugLoc();
     // the instruction does not contain debug location
-    if (!debugLoc){
+    if (!debugLoc && verbose){
         fprintf(stderr, "debug information is not found.");;
     }
     int lineNo = debugLoc.getLine();
@@ -162,8 +165,8 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
                                Value *X, Instruction *Dst, Function * func)
 {
     if (isFuncArgument(func, X)){
-        fprintf(stderr, "PROPAGATE ARGUMENT\n");
-        return;
+        if (verbose)
+            fprintf(stderr, "PROPAGATE ARGUMENT\n");
     }
 
     SeenEntry Entry = {/*forward=*/true, X};
@@ -172,8 +175,10 @@ static void findFixLocsForward(const DominatorTree &DT, std::set<SeenEntry> &See
         return;
     Seen.insert(Entry);
 
-    // fprintf(stderr, "\t\tFORWARD ");
-    // X->print(errs()); fprintf(stderr, "\n");
+    if (verbose) {
+        fprintf(stderr, "\t\tFORWARD ");
+        X->print(errs()); fprintf(stderr, "\n");
+    }
 
     if (auto *Cmp = dyn_cast<ICmpInst>(X))
     {
@@ -232,7 +237,8 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
                                 Value *X, Instruction *Dst, Function * func)
 {
     if (isFuncArgument(func, X)){
-        fprintf(stderr, "PROPAGATE ARGUMENT\n");
+        if (verbose)
+            fprintf(stderr, "PROPAGATE ARGUMENT\n");
         return;
     }
 
@@ -242,15 +248,19 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
         return;
     Seen.insert(Entry);
 
+    findFixLocsForward(DT, Seen, pFixLocs, X, Dst, func);
+
     // Only care about instructions:
     if (!isa<Instruction>(X))
         return;
 
-    // fprintf(stderr, "\t\tBACKWARD ");
-    // X->print(errs()); fprintf(stderr, "\n");
+    if (verbose) {
+        fprintf(stderr, "\t\tBACKWARD ");
+        X->print(errs());
+        fprintf(stderr, "\n");
+    }
 
     // Find control-flow locations:
-    findFixLocsForward(DT, Seen, pFixLocs, X, Dst, func);
 
     // Data-flow patching:
     if (auto *GEP = dyn_cast<GetElementPtrInst>(X))
@@ -303,8 +313,10 @@ static void findFixLocsDataFlow(const DominatorTree &DT, std::set<SeenEntry> &Se
     else
     {
         // Not yet implemented!
-        // fprintf(stderr, "\t\t\33[33mSTOP\33[0m [not yet implemented] \n");
-        // X->print(errs()); fprintf(stderr, "\n");
+        if (verbose){
+            fprintf(stderr, "\t\t\33[33mSTOP\33[0m [not yet implemented] \n");
+            X->print(errs()); fprintf(stderr, "\n");
+        }
     }
 }
 
@@ -354,9 +366,6 @@ static void suggestFixLocs(Module &M)
     string callee, current_function;
     static bool isCrashFunction = true; // the first iteration will explore crash function
     for(long i=funcCalls.size()-1; i>=0; i--){
-        // if(seenFun.find(funcCalls[i]) != seenFun.end())
-        //     continue;
-        // seenFun.insert(funcCalls[i]);
         current_function = funcCalls[i];
 
         Function *F = M.getFunction(current_function);
@@ -366,45 +375,42 @@ static void suggestFixLocs(Module &M)
         //    errs() << *(it->first) << " => " << it->second.varName << " => " << it->second.declareLineNo << '\n';
         //}
 
-        fprintf(stderr, "\nFound \33[32mFUNCTION\33[0m %s\n",
-                F->getName().str().c_str());
+        if (verbose)
+            fprintf(stderr, "\nFound \33[32mFUNCTION\33[0m %s\n", F->getName().str().c_str());
 
         DominatorTree DT(*F);
-        int index = 0;
+        std::set<SeenEntry> Seen;
+        set<FixEntry> pFixLocs;
         for (auto &BB: *F)
         {
             for (auto &I: BB) {
-                index++;
-                if (isCrashFunction && index == targetNO){
+                if (isCrashFunction){
+
                     if (auto *inst = dyn_cast<Instruction>(&I)) {
-                        std::set<SeenEntry> Seen;
-                        static set<FixEntry> pFixLocs;
+
+                        const DebugLoc debugLoc = inst->getDebugLoc();
+                        // the instruction does not contain debug location
+                        if (!debugLoc){
+                            continue;
+                        }
+                        int lineNo = debugLoc.getLine();
+                        if (lineNo != targetNO)
+                            continue;
+
+                        // inst->print(errs());
                         findFixLocsDataFlow(DT, Seen, pFixLocs, inst, inst, F);
-                        // suggestFixLocs(DT, dyn_cast<Instruction>(inst), F);
-                        isCrashFunction = false;
-                        pFixLocs = determineVarsToSymbolize(Seen, value2Meta, pFixLocs);
-                        allPotentialFixLocs.insert(pFixLocs.begin(), pFixLocs.end());
-
-                        //for(SeenEntry seen: Seen)
-                        //    errs() << "seen entry:" << *(seen.X) << "\n";
-
-                        goto done;
                     }
                 }
                 else if(!isCrashFunction && isa<CallInst>(&I)){
                     auto *inst = dyn_cast<CallInst>(&I);
                     if (inst->getCalledFunction()->getName() == callee){
-                        std::set<SeenEntry> Seen;
-                        set<FixEntry> pFixLocs;
+
                         for(int argumentIndex: argumentsForBackwardAnalysis){
-                            errs() << "the argument includes " << argumentIndex << "\n";
+                            if (verbose)
+                                errs() << "the argument includes " << argumentIndex << "\n";
                             findFixLocsDataFlow(DT, Seen, pFixLocs, inst->getArgOperand(argumentIndex), inst, F);
                             // suggestFixLocs(DT, inst->getArgOperand(argumentIndex), F);
                         }
-                        isCrashFunction = false;
-                        pFixLocs = determineVarsToSymbolize(Seen, value2Meta, pFixLocs);
-                        allPotentialFixLocs.insert(pFixLocs.begin(), pFixLocs.end());
-
                         //for(SeenEntry seen: Seen)
                         //    errs() << "seen entry:" << *(seen.X) << "\n";
                         goto done;
@@ -413,6 +419,10 @@ static void suggestFixLocs(Module &M)
             }
         }
     done:
+        isCrashFunction = false;
+        pFixLocs = determineVarsToSymbolize(Seen, value2Meta, pFixLocs);
+        allPotentialFixLocs.insert(pFixLocs.begin(), pFixLocs.end());
+
         callee = current_function;
     }
 }
@@ -439,7 +449,7 @@ static void writeToJsonFile(string &fileName, set<FixEntry> &fixLocs){
     string content = styledWriter.write(fixLocations);
 
     std::fstream fs;
-    fs.open (fileName, std::fstream::in | std::fstream::out | std::fstream::app);
+    fs.open (fileName, std::fstream::in | std::fstream::out);
     fs << content << "\n";
     errs() << content << "\n";
     fs.close();
@@ -463,7 +473,8 @@ namespace
             suggestFixLocs(M);
             string fileName = "/tmp/fixlocations.json";
             writeToJsonFile(fileName, allPotentialFixLocs);
-            errs() << "Fix locations have been written to file \33[32m" << fileName << "\n";
+            if (verbose)
+                errs() << "Fix locations have been written to file \33[32m" << fileName << "\n";
             return true;
         }
     };

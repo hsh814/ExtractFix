@@ -37,4 +37,6 @@ class BufferOverflowSanitizer(Sanitizer):
     def generate_crash_info(self):
         # TODO: call low fat
         # here, you need to compile the project by yourself
-        crash_info = Global.CrashInfo("main", 51, {})
+        crash_info = Global.CrashInfo("decode_dds1", 29, {})
+        return crash_info
+

@@ -11,7 +11,7 @@ require opt
 script_path=`dirname $0`
 echo $script_path
 
-usage="Usage: ./fault_localization SUBJECT TEST OUTPUT"
+usage="Usage: ./fault_localization SUBJECT FUNC_NAME NUMBER FUNC_LIST"
 
 if [[ $# > 0 ]]; then
     subject="$1"
@@ -22,7 +22,7 @@ else
 fi
 
 if [[ $# > 0 ]]; then
-    testcase="$1"
+    fun_name="$1"
     shift
 else
     echo "$usage"
@@ -30,16 +30,25 @@ else
 fi
 
 if [[ $# > 0 ]]; then
-    output="$1"
+    number="$1"
     shift
 else
     echo "$usage"
     exit 1
 fi
 
+if [[ $# > 0 ]]; then
+    func_list="$1"
+    shift
+else
+    echo "$usage"
+    exit 1
+fi
+
+
 if [ ! -f "${script_path}/../fault_localization/libLLVMFixLoc.so" ]; then
     echo "${script_path}/../fault_localization/libLLVMFixLoc.so does not exist"
     exit 1
 fi
 
-opt -load ${script_path}/../fault_localization/libLLVMFixLoc.so -fixloc $subject > /dev/null
+opt -load ${script_path}/../fault_localization/libLLVMFixLoc.so -fixloc $subject -fun ${fun_name} -no ${number} -lf ${func_list} > /dev/null
