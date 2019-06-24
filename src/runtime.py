@@ -23,12 +23,24 @@ import subprocess
 import os
 
 
-def compile_to_bc_llvm6(compile_command, work_dir, logger):
-    CC = "clang"
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    klee_include = os.path.join(current_dir, "klee", "include")
-    CFLAGS = "-I" + klee_include + " -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone"
-    command = "CC="+CC+" CFLAGS=\'"+CFLAGS+"\' " + compile_command
+def project_config(work_dir, logger):
+    command = "./project_config.sh"
+    logger.debug("compile command: " + command)
+    try:
+        subprocess.check_output(command, cwd=work_dir, shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.fatal("config error, command line: " + command)
+        exit(1)
+
+    logger.info("successfully config project")
+
+
+def compile_to_bc_llvm6(work_dir, logger):
+    # current_dir = os.path.dirname(os.path.realpath(__file__))
+    # klee_include = os.path.join(current_dir, "klee", "include")
+    # CFLAGS = "-I" + klee_include + " -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone"
+    # command = "CC="+CC+" CFLAGS=\'"+CFLAGS+"\' " + compile_command
+    command = "./project_build.sh"
     logger.debug("compile command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
@@ -54,27 +66,26 @@ def run_mem2reg(work_dir, logger, binary_name):
     logger.info("successfully run mem2reg")
 
 
-def compile_llvm6(binary_name, logger):
-    binary_name_with_func_tracer = binary_name[:binary_name.find(".")]
-    command = "clang " + binary_name + " -o " + binary_name_with_func_tracer
+def compile_llvm6(work_dir, binary_name, logger):
+    command = "./project_compile.sh " + binary_name + ".bc " + binary_name
     logger.debug("compile command: " + command)
     try:
-        subprocess.check_output(command, shell=True)
+        subprocess.check_output(command, cwd=work_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("compile error, command line: " + command)
         exit(1)
 
     logger.info("clang successfully compile project")
 
-    return binary_name_with_func_tracer
+    return binary_name
 
 
-def run(binary_name, test_list, logger):
+def run(work_dir, driver, binary, test_list, logger):
     # TODO: assume the first test is the failing test
-    command = binary_name + " " + test_list[0]
-    logger.debug("compile command: " + command)
+    command = "./" + driver + " " + " " + binary + " ./" + test_list[0]
+    logger.debug("run command: " + command)
     try:
-        result = subprocess.check_output(command, shell=True)
+        result = subprocess.check_output(command, cwd=work_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("run " + command + "failed")
         exit(1)

@@ -378,6 +378,8 @@ static void suggestFixLocs(Module &M)
         if (verbose)
             fprintf(stderr, "\nFound \33[32mFUNCTION\33[0m %s\n", F->getName().str().c_str());
 
+        vector<int> argumentsForBackwardAnalysisOfCallee;
+
         DominatorTree DT(*F);
         std::set<SeenEntry> Seen;
         set<FixEntry> pFixLocs;
@@ -403,9 +405,9 @@ static void suggestFixLocs(Module &M)
                 }
                 else if(!isCrashFunction && isa<CallInst>(&I)){
                     auto *inst = dyn_cast<CallInst>(&I);
-                    if (inst->getCalledFunction()->getName() == callee){
+                    if (inst->getCalledFunction() && inst->getCalledFunction()->getName() == callee){
 
-                        for(int argumentIndex: argumentsForBackwardAnalysis){
+                        for(int argumentIndex: argumentsForBackwardAnalysisOfCallee){
                             if (verbose)
                                 errs() << "the argument includes " << argumentIndex << "\n";
                             findFixLocsDataFlow(DT, Seen, pFixLocs, inst->getArgOperand(argumentIndex), inst, F);
@@ -424,6 +426,7 @@ static void suggestFixLocs(Module &M)
         allPotentialFixLocs.insert(pFixLocs.begin(), pFixLocs.end());
 
         callee = current_function;
+        argumentsForBackwardAnalysisOfCallee = argumentsForBackwardAnalysis;
     }
 }
 

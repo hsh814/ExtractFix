@@ -22,21 +22,21 @@ import Global
 
 
 class Sanitizer:
-    def __init__(self, source_path, compile_command):
+    def __init__(self, source_path):
         self.source_path = source_path
-        self.compile_command = compile_command
+
 
     def _default_generate_crash_info(self):
         pass
 
 
 class BufferOverflowSanitizer(Sanitizer):
-    def __init__(self, source_path, compile_command):
-        Sanitizer.__init__(self, source_path, compile_command)
+    def __init__(self, source_path):
+        Sanitizer.__init__(self, source_path)
 
     def generate_crash_info(self):
         # TODO: call low fat
         # here, you need to compile the project by yourself
-        crash_info = Global.CrashInfo("decode_dds1", 29, {})
+        crash_info = Global.CrashInfo("decode_dds1", 51, {})
         return crash_info
 

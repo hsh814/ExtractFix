@@ -60,7 +60,8 @@ class FaultLocalization:
 
         self.logger.debug("run FixLoc pass command: " + command)
         try:
-            retval = subprocess.check_output(command, stderr=subprocess.STDOUT, cwd=self.work_dir, shell=True)
+            project_path = os.path.join(self.work_dir, "project")
+            retval = subprocess.check_output(command, cwd=project_path, shell=True)
         except subprocess.CalledProcessError as e:
             self.logger.fatal("run FixLoc pass failed, command line: " + command)
             exit(1)
