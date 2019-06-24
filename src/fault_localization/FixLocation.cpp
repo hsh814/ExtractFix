@@ -451,11 +451,12 @@ static void writeToJsonFile(string &fileName, set<FixEntry> &fixLocs){
     Json::StyledWriter styledWriter;
     string content = styledWriter.write(fixLocations);
 
-    std::fstream fs;
-    fs.open (fileName, std::fstream::in | std::fstream::out);
-    fs << content << "\n";
-    errs() << content << "\n";
-    fs.close();
+    std::ofstream os;
+    os.open (fileName);
+    os << content << "\n";
+    if (verbose)
+        errs() << content << "\n";
+    os.close();
 }
 
 /*

@@ -290,8 +290,8 @@ def insert_global_size_decl(filePath, blackList, include_options, callees, logge
             if result is None:
                 continue
 
-            logger.debug( '\tInserting global size: ' + callee.gv + ' @ ' + callee.calleeName + " in " + \
-                  os.path.basename(f.name) + " @ Line " + str(headInsertLine))
+            # logger.debug( '\tInserting global size: ' + callee.gv + ' @ ' + callee.calleeName + " in " + \
+            #       os.path.basename(f.name) + " @ Line " + str(headInsertLine))
 
             headLines.append("/*M_SIZE_G*/ extern size_t " + callee.gv + ";\n")
 

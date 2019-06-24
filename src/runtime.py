@@ -24,7 +24,7 @@ import os
 
 
 def project_config(work_dir, logger):
-    command = "./project_config.sh"
+    command = "./project_config.sh" + " &> /dev/null"
     logger.debug("compile command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
@@ -40,7 +40,7 @@ def compile_to_bc_llvm6(work_dir, logger):
     # klee_include = os.path.join(current_dir, "klee", "include")
     # CFLAGS = "-I" + klee_include + " -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone"
     # command = "CC="+CC+" CFLAGS=\'"+CFLAGS+"\' " + compile_command
-    command = "./project_build.sh"
+    command = "./project_build.sh" + " &> /dev/null"
     logger.debug("compile command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
@@ -67,7 +67,7 @@ def run_mem2reg(work_dir, logger, binary_name):
 
 
 def compile_llvm6(work_dir, binary_name, logger):
-    command = "./project_compile.sh " + binary_name + ".bc " + binary_name
+    command = "./project_compile.sh " + binary_name + ".bc " + binary_name + " > /dev/null"
     logger.debug("compile command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
@@ -82,7 +82,7 @@ def compile_llvm6(work_dir, binary_name, logger):
 
 def run(work_dir, driver, binary, test_list, logger):
     # TODO: assume the first test is the failing test
-    command = "./" + driver + " " + " " + binary + " ./" + test_list[0]
+    command = "./" + driver + " " + " " + binary + " ./" + test_list[0] + " 2> /dev/null"
     logger.debug("run command: " + command)
     try:
         result = subprocess.check_output(command, cwd=work_dir, shell=True)

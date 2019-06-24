@@ -5,5 +5,5 @@ git checkout d9783e4
 mkdir klee
 cd klee
 export LLVM_COMPILER=clang
-CC=wllvm ../configure --disable-nls CFLAGS="-g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__"
+CC=wllvm ../configure --disable-nls CFLAGS="-g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__" &> /dev/null
 cd ..

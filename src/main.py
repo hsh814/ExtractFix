@@ -40,15 +40,17 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     runtime.project_config(work_dir, logger)
     project_path = os.path.join(work_dir, "project")
 
-    crash_info = Global.CrashInfo("readSeparateTilesIntoBuffer", 994, {})
-
     if bug_type == 'buffer_overflow':
         # insert global variable for malloc, which is then used to generate crash-free-constraints
         GSInserter.insert_gs(project_path, project_path, logger)
 
         sanitizer = Sanitizer.BufferOverflowSanitizer(bug_type)
+        # TODO: implement crash info generation
         crash_info = sanitizer.generate_crash_info()
         logger.debug("crash info: "+str(crash_info))
+
+        # TODO: remove
+        crash_info = Global.CrashInfo("readSeparateTilesIntoBuffer", 995, {})
 
     # compile the program to bc file and optimize it using mem2reg
     runtime.compile_to_bc_llvm6(work_dir, logger)
