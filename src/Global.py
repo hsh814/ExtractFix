@@ -53,14 +53,18 @@ class CrashInfo:
 
 
 class FixLoc:
-    def __init__(self, message, function_name, line_no, sym_vars):
+    def __init__(self, message, file_name, function_name, line_no, sym_vars):
         self.message = message
+        self.file_name = file_name
         self.function_name = function_name
         self.line_no = line_no
         self.sym_vars = sym_vars
 
     def get_message(self):
         return self.message
+
+    def get_file_name(self):
+        return self.file_name
 
     def get_function_name(self):
         return self.function_name

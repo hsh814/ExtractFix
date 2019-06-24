@@ -25,7 +25,7 @@ import sys, time, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 import subprocess
-from instrumentation import GSInserter, FuncTracer
+from instrumentation import GSInserter, FuncTracer, SymVarInserter
 from Global import BugType
 from sanitizer import Sanitizer
 from fault_localization import FaultLocalization
@@ -69,6 +69,11 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     # fault localization
     fl = FaultLocalization.FaultLocalization(work_dir, binary_name, func_list, crash_info, logger)
     potential_funcs = fl.get_potential_fault_locs()
+
+    sym_var_inserter = SymVarInserter.SymVarInserter(project_path, logger, crash_info)
+    for fix_loc in potential_funcs:
+        # insert symbolic variables
+        sym_var_inserter.insert_sym_vars(fix_loc)
 
 
 def process_func_trace(func_trace):

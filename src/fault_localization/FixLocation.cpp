@@ -98,6 +98,7 @@ struct SeenEntry{
 
 struct FixEntry{
     string description;
+    string filename;
     string funcName;
     int lineNo;
     mutable vector<struct variable> varsToSymbolize;
@@ -145,7 +146,10 @@ static void recordFixLoc(const char* message, const string funcName,
     }
     int lineNo = debugLoc.getLine();
 
-    FixEntry Entry = {message, funcName, lineNo};
+    const DILocation *test =debugLoc.get();
+    string filename = test->getFilename();
+
+    FixEntry Entry = {message, filename, funcName, lineNo};
     auto i = pFixLocs.find(Entry);
     if (i != pFixLocs.end())
         return;
@@ -436,15 +440,16 @@ static void writeToJsonFile(string &fileName, set<FixEntry> &fixLocs){
     for (FixEntry fixEntry: fixLocs){
         Json::Value fixLocation;
         fixLocation[0] = fixEntry.description;
-        fixLocation[1] = fixEntry.funcName;
-        fixLocation[2] = fixEntry.lineNo;
+        fixLocation[1] = fixEntry.filename;
+        fixLocation[2] = fixEntry.funcName;
+        fixLocation[3] = fixEntry.lineNo;
         // inst->print(errs());
 
         Json::Value sysVars;
         for (int i = 0; i<fixEntry.varsToSymbolize.size(); i++){
             sysVars.append(fixEntry.varsToSymbolize[i].varName);
         }
-        fixLocation[3] = sysVars;
+        fixLocation[4] = sysVars;
         fixLocations[id++] = fixLocation;
     }
 
