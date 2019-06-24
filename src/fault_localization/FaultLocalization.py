@@ -77,10 +77,11 @@ class FaultLocalization:
             data = json.load(json_file)
             for p in data:
                 message = p[0]
-                function_name = p[1]
-                line_no = p[2]
-                sys_vars = p[3]
-                fix_loc = FixLoc(message, function_name, line_no, sys_vars)
+                file_name = p[1]
+                function_name = p[2]
+                line_no = p[3]
+                sys_vars = p[4]
+                fix_loc = FixLoc(message, file_name, function_name, line_no, sys_vars)
 
                 fix_locs.append(fix_loc)
         return fix_locs
@@ -92,5 +93,6 @@ class FaultLocalization:
         fix_locs = self.read_fix_loc_from_file()
 
         for fix_loc in fix_locs:
-            print fix_loc
+            self.logger.debug(fix_loc)
+        return fix_locs
 
