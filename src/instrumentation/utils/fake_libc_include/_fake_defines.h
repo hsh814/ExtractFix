@@ -201,4 +201,7 @@
 #define __attribute__(x)
 #define __extension__(x)
 
+/* To disable MACRO in CoreUtils*/
+#define _Noreturn
+
 #endif

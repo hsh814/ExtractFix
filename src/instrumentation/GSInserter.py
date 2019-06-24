@@ -321,6 +321,7 @@ def insert_gs(file_name, include_base, logger):
     else:
         files = get_files(file_name, '.c')
 
+    assert(not os.path.isfile(include_base))
     include_options = getImportHeadFolders(include_base)
 
     # TODO: move to configure
