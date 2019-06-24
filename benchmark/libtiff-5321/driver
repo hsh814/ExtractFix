@@ -1,0 +1,3 @@
+binary=$1
+test=$2
+${binary} ${test} temp

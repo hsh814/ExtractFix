@@ -101,8 +101,8 @@ namespace
             }
             Module* M = F.getParent();
 
-            std::string enter = "CRASH_FREE_TRACER: IN  >>>> " + F.getName().str() + "\n";
-            std::string exit =  "CRASH_FREE_TRACER: OUT >>>> " + F.getName().str() + "\n";
+            std::string enter = "IN >>>> " + F.getName().str() + "\n";
+            std::string exit =  "OUT >>>> " + F.getName().str() + "\n";
 
 
             BasicBlock& firstBB = *(F.begin());

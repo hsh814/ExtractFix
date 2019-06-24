@@ -33,7 +33,7 @@ class BugType(Enum):
         return "[buffer_overflow, integer_overflow, null_pointer, assertion_failure]"
 
 
-class CrashInfo():
+class CrashInfo:
     def __init__(self, function_name, line_no, cfc):
         self.function_name = function_name
         self.line_no = line_no
@@ -49,4 +49,28 @@ class CrashInfo():
         return self.cfc
 
     def __str__(self):
-        return self.function_name + ":" + str(self.line_no) + " " + self.cfc
+        return str(self.__dict__)
+
+
+class FixLoc:
+    def __init__(self, message, function_name, line_no, sym_vars):
+        self.message = message
+        self.function_name = function_name
+        self.line_no = line_no
+        self.sym_vars = sym_vars
+
+    def get_message(self):
+        return self.message
+
+    def get_function_name(self):
+        return self.function_name
+
+    def get_line_no(self):
+        return self.line_no
+
+    def get_sym_vars(self):
+        return self.sym_vars
+
+    def __str__(self):
+        return str(self.__dict__)
+

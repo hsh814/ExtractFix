@@ -29,3 +29,6 @@ set_target_properties(LLVMFixLoc PROPERTIES
     COMPILE_FLAGS "-fno-rtti"
 )
 
+configure_file(FaultLocalization.py FaultLocalization.py COPYONLY)
+configure_file(__init__.py __init__.py COPYONLY)
+

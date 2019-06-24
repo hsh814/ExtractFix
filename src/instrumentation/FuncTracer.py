@@ -27,10 +27,10 @@ class FuncTracer:
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
 
     def insert_function_trace(self, work_dir, logger, binary_name):
-        binary_full_path = os.path.join(work_dir, binary_name+".bc")
+        binary_full_path = os.path.join(work_dir, binary_name)
         lib_func_tracer = os.path.join(self.dir_path, "libLLVMFuncTracer.so")
 
-        command = "opt -S -load=" + lib_func_tracer + " -func_tracer " + binary_full_path + \
+        command = "opt -S -load=" + lib_func_tracer + " -func_tracer " + binary_full_path+".bc" + \
                   " > " + binary_full_path+"_with_func_tracer.ll"
 
         command2 = "llvm-as " + binary_full_path+"_with_func_tracer.ll" + \
@@ -44,5 +44,5 @@ class FuncTracer:
 
         logger.info("successfully instrument with functracer")
 
-        return binary_full_path+"_with_func_tracer.bc"
+        return binary_full_path+"_with_func_tracer"
 
