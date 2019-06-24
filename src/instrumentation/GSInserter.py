@@ -1,7 +1,7 @@
 import sys
 import os
 import re
-
+import logging
 from pycparser import c_parser, c_ast, parse_file, c_generator
 
 # The folder holding this python script
@@ -204,13 +204,13 @@ def transfer_malloc_param(filePath, blackList, include_options, callees):
         if result is None:
             return
 
-    print('Processing: %s') % (filePath)
+    # print('Processing: %s') % (filePath)
 
     insertList, calleeDict, headInsertLine = show_func_calls(filePath, func, include_options)
 
     # containts malloc invocation
-    if len(insertList) > 0:
-        print('\tReplacing malloc')
+    # if len(insertList) > 0:
+    #     print('\tReplacing malloc')
 
     # for item in insertList:
     #    print(item)
@@ -263,7 +263,7 @@ def transfer_malloc_param(filePath, blackList, include_options, callees):
             f.flush()
 
 
-def insert_global_size_decl(filePath, blackList, include_options, callees):
+def insert_global_size_decl(filePath, blackList, include_options, callees, logger):
     # if filePath != '/home/nightwish/workspace/subjects/crash_free/libtiff_ig/libtiff/tif_jpeg.c':
     #   return
 
@@ -290,8 +290,8 @@ def insert_global_size_decl(filePath, blackList, include_options, callees):
             if result is None:
                 continue
 
-            print '\tInserting global size: ' + callee.gv + ' @ ' + callee.calleeName + " in " + \
-                  os.path.basename(f.name) + " @ Line " + str(headInsertLine)
+            logger.debug( '\tInserting global size: ' + callee.gv + ' @ ' + callee.calleeName + " in " + \
+                  os.path.basename(f.name) + " @ Line " + str(headInsertLine))
 
             headLines.append("/*M_SIZE_G*/ extern size_t " + callee.gv + ";\n")
 
@@ -314,7 +314,7 @@ def getImportHeadFolders(project_base):
     return cpp_args
 
 
-def insert_gs(file_name, include_base):
+def insert_gs(file_name, include_base, logger):
     files = []
     if os.path.isfile(file_name):
         files.append(file_name)
@@ -329,16 +329,15 @@ def insert_gs(file_name, include_base):
                  'sgisv.c', 'tiffgt.c', 'tiffinfoce.c', 'tiff2dib.c', 'ras2tif.c',
                  'tif_pdsdirwrite.c', 'xtif_dir.c']
 
-    print('>>>>>>>> TRANSFORMING MALLOC SIZE >>>>>>>>')
+    logger.debug('>>>>>>>> TRANSFORMING MALLOC SIZE >>>>>>>>')
     callees = []
     for c_file in files:
         transfer_malloc_param(c_file, blackList, include_options, callees)
 
-    print('>>>>>>>> INSERTING GLOBAL DECL >>>>>>>>')
+    logger.debug('>>>>>>>> INSERTING GLOBAL DECL >>>>>>>>')
     for c_file in files:
-        insert_global_size_decl(c_file, blackList, include_options, callees)
+        insert_global_size_decl(c_file, blackList, include_options, callees, logger)
 
-    print('>>>>>>>> FINISH >>>>>>>>')
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
@@ -346,11 +345,12 @@ if __name__ == "__main__":
         include_base = sys.argv[2]
     else:
         help = "Usage: GSInserter [PATH_TO_SOURCE] [PATH_TO_INCLUDE_BASE]\n\n" \
-               "-The project need to be configured firstly to generate some '.h' files\n\n" \
-               "-Be careful about the complier options\n" \
-               "\t#define __attribute__(x)\n" \
-               "\t#define __extension__(x)\n"
+               "-The project need to be configured firstly to generate some '.h' files\n\n"
+
         sys.exit(help)
 
-    insert_gs(filename, include_base)
+    logging.basicConfig()
+    logger = logging.getLogger('Crash-free-fix ')
+
+    insert_gs(filename, include_base, logger)
 

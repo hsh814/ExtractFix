@@ -44,7 +44,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
     if bug_type == 'buffer_overflow':
         # insert global variable for malloc, which is then used to generate crash-free-constraints
-        GSInserter.insert_gs(project_path, logger)
+        GSInserter.insert_gs(project_path, project_path, logger)
 
         sanitizer = Sanitizer.BufferOverflowSanitizer(bug_type)
         crash_info = sanitizer.generate_crash_info()
