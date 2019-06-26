@@ -73,7 +73,7 @@ target_link_libraries( GSInserter
   LLVMScalarOpts
   LLVMInstCombine
   LLVMTransformUtils
-  LLVMipa
+  #LLVMipa
   LLVMAnalysis
   LLVMTarget
   LLVMOption # Support

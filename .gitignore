@@ -4,3 +4,5 @@ temp/
 *.pyc
 
 **/.idea/
+
+**/cmake-build-debug/
