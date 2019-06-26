@@ -20,5 +20,10 @@ pip install pycparser enum argparse coloredlogs
 ### Installation
 ```
 1. git clong https://github.com/gaoxiang9430/crash-free-fix.git
-2. mkdir build; cd build; LLVM_HOME=[your-llvm-build-path] cmake ../src; make
+2. compile klee and set
+```
+export PATH=$PATH:[YOUR-PATH]/klee/build/bin
+export LD\_LIBRARY\_PATH=LD\_LIBRARY\_PATH:[YOUR-PATH]/klee/build/lib
+```
+3. mkdir build; cd build; LLVM_HOME=[your-llvm-build-path] cmake ../src; make
 ```
