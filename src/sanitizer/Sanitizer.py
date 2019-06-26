@@ -49,7 +49,33 @@ class BufferOverflowSanitizer(Sanitizer):
 
         self.logger.info("successfully run lowfat to generate crash-free constraints")
 
-        crash_info = Global.CrashInfo(".", "ffmpeg.c", "decode_dds1", 51, {})
+        crash_info = self.parse_crash_info()
         self.logger.debug("crash information is " + str(crash_info))
+        return crash_info
+
+    def parse_crash_info(self):
+        f= open("/tmp/cfc.out","r")
+        line = f.readline()
+        loc_cfc = line.split("#")
+        assert (len(loc_cfc) == 2)
+
+        location = loc_cfc[0]
+        path_func_lineno = location.split(":")
+        assert len(path_func_lineno) == 3
+        line_no = path_func_lineno[2]
+        function_name = path_func_lineno[1]
+
+        file_path = path_func_lineno[0].replace("../", "")
+        index = file_path.rfind("/")
+        path = file_path[0:index]
+        file_name = file_path[index+1:]
+
+        cfc = loc_cfc[1]
+        start = cfc.find("(")
+        end = cfc.find(")")
+        assert (start < end)
+        cfc = cfc[start+1:end]
+
+        crash_info = Global.CrashInfo(path, file_name, function_name, line_no, cfc)
         return crash_info
 
