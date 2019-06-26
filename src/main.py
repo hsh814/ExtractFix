@@ -37,43 +37,49 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     work_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
     logger.info("project working directory " + work_dir)
     subprocess.check_output(['cp', '-r', str(source_path), work_dir])
-    runtime.project_config(work_dir, logger)
     project_path = os.path.join(work_dir, "project")
+    # insert global variable for malloc, which is then used to generate crash-free-constraints
+    GSInserter.insert_gs(project_path, project_path, logger)
 
     if bug_type == 'buffer_overflow':
-        # insert global variable for malloc, which is then used to generate crash-free-constraints
-        GSInserter.insert_gs(project_path, project_path, logger)
-
-        sanitizer = Sanitizer.BufferOverflowSanitizer(bug_type)
+        sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
         # TODO: implement crash info generation
         crash_info = sanitizer.generate_crash_info()
         logger.debug("crash info: "+str(crash_info))
 
-        # TODO: remove
-        crash_info = Global.CrashInfo("readSeparateTilesIntoBuffer", 995, {})
+    # TODO: remove
+    crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})
 
+    runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
-    runtime.compile_to_bc_llvm6(work_dir, logger)
+    runtime.project_build(work_dir, logger, "to_bc")
     # runtime.run_mem2reg(work_dir, logger, binary_name)
 
     # instrument program by inserting function tracer
     func_tracer = FuncTracer.FuncTracer()
-    bc_with_func_tracer = func_tracer.insert_function_trace(project_path, logger, binary_name)
-    binary_name_with_func_tracer = runtime.compile_llvm6(work_dir, bc_with_func_tracer, logger)
+    bc_full_path_with_func_tracer = func_tracer.insert_function_trace(project_path, logger, binary_name)
+    binary_full_path_with_func_tracer = runtime.compile_llvm6(work_dir, bc_full_path_with_func_tracer, logger)
 
     # run function tracer to generate function trace
-    func_trace = runtime.run(work_dir, driver, binary_name_with_func_tracer, test_list, logger)
+    func_trace = runtime.run(work_dir, driver, binary_full_path_with_func_tracer, test_list, logger)
     func_list = process_func_trace(func_trace)
     # logger.debug("function trace" + str(func_list))
 
     # fault localization
-    fl = FaultLocalization.FaultLocalization(work_dir, binary_name, func_list, crash_info, logger)
+    fl = FaultLocalization.FaultLocalization(project_path, binary_name, func_list, crash_info, logger)
     potential_funcs = fl.get_potential_fault_locs()
 
-    sym_var_inserter = SymVarInserter.SymVarInserter(project_path, logger, crash_info)
     for fix_loc in potential_funcs:
-        # insert symbolic variables
+        sym_var_inserter = SymVarInserter.SymVarInserter(project_path, logger, crash_info)
+        # insert symbolic variables at source code level
         sym_var_inserter.insert_sym_vars(fix_loc)
+        # compile the program to bc file and optimize it using mem2reg
+        runtime.project_build(work_dir, logger, "to_bc")
+        binary_full_path = os.path.join(project_path, binary_name+".bc")
+        runtime.run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger)
+
+        # restore original source code
+        sym_var_inserter.mv_original_file_back()
 
 
 def process_func_trace(func_trace):

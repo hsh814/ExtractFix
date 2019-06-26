@@ -19,24 +19,37 @@
 ###########################################################################
 
 import Global
+import runtime
+import os
 
 
 class Sanitizer:
-    def __init__(self, source_path):
-        self.source_path = source_path
-
+    def __init__(self, work_dir, logger):
+        self.work_dir = work_dir
+        self.logger = logger
 
     def _default_generate_crash_info(self):
         pass
 
 
 class BufferOverflowSanitizer(Sanitizer):
-    def __init__(self, source_path):
-        Sanitizer.__init__(self, source_path)
+    def __init__(self, work_dir, project_path, binary_name, driver, test_list, logger):
+        Sanitizer.__init__(self, work_dir, logger)
+        self.project_path = project_path
+        self.binary_name = binary_name
+        self.driver = driver
+        self.test_list = test_list
 
     def generate_crash_info(self):
-        # TODO: call low fat
-        # here, you need to compile the project by yourself
-        crash_info = Global.CrashInfo("decode_dds1", 51, {})
+        runtime.project_config(self.work_dir, self.logger, "lowfat")
+        runtime.project_build(self.work_dir, self.logger, "lowfat")
+
+        binary_full_path = os.path.join(self.project_path, self.binary_name)
+        runtime.run(self.work_dir, self.driver, binary_full_path, self.test_list, self.logger)
+
+        self.logger.info("successfully run lowfat to generate crash-free constraints")
+
+        crash_info = Global.CrashInfo(".", "ffmpeg.c", "decode_dds1", 51, {})
+        self.logger.debug("crash information is " + str(crash_info))
         return crash_info
 
