@@ -28,6 +28,7 @@ class SymVarInserter:
         self.project_dir = project_dir
         self.crash_info = crash_info
         self.copied_files = {}
+        self.file_index = 0
 
     def insert_sym_vars(self, fix_loc):
         # TODO: insert symbolic variable at fix location, FixLoc is defined in Global
@@ -48,13 +49,18 @@ class SymVarInserter:
         target_dir = "/tmp/original_files/"
         if not os.path.isdir(target_dir):
             os.mkdir(target_dir)
-        source_dir = os.path.join(self.project_dir, file_name)
-        command = "cp " + source_dir + " " + target_dir
+        source_file = os.path.join(self.project_dir, file_name)
+        target_file = os.path.join(target_dir, str(self.file_index))
+        command = "cp " + source_file + " " + target_file
         subprocess.check_output(command, shell=True)
-        self.copied_files[target_dir] = source_dir
+        self.copied_files[target_file] = source_file
+        self.file_index += 1
 
     def mv_original_file_back(self):
-        for target_dir, source_dir in self.copied_files.iteritems():
-            command = "mv " + target_dir + " " + source_dir
+        for target_file, source_file in self.copied_files.iteritems():
+            command = "mv " + target_file + " " + source_file
             subprocess.check_output(command, shell=True)
+
+        command = "rm -rf /tmp/original_files/"
+        subprocess.check_output(command, shell=True)
 

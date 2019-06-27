@@ -25,7 +25,7 @@ import sys, time, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 import subprocess
-from instrumentation import GSInserter, FuncTracer, SymVarInserter
+from instrumentation import ProjPreprocessor, FuncTracer, SymVarInserter
 from Global import BugType
 from sanitizer import Sanitizer
 from fault_localization import FaultLocalization
@@ -38,17 +38,20 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     logger.info("project working directory " + work_dir)
     subprocess.check_output(['cp', '-r', str(source_path), work_dir])
     project_path = os.path.join(work_dir, "project")
-    # insert global variable for malloc, which is then used to generate crash-free-constraints
-    GSInserter.insert_gs(project_path, project_path, logger)
+
+    runtime.project_config(work_dir, logger, "to_bc")
+    ProjPreprocessor.__preprocess(project_path, lib=True, logger=logger)
 
     if bug_type == 'buffer_overflow':
+        # insert global variable for malloc, which is then used to generate crash-free-constraints
+        ProjPreprocessor.__preprocess(project_path, globalize=True, logger=logger)
         sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
         # TODO: implement crash info generation
         crash_info = sanitizer.generate_crash_info()
         logger.debug("crash info: "+str(crash_info))
 
     # TODO: remove
-    crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})
+    # crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})
 
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
@@ -80,6 +83,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
         # restore original source code
         sym_var_inserter.mv_original_file_back()
+        break
 
 
 def process_func_trace(func_trace):

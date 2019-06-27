@@ -5,33 +5,74 @@ import logging
 import commands
 import argparse
 
-from GSInserter import getFiles, getImportHeadFolders
-
+# from GSInserter import getFiles, getImportHeadFolders
+# TODO: may need to change in different system
 system_header = ['/usr/local/lib/clang/6.0.1/include']
 
 callee_tmp_file = '/tmp/callee.txt'
 
-def preprocess_single_file(mission, f, tail, args):
+source_dir = os.path.dirname(os.path.realpath(__file__))
+
+
+def get_import_head_folders(project_base, system_header=[]):
+    headers = get_files(project_base, '.h')
+    cpp_args = []
+
+    for folder in system_header:
+        opt = '-I' + folder
+        if opt not in cpp_args:
+            cpp_args.append(opt)
+
+    for header in headers:
+        opt = '-I' + header[0:header.rfind('/')]
+        if opt not in cpp_args:
+            cpp_args.append(opt)
+
+    return cpp_args
+
+
+def get_files(target_dir, exetension):
+    item_list = os.listdir(target_dir)
+
+    file_list = list()
+    for item in item_list:
+        item_dir = os.path.join(target_dir, item)
+        if os.path.isdir(item_dir):
+            if item_dir.endswith('/test'):
+                continue
+
+            file_list += get_files(item_dir, exetension)
+        else:
+            if item_dir.endswith(exetension):
+                file_list.append(item_dir)
+    return file_list
+
+
+def preprocess_single_file(mission, f, tail, logger):
     # if 'tif_ovrcache.c' not in f:
     #     return ''
 
-    cmd = './GSInserter -mission=' + mission + " " + f + tail
+    cmd = source_dir+'/GSInserter -mission=' + mission + " " + f + tail
 
-    if args.verbose:
-        print ('Executing >>>>>>>>\n%s\n') % (cmd)
+    # logger.debug('Executing >>>>>>>>'+cmd)
 
     try:
         (status, output) = commands.getstatusoutput(cmd)
     except:
         e = sys.exc_info()[0]
-        print e
+        logger.fatal(e)
 
     return output
 
 
-def preprocess(args):
+def preprocess(args, logger):
     project_base = args.base
+    lib = args.lib
+    globalize = args.globalize
+    __preprocess(project_base, lib, globalize, logger)
 
+
+def __preprocess(project_base, lib=False, globalize=False, logger=logging):
     # TODO: configure fisrt
     # configure the project to generate the full headers
     # check the configure file exists
@@ -40,34 +81,31 @@ def preprocess(args):
     if os.path.exists(callee_tmp_file):
         os.remove(callee_tmp_file)
 
-    files = getFiles(project_base, '.c')
-    include_options = getImportHeadFolders(project_base, system_header)
+    files = get_files(project_base, '.c')
+    include_options = get_import_head_folders(project_base, system_header)
 
     tail = ' -- ' + ' '.join(include_options)
 
-    if args.lib:
+    if lib:
         logger.debug('>>>>>>>> REPLACE UNSUPPORTED LIB >>>>>>>>')
         for c_file in files:
-            output = preprocess_single_file('replace-flib', c_file, tail, args)
-            if args.verbose:
-                print output
+            output = preprocess_single_file('replace-flib', c_file, tail, logger)
+            # logger.debug(output)
             assert 'core dump' not in output
 
-    if args.globalize:
+    if globalize:
         logger.debug('>>>>>>>> INSERT GLOBAL MALLOC SIZE >>>>>>>>')
         for c_file in files:
             cotail = ' -callee-out=' + callee_tmp_file + tail
-            output = preprocess_single_file('replace-size', c_file, cotail, args)
-            if args.verbose:
-                print output
+            output = preprocess_single_file('replace-size', c_file, cotail, logger)
+            # logger.debug(output)
             assert 'core dump' not in output
 
         logger.debug('>>>>>>>> DECLARE GLOBAL MALLOC SIZE >>>>>>>>')
         for c_file in files:
             cotail = ' -callee-out=' + callee_tmp_file + tail
-            output = preprocess_single_file('declare-size', c_file, cotail, args)
-            if args.verbose:
-                print output
+            output = preprocess_single_file('declare-size', c_file, cotail, logger)
+            # logger.debug(output)
             assert 'core dump' not in output
 
 
@@ -89,6 +127,10 @@ if __name__ == "__main__":
     logging.basicConfig()
     logger = logging.getLogger('Crash-free-fix Preprocess: ' + args.base)
 
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+
     assert not os.path.isfile(args.base)
 
-    preprocess(args)
+    preprocess(args, logger)
+
