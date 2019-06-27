@@ -162,7 +162,7 @@ def change_malloc_line(line, globalName):
     newLine = pre + 'malloc(' + globalName + post + '\n'
     return newLine
 
-def get_files(target_dir, exetension):
+def getFiles(target_dir, exetension):
     item_list = os.listdir(target_dir)
 
     file_list = list()
@@ -172,7 +172,7 @@ def get_files(target_dir, exetension):
             if item_dir.endswith('/test'):
                 continue
 
-            file_list += get_files(item_dir, exetension)
+            file_list += getFiles(item_dir, exetension)
         else:
             if item_dir.endswith(exetension):
                 file_list.append(item_dir)
@@ -303,9 +303,15 @@ def insert_global_size_decl(filePath, blackList, include_options, callees, logge
         f.flush()
 
 
-def getImportHeadFolders(project_base):
-    headers = get_files(project_base, '.h')
+def getImportHeadFolders(project_base, system_header=[]):
+    headers = getFiles(project_base, '.h')
     cpp_args = []
+
+    for folder in system_header:
+        opt = '-I' + folder
+        if opt not in cpp_args:
+            cpp_args.append(opt)
+
     for header in headers:
         opt = '-I' + header[0:header.rfind('/')]
         if opt not in cpp_args:
@@ -319,7 +325,7 @@ def insert_gs(file_name, include_base, logger):
     if os.path.isfile(file_name):
         files.append(file_name)
     else:
-        files = get_files(file_name, '.c')
+        files = getFiles(file_name, '.c')
 
     assert(not os.path.isfile(include_base))
     include_options = getImportHeadFolders(include_base)

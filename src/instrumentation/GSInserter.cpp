@@ -20,7 +20,10 @@ using namespace clang::driver;
 using namespace clang::tooling;
 using namespace std;
 
-ofstream CalleeOFS;
+#define OPT_RS "replace-size"
+#define OPT_DS "declare-size"
+#define OPT_RF "replace-flib"
+
 
 static llvm::cl::OptionCategory PreprocessorCategory("Target Project Preprocessor");
 
@@ -33,10 +36,14 @@ static llvm::cl::opt<string> MissionType("mission",
 
 static llvm::cl::opt<string> CalleeOutFile("callee-out",
                                               llvm::cl::desc("the file to record callees of malloc"),
-                                              llvm::cl::Required, llvm::cl::cat(PreprocessorCategory));
+                                              llvm::cl::Optional, llvm::cl::cat(PreprocessorCategory));
 
 static const string GL_PREFIX = "LOWFAT_GLOBAL_MS_";
 
+ofstream CalleeOFS;
+vector<string> CalleeFileLines;
+string OutputStr;
+llvm::raw_string_ostream OS(OutputStr);
 
 static const FunctionDecl* getParentFuncDecl(ASTContext &Context, const Decl *d);
 
@@ -102,11 +109,61 @@ class LibReplaceVisitor : public RecursiveASTVisitor<LibReplaceVisitor> {
 private:
     Rewriter &TheRewriter;
     CompilerInstance &Compiler;
+    map<string, string> Libs;
+    map<string, string> Func2Signature;
+    bool FuncDeclInserted = false;
+
 public:
-    LibReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {}
+    LibReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {
+        Libs["fabs"] = "fabs_fk";
+        Func2Signature["fabs"] = "double fabs_fk(double x);";
+    }
 
+    bool VisitExpr(Expr *e){
 
+        if (isa<CallExpr>(e)) {
+            CallExpr *call = cast<CallExpr>(e);
+
+            if(call->getDirectCallee()){
+                string callee = call->getDirectCallee()->getName().str();
+                if(Libs.find(callee) != Libs.end()){
+                    string target = Libs[callee];
+                    TheRewriter.ReplaceText(call->getLocStart(), callee.length(), target);
+
+                    FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(call->getLocStart());
+
+                    llvm::errs()<<"Replace "<<FullLocation.getFileEntry()->getName()<<" # "<<
+                                FullLocation.getLineNumber()<<" "<<callee<<" ==>> "<<target<<"\n";
+
+                    if(!FuncDeclInserted){
+                        const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
+                        if(!currFunc) {
+                            call->dump();
+                            llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
+                            return true;
+                        }
+
+                        string declStmt = "/*LOWFAT_D*/ extern " + Func2Signature[callee] + "\n";
+                        TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
+                        FuncDeclInserted = true;
+                    }
+
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool VisitFunctionDecl(FunctionDecl *f) {
+        if (!(f->hasBody()) || f->isInlined()) {
+            return false;
+        }
+        //f->dump();
+        return true;
+    }
 };
+
 
 class GSDeclVisitor : public RecursiveASTVisitor<GSDeclVisitor> {
 private:
@@ -114,7 +171,6 @@ private:
     CompilerInstance &Compiler;
     map<string, vector<string>> Func2Global;
     map<string, string> Func2InsertedCaller;
-
 public:
     GSDeclVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {
 
@@ -124,8 +180,14 @@ public:
             while (getline (calleeFile, line)) {
                 int idx = line.find(' ');
                 assert(idx > 0);
-                string mtd = line.substr(0, idx);
-                string gv = line.substr(idx + 1);
+                string fileName = line.substr(0, idx);
+                string remaining = line.substr(idx + 1);
+
+                idx = remaining.find(' ');
+                assert(idx > 0);
+
+                string mtd = remaining.substr(0, idx);
+                string gv = remaining.substr(idx + 1);
 
                 if(Func2Global.find(mtd) == Func2Global.end()){
                     Func2Global[mtd] = vector<string>();
@@ -133,7 +195,7 @@ public:
 
                 Func2Global[mtd].push_back(gv);
 
-                //llvm::errs()<<mtd<<" ----->>>>> " << gv <<"\n";
+                llvm::errs()<<mtd<<" ----->>>>> " << gv <<" @ "<<fileName<<"\n";
             }
             calleeFile.close();
         }
@@ -146,6 +208,13 @@ public:
 
             if(call->getDirectCallee()){
 
+                SourceManager &SM = Compiler.getSourceManager();
+
+                if(SM.getFileID(call->getDirectCallee()->getLocStart()) == SM.getFileID(call->getLocStart())){
+                    // if the callee and the current call are in the same file, it is no need to insert decl
+                    return true;
+                }
+
                 // the function to be called
                 string callee = call->getDirectCallee()->getName().str();
 
@@ -154,6 +223,12 @@ public:
                 if (Func2Global.count(callee) > 0) {
 
                     const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
+
+                    if(!currFunc) {
+                        call->dump();
+                        llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
+                        return true;
+                    }
 
                     string funcName = currFunc->getName().str();
 
@@ -179,7 +254,7 @@ public:
     }
 
     bool VisitFunctionDecl(FunctionDecl *f) {
-        if (!f->hasBody() || f->isInlined()) {
+        if (!(f->hasBody()) || f->isInlined()) {
             return false;
         }
         //f->dump();
@@ -200,6 +275,7 @@ public:
         bool VisitExpr(Expr *e){
         if (isa<CallExpr>(e)) {
             CallExpr *call = cast<CallExpr>(e);
+            //call->dump();
 
             if(call->getDirectCallee()){
                 if(call->getDirectCallee()->getName() == "malloc"){
@@ -212,6 +288,12 @@ public:
                     const string oriSize = Lexer::getSourceText(CharSourceRange::getTokenRange(size->getSourceRange()), SM, OPT);
 
                     const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
+
+                    if(!currFunc) {
+                        call->dump();
+                        llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
+                        return true;
+                    }
 
                     //currFunc->dump();
                     string oriFileName(SM.getFileEntryForID(SM.getMainFileID())->getName().str());
@@ -235,15 +317,26 @@ public:
 
                     string newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriSize + "; " + oriSize + ";} )";
 
-                    llvm::errs()<<">>>>>>>> "<<oriFileName<<" @ "<<funcName<<"()  MALLOC ARG: "<<oriSize<<"\n";
+                    llvm::errs()<<">>>>>>>> "<<oriFileName<<" @ "<<funcName<<"()\n\tMALLOC ARG: "<<oriSize<<" -->> "<<newArg<<"\n";
 
-                    TheRewriter.ReplaceText(size->getLocStart(), oriSize.length(), newArg);
+                    //size->dump();
+                    llvm::errs()<<" "<<oriSize.length()<<" "<<newArg<<"\n";
 
-                    string declStmt = "/*M_SIZE_G*/ size_t " + globalName + ";\n";
+                    SourceLocation sizeStart = size->getLocStart();
+                    if(sizeStart.isMacroID() ) {
+                        std::pair< SourceLocation, SourceLocation > expansionRange = TheRewriter.getSourceMgr().getImmediateExpansionRange(sizeStart);
+                        sizeStart = expansionRange.first;
+                    }
+
+                    TheRewriter.ReplaceText(sizeStart, oriSize.length(), newArg); // oriSize.length()
+
+                    string declStmt = "/*LOWFAT_GS*/ size_t " + globalName + ";\n";
                     TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
 
                     if(funcName != "main"){
-                        CalleeOFS<<funcName<<" "<<globalName<<"\n";
+                        string calleeLine = oriFileName + " " + funcName + " " + globalName + "\n";
+                        llvm::errs()<<"ADDING INTO CALLEE FILE: "<<calleeLine;
+                        CalleeFileLines.push_back(calleeLine);
                     }
                 }
             }
@@ -253,9 +346,10 @@ public:
     }
 
     bool VisitFunctionDecl(FunctionDecl *f) {
-        if (!f->hasBody() || f->isInlined()) {
+        if (!(f->hasBody()) || f->isInlined()) {
             return false;
         }
+
         return true;
     }
 };
@@ -266,61 +360,71 @@ class PreprocessASTConsumer : public ASTConsumer {
 public:
     PreprocessASTConsumer(Rewriter &R, CompilerInstance &Compiler) {
 
-      if(MissionType == "replace-size" || MissionType == "replace-flib"){
+      if(MissionType == OPT_RS ){
           ReplaceVisitor = new GSReplaceVisitor(R, Compiler);
-      } else {
+      } else if (MissionType == OPT_RF) {
+          LibVisitor = new LibReplaceVisitor(R, Compiler);
+      } else if (MissionType == OPT_DS){
           DeclVisitor = new GSDeclVisitor(R, Compiler);
+      } else {
+          llvm::errs()<<"ERROR MISSION TYPE\n";
+          abort();
       }
-
     }
 
     // Override the method that gets called for each parsed top-level
     // declaration.
     bool HandleTopLevelDecl(DeclGroupRef DR) override {
-    for (DeclGroupRef::iterator b = DR.begin(), e = DR.end(); b != e; ++b) {
 
-        if(MissionType == "replace-size" || MissionType == "replace-flib"){
-            ReplaceVisitor->TraverseDecl(*b);
-        } else {
-            DeclVisitor->TraverseDecl(*b);
+        for (DeclGroupRef::iterator b = DR.begin(), e = DR.end(); b != e; ++b) {
+            if(MissionType == OPT_RS){
+                ReplaceVisitor->TraverseDecl(*b);
+            } else if (MissionType == OPT_RF){
+                LibVisitor->TraverseDecl(*b);
+            } else if (MissionType == OPT_DS){
+                DeclVisitor->TraverseDecl(*b);
+            } else {
+                llvm::errs()<<"ERROR MISSION TYPE: "<<MissionType<<"\n";
+                abort();
+            }
+            //(*b)->dump();
         }
-        //(*b)->dump();
-    }
-    return true;
+
+        return true;
     }
 
 private:
     GSReplaceVisitor* ReplaceVisitor;
     GSDeclVisitor* DeclVisitor;
+    LibReplaceVisitor* LibVisitor;
 };
 
 // For each source file provided to the tool, a new FrontendAction is created.
 class PreprocessFrontendAction : public ASTFrontendAction {
 public:
-  PreprocessFrontendAction() {}
-  void EndSourceFileAction() override {
-    SourceManager &SM = TheRewriter.getSourceMgr();
+    PreprocessFrontendAction() {}
+    void EndSourceFileAction() override {
+        SourceManager &SM = TheRewriter.getSourceMgr();
 
-    string fileName = SM.getFileEntryForID(SM.getMainFileID())->getName().str();
-    llvm::errs() << "** EndSourceFileAction for: "<<fileName<<"\n";
+        string fileName = SM.getFileEntryForID(SM.getMainFileID())->getName().str();
+        llvm::errs() << "** EndSourceFileAction for: "<<fileName<<"\n";
 
-    // Now emit the rewritten buffer.
-    std::error_code EC;
-    llvm::raw_fd_ostream OS(fileName, EC, llvm::sys::fs::F_None);
+        // Now emit the rewritten buffer.
 
-    TheRewriter.getEditBuffer(SM.getMainFileID()).write(OS);
-  }
+        TheRewriter.getEditBuffer(SM.getMainFileID()).write(OS); //llvm::outs()
+    }
 
-  std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
+
+    std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
                                                  StringRef file) override {
 
-    llvm::errs() << "** Creating AST consumer for: " << file << "\n";
-    TheRewriter.setSourceMgr(CI.getSourceManager(), CI.getLangOpts());
-    return std::unique_ptr<clang::ASTConsumer>(new PreprocessASTConsumer(TheRewriter, CI));
-  }
+        llvm::errs() << "** Creating AST consumer for: " << file << "\n";
+        TheRewriter.setSourceMgr(CI.getSourceManager(), CI.getLangOpts());
+        return std::unique_ptr<clang::ASTConsumer>(new PreprocessASTConsumer(TheRewriter, CI));
+    }
 
 private:
-  Rewriter TheRewriter;
+    Rewriter TheRewriter;
 };
 
 
@@ -328,17 +432,17 @@ static bool processOptionsSucc(){
     bool succ = true;
     if (MissionType.length()) {
         llvm::errs()<< "Current Mission: "<<MissionType<< "\n";
-        if (MissionType == "replace-size" || MissionType == "declare-size"){
+        if (MissionType == OPT_RS || MissionType == OPT_DS){
 
             if(CalleeOutFile.length()){
-                if(MissionType == "replace-size") {
+                if(MissionType == OPT_RS) {
                     CalleeOFS.open(CalleeOutFile, std::ios_base::app);
                 }
             } else {
                 llvm::errs() << "Empty CalleeOutFile.\n";
                 succ = false;
             }
-        } else if(MissionType != "replace-flib"){
+        } else if(MissionType != OPT_RF){
             llvm::errs() << "Error MissionType"<<MissionType<<"\n";
             succ = false;
         }
@@ -356,11 +460,32 @@ static bool processOptionsSucc(){
  */
 int main(int argc, const char **argv) {
     CommonOptionsParser op(argc, argv, PreprocessorCategory);
+
+    // only process single file
+    assert(op.getSourcePathList().size() == 1);
+
     ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
     if(!processOptionsSucc()){
         return 0;
     }
 
-    return Tool.run(newFrontendActionFactory<PreprocessFrontendAction>().get());
+    int ret = Tool.run(newFrontendActionFactory<PreprocessFrontendAction>().get());
+    if(ret == 0){
+        for(string line : CalleeFileLines){
+            CalleeOFS<<line;
+        }
+        CalleeOFS.close();
+
+        // write to file
+        if(OS.str().length() != 0){
+            string fileName = op.getSourcePathList()[0];
+            ofstream srcFile;
+            srcFile.open(fileName);
+            srcFile<<OS.str();
+            srcFile.close();
+        }
+    }
+
+    return ret;
 }
