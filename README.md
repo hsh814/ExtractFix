@@ -14,7 +14,7 @@ sudo apt-get install libjsoncpp-dev
 ```
 4. Python packages
 ```
-pip install pycparser enum argparse coloredlogs
+pip install enum argparse coloredlogs
 ```
 
 ### Installation
