@@ -19,6 +19,7 @@
 ###########################################################################
 
 from Global import *
+import subprocess, os
 
 
 class SymVarInserter:
@@ -26,13 +27,34 @@ class SymVarInserter:
         self.logger = logger
         self.project_dir = project_dir
         self.crash_info = crash_info
+        self.copied_files = {}
 
     def insert_sym_vars(self, fix_loc):
-        # TODO: insert symbolic variable at fix location, FicLoc is defined in Global
-        # TODO: I suggest coping the to-be-changed files into temporary directory and
-        #  copy them back before trying the next fix location
+        # TODO: insert symbolic variable at fix location, FixLoc is defined in Global
+        file_name = fix_loc.get_file_name()
+        file_name = file_name.replace("../", "")
+        self.save_original_file(file_name)
+
         self.insert_cfc()
 
     def insert_cfc(self):
-        # TODO: insert cfc at crash location, crash_info is defined in Global
-        pass
+        source_dir = os.path.join(self.project_dir,
+                                  self.crash_info.file_path,
+                                  self.crash_info.file_name)
+        self.save_original_file(source_dir)
+
+    def save_original_file(self, file_name):
+        self.logger.debug("save original file " + file_name)
+        target_dir = "/tmp/original_files/"
+        if not os.path.isdir(target_dir):
+            os.mkdir(target_dir)
+        source_dir = os.path.join(self.project_dir, file_name)
+        command = "cp " + source_dir + " " + target_dir
+        subprocess.check_output(command, shell=True)
+        self.copied_files[target_dir] = source_dir
+
+    def mv_original_file_back(self):
+        for target_dir, source_dir in self.copied_files.iteritems():
+            command = "mv " + target_dir + " " + source_dir
+            subprocess.check_output(command, shell=True)
+

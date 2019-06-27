@@ -34,10 +34,18 @@ class BugType(Enum):
 
 
 class CrashInfo:
-    def __init__(self, function_name, line_no, cfc):
+    def __init__(self, file_path, file_name, function_name, line_no, cfc):
+        self.file_path = file_path
+        self.file_name = file_name
         self.function_name = function_name
         self.line_no = line_no
         self.cfc = cfc
+
+    def get_file_name(self):
+        return self.file_name
+
+    def get_file_path(self):
+        return self.file_path
 
     def get_function_name(self):
         return self.function_name

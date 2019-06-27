@@ -23,8 +23,8 @@ from Global import *
 
 
 class FaultLocalization:
-    def __init__(self, work_dir, binary_name, func_list, crash_info, logger):
-        self.work_dir = work_dir
+    def __init__(self, project_path, binary_name, func_list, crash_info, logger):
+        self.project_path = project_path
         self.binary_name = binary_name
         self.func_list = func_list
         self.crash_info = crash_info
@@ -60,8 +60,7 @@ class FaultLocalization:
 
         self.logger.debug("run FixLoc pass command: " + command)
         try:
-            project_path = os.path.join(self.work_dir, "project")
-            retval = subprocess.check_output(command, cwd=project_path, shell=True)
+            retval = subprocess.check_output(command, cwd=self.project_path, shell=True)
         except subprocess.CalledProcessError as e:
             self.logger.fatal("run FixLoc pass failed, command line: " + command)
             exit(1)
