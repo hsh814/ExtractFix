@@ -23,8 +23,8 @@ import subprocess
 import os
 
 
-def project_config(work_dir, logger):
-    command = "./project_config.sh" + " &> /dev/null"
+def project_config(work_dir, logger, build_type="to_bc"):
+    command = "./project_config.sh " + build_type + " &> /dev/null"
     logger.debug("compile command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
@@ -35,12 +35,12 @@ def project_config(work_dir, logger):
     logger.info("successfully config project")
 
 
-def compile_to_bc_llvm6(work_dir, logger):
+def project_build(work_dir, logger, build_type="to_bc"):
     # current_dir = os.path.dirname(os.path.realpath(__file__))
     # klee_include = os.path.join(current_dir, "klee", "include")
     # CFLAGS = "-I" + klee_include + " -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone"
     # command = "CC="+CC+" CFLAGS=\'"+CFLAGS+"\' " + compile_command
-    command = "./project_build.sh" + " &> /dev/null"
+    command = "./project_build.sh " + build_type + " &> /dev/null"
     logger.debug("compile command: " + command)
     try:
         subprocess.check_output(command, cwd=work_dir, shell=True)
@@ -80,9 +80,24 @@ def compile_llvm6(work_dir, binary_name, logger):
     return binary_name
 
 
-def run(work_dir, driver, binary, test_list, logger):
+def run(work_dir, driver, binary_full_path, test_list, logger):
     # TODO: assume the first test is the failing test
-    command = "./" + driver + " " + " " + binary + " ./" + test_list[0] + " 2> /dev/null"
+    command = "./" + driver + " " + binary_full_path + " ./" + test_list[0] + " 2> /dev/null"
+    logger.debug("run command: " + command)
+    try:
+        result = subprocess.check_output(command, cwd=work_dir, shell=True)
+    except subprocess.CalledProcessError as e:
+        logger.fatal("run " + command + "failed")
+        return
+
+    logger.info("successfully run " + command)
+
+    return result
+
+
+def run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger):
+    crash_loc = crash_info.file_name + ":" + str(crash_info.line_no)
+    command = "./klee-" + driver + " " + binary_full_path + " ./" + test_list[0] + " " + crash_loc + " 2> /dev/null"
     logger.debug("run command: " + command)
     try:
         result = subprocess.check_output(command, cwd=work_dir, shell=True)

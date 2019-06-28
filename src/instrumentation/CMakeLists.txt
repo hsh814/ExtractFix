@@ -89,10 +89,11 @@ target_link_libraries( GSInserter
 # LLVM is (typically) built with no C++ RTTI. We need to match that;
 # otherwise, we'll get linker errors about missing RTTI data.
 set_target_properties(GSInserter PROPERTIES
-    COMPILE_FLAGS "-fno-rtti"
+    COMPILE_FLAGS "-fno-rtti -g"
 )
 
 
+configure_file(ProjPreprocessor.py ProjPreprocessor.py COPYONLY)
 configure_file(GSInserter.py GSInserter.py COPYONLY)
 configure_file(FuncTracer.py FuncTracer.py COPYONLY)
 configure_file(__init__.py __init__.py COPYONLY)

@@ -26,8 +26,8 @@ class FuncTracer:
     def __init__(self):
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
 
-    def insert_function_trace(self, work_dir, logger, binary_name):
-        binary_full_path = os.path.join(work_dir, binary_name)
+    def insert_function_trace(self, project_path, logger, binary_name):
+        binary_full_path = os.path.join(project_path, binary_name)
         lib_func_tracer = os.path.join(self.dir_path, "libLLVMFuncTracer.so")
 
         command = "opt -S -load=" + lib_func_tracer + " -func_tracer " + binary_full_path+".bc" + \
@@ -37,8 +37,8 @@ class FuncTracer:
                    " -o " + binary_full_path+"_with_func_tracer.bc"
         logger.debug("instrument with functracer command: " + command)
         try:
-            subprocess.check_output(command, cwd=work_dir, shell=True)
-            subprocess.check_output(command2, cwd=work_dir, shell=True)
+            subprocess.check_output(command, cwd=project_path, shell=True)
+            subprocess.check_output(command2, cwd=project_path, shell=True)
         except subprocess.CalledProcessError as e:
             logger.fatal("run functracer failed, command line: " + command)
 

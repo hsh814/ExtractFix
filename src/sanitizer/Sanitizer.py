@@ -19,24 +19,63 @@
 ###########################################################################
 
 import Global
+import runtime
+import os
 
 
 class Sanitizer:
-    def __init__(self, source_path):
-        self.source_path = source_path
-
+    def __init__(self, work_dir, logger):
+        self.work_dir = work_dir
+        self.logger = logger
 
     def _default_generate_crash_info(self):
         pass
 
 
 class BufferOverflowSanitizer(Sanitizer):
-    def __init__(self, source_path):
-        Sanitizer.__init__(self, source_path)
+    def __init__(self, work_dir, project_path, binary_name, driver, test_list, logger):
+        Sanitizer.__init__(self, work_dir, logger)
+        self.project_path = project_path
+        self.binary_name = binary_name
+        self.driver = driver
+        self.test_list = test_list
 
     def generate_crash_info(self):
-        # TODO: call low fat
-        # here, you need to compile the project by yourself
-        crash_info = Global.CrashInfo("decode_dds1", 51, {})
+        runtime.project_config(self.work_dir, self.logger, "lowfat")
+        runtime.project_build(self.work_dir, self.logger, "lowfat")
+
+        binary_full_path = os.path.join(self.project_path, self.binary_name)
+        runtime.run(self.work_dir, self.driver, binary_full_path, self.test_list, self.logger)
+
+        self.logger.info("successfully run lowfat to generate crash-free constraints")
+
+        crash_info = self.parse_crash_info()
+        self.logger.debug("crash information is " + str(crash_info))
+        return crash_info
+
+    def parse_crash_info(self):
+        f= open("/tmp/cfc.out","r")
+        line = f.readline()
+        loc_cfc = line.split("#")
+        assert (len(loc_cfc) == 2)
+
+        location = loc_cfc[0]
+        path_func_lineno = location.split(":")
+        assert len(path_func_lineno) == 3
+        line_no = path_func_lineno[2]
+        function_name = path_func_lineno[1]
+
+        file_path = path_func_lineno[0].replace("../", "")
+        index = file_path.rfind("/")
+        path = file_path[0:index]
+        file_name = file_path[index+1:]
+
+        cfc = loc_cfc[1]
+        start = cfc.find("(")
+        end = cfc.find(")")
+        assert (start < end)
+        cfc = cfc[start+1:end]
+
+        crash_info = Global.CrashInfo(path, file_name, function_name, line_no, cfc)
         return crash_info
 
