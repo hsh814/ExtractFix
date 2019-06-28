@@ -61,6 +61,19 @@ class SynthesisContext(object):
         self.spec = None
         self.synth_funs = None
 
+    def print(self):
+        print("My Function_instantiators")
+        import pprint as pp
+        pp.pprint(self.function_instantiators)
+        print("My Variable_map")
+        pp.pprint(self.variables_map)
+        print("My Unknown_function_map")
+        pp.pprint(self.unknown_function_map)
+        print("My Spec")
+        pp.pprint(self.spec)
+        print("My Synth_funs")
+        pp.pprint(self.synth_funs)
+
     def make_variable(self, var_type, var_name,
                       var_eval_offset = exprs.VariableInfo._undefined_offset):
         """Makes a variable info of the given name and type."""

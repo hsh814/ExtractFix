@@ -257,6 +257,9 @@ class _RecursiveGeneratorPlaceholder(GeneratorBase):
         if (self.actual_generator == None):
             return
         else:
+            #for obj in self.actual_generator.generate():
+            #    print("generate ", exprs.expression_to_string(obj))
+            #    yield obj
             yield from self.actual_generator.generate()
             # # audupa: comment out above and uncomment below for python3 < 3.3
             # for obj in self.actual_generator.generate():
@@ -518,13 +521,25 @@ class BunchedGenerator(GeneratorBase):
                     ranked_candidates.append(candidates[j])
                     ranked_candidate_weight.append(i)
 
-        for i in range(1000):
-            print(exprs.expression_to_string(ranked_candidates[i]), str(ranked_candidate_weight[i]))
-        print("================================================================================")
+        #for i in range(1000):
+        #    print(exprs.expression_to_string(ranked_candidates[i]), str(ranked_candidate_weight[i]))
+        #print("================================================================================")
         return ranked_candidates
 
 
     def generate(self):
+        sub_gen = self.generator_object.generate()
+        current = []
+        while True:
+            try:
+                current.append(next(sub_gen))
+            except StopIteration:
+                if len(current) > 0:
+                    yield current
+                return None
+            if len(current) >= self.max_size:
+                yield current
+                current = []
         max_size = self.max_size
 
         candidates = []
@@ -540,13 +555,15 @@ class BunchedGenerator(GeneratorBase):
                 break
             target_len.append(original_len-i)
             target_len.append(original_len+i)
-        # print(target_len)
+        print("get target_len", config.max_expression_size)
+        print(target_len)
 
         target_len_index = 1
         current_size = original_len # generate candidate with the same length as original statement
 
         sub_generator_object = self.generator_object
         bunch_size = self.bunch_size
+        print(current_size, bunch_size)
         sub_generator_object.set_size(current_size)
         sub_generator_state = sub_generator_object.generate()
 
@@ -562,6 +579,7 @@ class BunchedGenerator(GeneratorBase):
                     # can be bump up the subgenerator size?
                     if (target_len_index < len(target_len)):
                         current_size = target_len[target_len_index]
+                        print("Start a new size", current_size)
                         target_len_index += 1
                     #if(current_size < max_size):
                     #    current_size += 1
@@ -582,7 +600,10 @@ class BunchedGenerator(GeneratorBase):
                 for temp in retval:
                     candidates.append(temp)
             i += 1
-
+        #print("all candidates")
+        #for term in candidates:
+        #    print(exprs.expression_to_string(term))
+        print("number of candidates ", len(candidates))
         candidates = self.rank(candidates)
         for i in range(0, len(candidates), bunch_size):
             retval = []

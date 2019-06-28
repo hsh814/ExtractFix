@@ -64,7 +64,7 @@ def _lib():
     global _loaded_lib
     if (_loaded_lib == None):
         mydir = os.path.dirname(os.path.abspath(__file__))
-        lib_dir = os.path.join(mydir, './libeusolver.so')
+        lib_dir = os.path.join(mydir, './libeusolver.dylib')
         try:
             init(lib_dir)
             # also disable interception of SIGINT

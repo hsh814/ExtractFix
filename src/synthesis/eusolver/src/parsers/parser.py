@@ -305,6 +305,7 @@ def process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, f
 
 def sexp_to_grammar(arg_vars, grammar_sexp, synth_fun, syn_ctx):
     non_terminals = [ t[0] for t in grammar_sexp ]
+    #print(grammar_sexp)
     nt_type = { nt:sexp_to_type(nt_type_data) for nt, nt_type_data, rules_data in grammar_sexp }
     rules = {}
     for nt, nt_type_data, rules_data in grammar_sexp:
@@ -313,6 +314,8 @@ def sexp_to_grammar(arg_vars, grammar_sexp, synth_fun, syn_ctx):
         for rule_data in rules_data:
             ph_lbvs, lbvs, rewrite =\
                     _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, {}, synth_fun, rule_data)
+            #print(rule_data, ph_lbvs, lbvs, rewrite)
+            #syn_ctx.print()
             rewrites.append(rewrite)
             ph_let_bound_vars.extend(ph_lbvs)
             let_bound_vars.extend(lbvs)
@@ -323,6 +326,7 @@ def sexp_to_grammar(arg_vars, grammar_sexp, synth_fun, syn_ctx):
             for rewrite in rewrites:
                 rewrite.substitute_expr(phlb, lvs[0])
         rules[nt] = rewrites
+
     return grammars.Grammar(non_terminals, nt_type, rules)
 
 _known_theories = [ "LIA", "BV", "SLIA" ]
@@ -389,6 +393,12 @@ def extract_benchmark(file_sexp):
 
     # Grammars
     grammar_map = {}
+    sketch_data, _ = filter_sexp_for('sketch', file_sexp)
+    wrap_sketch_data = [['Sketch', synth_funs_data[0][2], sketch_data[0]]]
+    sketch_result = sexp_to_grammar(synth_funs_grammar_data[0][1], wrap_sketch_data,
+                                    synth_funs_grammar_data[0][0], syn_ctx)
+    sketch_expression = sketch_result.rules['Sketch'][0].to_template_expr()[2]
+
     for synth_fun, arg_vars, grammar_data in synth_funs_grammar_data:
         if grammar_data == 'Default grammar':
             grammar_map[synth_fun] = grammar_data
@@ -423,7 +433,7 @@ def extract_benchmark(file_sexp):
     assert check_sats == [[]]
     #assert file_sexp == []
 
-    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammar_map, forall_vars_map, file_sexp
+    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammar_map, forall_vars_map, sketch_expression, file_sexp
 
 def get_theory_instantiator(theory):
     if theory == "LIA":

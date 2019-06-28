@@ -412,10 +412,6 @@ def identify_lia_grammars(synth_fun, grammar):
     return (boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod)
 
 
-
-
-
-
 class Grammar(object):
     def __init__(self, non_terminals, nt_type, rules, start='Start'):
         self.non_terminals = non_terminals
@@ -423,6 +419,19 @@ class Grammar(object):
         self.rules = rules
         self.start = start
         self.from_default = False
+
+    def printall(self):
+        print("rules:")
+        import pprint
+        pprint.pprint(self.rules)
+        print(type(self.rules))
+        for nt, extensions in self.rules.items():
+            print("Start from", nt)
+            for extension in extensions:
+                print(str(extension))
+        print("non_terminals", self.non_terminals)
+        print("nt_type", self.nt_type)
+        print("start", self.start)
 
     def add_constant_rules(self, constant_rewrites):
         for const_rewrite in constant_rewrites:
@@ -471,6 +480,8 @@ class Grammar(object):
             if not generator_factory.has_placeholder(_nt_to_generator_name(nt)):
                 generator_factory.make_placeholder(_nt_to_generator_name(nt))
         place_holders = generator_factory.generator_map
+        print("place_holders")
+        print(place_holders)
         ret = None
         for nt in self.non_terminals:
             generators = []

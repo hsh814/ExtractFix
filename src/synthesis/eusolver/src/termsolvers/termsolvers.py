@@ -145,7 +145,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         self.bunch_generator = None
         self.sketch = None
         self.max_term_size = 128
-        self.stopping_condition = StoppingCondition.term_sufficiency
+        self.stopping_condition = StoppingCondition.one_term_sufficiency
         self.full_signature = BitSet.make_factory(0)()
         self.one_full_signature = False
 
@@ -210,10 +210,12 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         try:
             bunch = next(bunch_generator_state)
         except StopIteration:
+            #print("Generator more term fail")
             return False
 
-
+        print("Start generate more terms", len(bunch))
         for term in bunch:
+            print(exprs.expression_to_string(term))
             if transform_term is not None:
                 term = transform_term(term)
             sig = self._compute_term_signature(term)
