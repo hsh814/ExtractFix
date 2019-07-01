@@ -65,7 +65,8 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
     # run function tracer to generate function trace
     func_trace = runtime.run(work_dir, driver, binary_full_path_with_func_tracer, test_list, logger)
-    func_list = process_func_trace(func_trace)
+    func_trace = open("/tmp/run_info", 'r').readlines()
+    func_list = process_func_trace(func_trace, crash_info)
     # logger.debug("function trace" + str(func_list))
 
     # fault localization
@@ -86,11 +87,20 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         break
 
 
-def process_func_trace(func_trace):
+def process_func_trace(func_trace, crash_info):
     retval = []
-    trace_list = func_trace.split('\n')[:-1]
+    trace_list = [item[:-1] for item in func_trace]
     for trace in trace_list:
-        retval.append(trace.split(' >>>> '))
+        if ' >>>> ' not in trace:
+            continue
+        entry = trace.split(' >>>> ')
+        if entry[0] != "IN" and entry[0] != "OUT":
+            continue
+
+        if entry[0] == "IN" and entry[1] == crash_info.get_function_name():
+            retval.append(entry)
+            break
+        retval.append(entry)
     return retval
 
 

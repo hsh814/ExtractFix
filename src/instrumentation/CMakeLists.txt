@@ -94,9 +94,7 @@ set_target_properties(GSInserter PROPERTIES
 
 
 configure_file(ProjPreprocessor.py ProjPreprocessor.py COPYONLY)
-configure_file(GSInserter.py GSInserter.py COPYONLY)
 configure_file(FuncTracer.py FuncTracer.py COPYONLY)
 configure_file(__init__.py __init__.py COPYONLY)
 configure_file(SymVarInserter.py SymVarInserter.py COPYONLY)
-file(COPY utils DESTINATION .)
 
