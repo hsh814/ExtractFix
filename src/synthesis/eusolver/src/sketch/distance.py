@@ -31,7 +31,6 @@ def levenshtein_distance(s, t):
             d[i][j] = min(d[i-1][j] + factor, d[i][j-1] + factor, d[i-1][j-1] + cost)
             # print(str(i), str(j), str(d[i][j]))
 
-
     return d[m][n]
 
 

@@ -82,13 +82,12 @@ def compile_llvm6(work_dir, binary_name, logger):
 
 def run(work_dir, driver, binary_full_path, test_list, logger):
     # TODO: assume the first test is the failing test
-    command = "./" + driver + " " + binary_full_path + " ./" + test_list[0] + " 2> /dev/null"
+    command = "./" + driver + " " + binary_full_path + " ./" + test_list[0] + " > /tmp/run_info 2> /tmp/run_info"
     logger.debug("run command: " + command)
     try:
         result = subprocess.check_output(command, cwd=work_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("run " + command + "failed")
-        return
 
     logger.info("successfully run " + command)
 

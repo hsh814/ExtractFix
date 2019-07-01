@@ -79,6 +79,7 @@ class Solver(object):
         import time
 
         time_origin = time.clock()
+        # verify_term_solve = True
 
         while (True):
             # print('________________')
@@ -93,7 +94,6 @@ class Solver(object):
             # Check term solver for completeness
             if verify_term_solve:
                 cexs = verifier.verify_term_solve(list(term_solver.get_signature_to_term().values()))
-                # print("cexs is:", cexs)
             else:
                 cexs = None
 
@@ -109,7 +109,7 @@ class Solver(object):
             else:
                 # print('Term solve incomplete!')
                 sol_or_cex = cexs
-
+            #print("current ", sol_or_cex)
             if _is_expr(sol_or_cex):
                 solution_found_at = time.clock() - time_origin
                 if self.report_additional_info:

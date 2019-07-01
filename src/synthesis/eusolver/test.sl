@@ -4,7 +4,8 @@
     ((Start Int (x0
                  x1
                  x2
-                 4
+                 2
+                 3
                  (+ Start Start)
                  (- Start Start)
                  (ite StartBool Start Start)))

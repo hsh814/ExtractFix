@@ -53,7 +53,7 @@ class RewriteBase(object):
     def __init__(self, type):
         self.type = type
 
-    def to_template_expr(self):
+    def to_template_expr(self, soft_name=False):
         raise basetypes.AbstractMethodError('RewriteBase.to_template_expr()')
 
     def rename_nt(self, old_name, new_name):
@@ -77,7 +77,7 @@ class ExpressionRewrite(RewriteBase):
     def str(self):
         return exprs.expression_to_string(self.expr)
 
-    def to_template_expr(self):
+    def to_template_expr(self, soft_name=False):
         return [], [], self.expr
 
     def rename_nt(self, old_name, new_name):
@@ -99,9 +99,11 @@ class NTRewrite(RewriteBase):
     def str(self):
         return self.non_terminal
 
-    def to_template_expr(self):
+    def to_template_expr(self, soft_name=False):
         import random
-        name = self.non_terminal + '_ph_' + str(random.randint(1, 1000000))
+        name = self.non_terminal;
+        if not soft_name:
+            name += '_ph_' + str(random.randint(1, 1000000))
         ph_var = exprs.VariableExpression(exprs.VariableInfo(self.type, name))
         return [ph_var], [self.non_terminal], ph_var
 
@@ -129,12 +131,12 @@ class FunctionRewrite(RewriteBase):
         return '(' + self.function_info.function_name + ' ' + \
             ' '.join([ x.str() for x in self.children ]) + ')'
 
-    def to_template_expr(self):
+    def to_template_expr(self, soft_name=False):
         ph_vars = []
         nts = []
         child_exprs = []
         for child in self.children:
-            curr_ph_vars, curr_nts, child_expr = child.to_template_expr()
+            curr_ph_vars, curr_nts, child_expr = child.to_template_expr(soft_name)
             ph_vars.extend(curr_ph_vars)
             nts.extend(curr_nts)
             child_exprs.append(child_expr)
@@ -412,10 +414,6 @@ def identify_lia_grammars(synth_fun, grammar):
     return (boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod)
 
 
-
-
-
-
 class Grammar(object):
     def __init__(self, non_terminals, nt_type, rules, start='Start'):
         self.non_terminals = non_terminals
@@ -423,6 +421,19 @@ class Grammar(object):
         self.rules = rules
         self.start = start
         self.from_default = False
+
+    def printall(self):
+        print("rules:")
+        import pprint
+        pprint.pprint(self.rules)
+        print(type(self.rules))
+        for nt, extensions in self.rules.items():
+            print("Start from", nt)
+            for extension in extensions:
+                print(str(extension))
+        print("non_terminals", self.non_terminals)
+        print("nt_type", self.nt_type)
+        print("start", self.start)
 
     def add_constant_rules(self, constant_rewrites):
         for const_rewrite in constant_rewrites:
@@ -471,6 +482,8 @@ class Grammar(object):
             if not generator_factory.has_placeholder(_nt_to_generator_name(nt)):
                 generator_factory.make_placeholder(_nt_to_generator_name(nt))
         place_holders = generator_factory.generator_map
+        print("place_holders")
+        print(place_holders)
         ret = None
         for nt in self.non_terminals:
             generators = []

@@ -402,8 +402,10 @@ static void suggestFixLocs(Module &M)
                         int lineNo = debugLoc.getLine();
                         if (lineNo != targetNO)
                             continue;
-
-                        // inst->print(errs());
+        		if (verbose){
+            			fprintf(stderr, "\nFound target line\n");
+	                        inst->print(errs());
+			}
                         findFixLocsDataFlow(DT, Seen, pFixLocs, inst, inst, F);
                     }
                 }

@@ -19,4 +19,4 @@
 
 (check-synth)
 
-(sketch (- x1 x2))
+(sketch (- a0 a1))

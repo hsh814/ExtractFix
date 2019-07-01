@@ -43,6 +43,7 @@ import z3
 from semantics import semantics_types
 from utils import basetypes
 from exprs import evaluation
+from exprs import exprs
 from utils.bitvectors import BitVector
 
 _expr_to_str = exprs.expression_to_string
@@ -300,6 +301,9 @@ class StdVerifier(VerifierBase):
         return self._default_verify(unification)
 
     def verify_term_solve(self, terms):
+        #print("verify:")
+        #for term in terms:
+        #    print(exprs.expression_to_string(term))
         smt_ctx = self.smt_ctx
         smt_solver = self.smt_solver
         smt_solver.pop()
@@ -321,6 +325,7 @@ class StdVerifier(VerifierBase):
         smt_solver.push()
         smt_solver.add(eq_cnstr)
         r = smt_solver.check()
+        #print(smt_solver)
 
         #print(smt_solver)
         #print(smt_solver.model())
@@ -335,6 +340,9 @@ class StdVerifier(VerifierBase):
                                        self.var_smt_expr_list,
                                        self.var_info_list)
             #print("model to point is running")
+            print("invalid point:")
+            for value in cex_point:
+                print(exprs.value_to_string(value))
             return [cex_point]
         else:
             return None

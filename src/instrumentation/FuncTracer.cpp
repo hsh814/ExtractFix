@@ -52,12 +52,13 @@ using namespace std;
 static void insertPrintf(Module *M, Instruction *I, std::string msg){
     IRBuilder<> builder(I);
 
-    Function* funcPrintf = M->getFunction("fprintf");
+
+    Function* funcPrintf = M->getFunction("perror");
     if (!funcPrintf) {
         std::vector<Type*> printfTypeVec;
         printfTypeVec.push_back(PointerType::get(IntegerType::get(M->getContext(), 8), 0));
         FunctionType* printfType = FunctionType::get(IntegerType::get(M->getContext(), 32), printfTypeVec, true);
-        funcPrintf = Function::Create(printfType, GlobalValue::ExternalLinkage, "fprintf", M);
+        funcPrintf = Function::Create(printfType, GlobalValue::ExternalLinkage, "perror", M);
         funcPrintf->setCallingConv(CallingConv::C);
     }
 

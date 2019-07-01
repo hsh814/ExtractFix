@@ -50,7 +50,7 @@ from unifiers import unifiers
 from unifiers import unifiers_lia
 from core import solvers
 from exprs import exprs
-from enumerators import enumerators
+from enumerators import enumerators, distance_enumerators
 from exprs import exprtypes
 from semantics import semantics_core
 from core import grammars
@@ -297,7 +297,7 @@ def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, ver
     rewritten_solutions = rewrite_solution(synth_funs, solution, reverse_mapping=None)
     return rewritten_solutions
 
-def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, sketch):
+def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, sketch, sketch_expression):
     generator_factory = enumerators.RecursiveGeneratorFactory()
     TermSolver = termsolvers.PointlessTermSolver
 
@@ -308,12 +308,13 @@ def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, 
     else:
         grammar = grammar_map[synth_funs[0]]
 
-    term_generator = grammar.to_generator(generator_factory)
+    #term_generator = grammar.to_generator(generator_factory)
 
     fa_map = {}
     for synth_fun in synth_funs:
         fa_map.update(synth_fun.formal_actual_map())
     sketch_info = [sketch, fa_map]
+    term_generator = distance_enumerators.DistanceBasedEnumerator(grammar, sketch, fa_map, sketch_expression)
 
     term_solver = TermSolver(specification.term_signature, term_generator, sketch_info)
     term_solver.stopping_condition = termsolvers.StoppingCondition.one_term_sufficiency
@@ -342,9 +343,11 @@ def make_solver(file_sexp):
             constraints,
             grammar_map,
             forall_vars_map,
+            sketch_expression,
             file_sexp
             ) = benchmark_tuple
     sketch = sketch_parser.extract_sketch(file_sexp)
+    # print(sketch, sketch_expression)
 
     assert len(theories) == 1
     theory = theories[0]
@@ -380,7 +383,8 @@ def make_solver(file_sexp):
             grammar_map,
             specification,
             verifier,
-            sketch
+            sketch,
+            sketch_expression
             )
 
     for solver_name, solver in solvers:
@@ -423,7 +427,9 @@ def test_make_solver(benchmark_files):
     for benchmark_file in benchmark_files:
         # print(benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
-
+        #print(file_sexp)
+        # import pprint
+        # pprint.pprint(file_sexp)
         # import cProfile, pstats
         # pr = cProfile.Profile()
         # pr.enable()
