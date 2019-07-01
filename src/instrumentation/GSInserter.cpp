@@ -315,7 +315,7 @@ public:
                     string globalName = GL_PREFIX + "_" + fileName + "_" + funcName + "_" +
                             std::to_string(FullLocation.getSpellingLineNumber());
 
-                    string newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriSize + "; " + oriSize + ";} )";
+                    string newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriSize + "; " + globalName + ";} )";
 
                     llvm::errs()<<">>>>>>>> "<<oriFileName<<" @ "<<funcName<<"()\n\tMALLOC ARG: "<<oriSize<<" -->> "<<newArg<<"\n";
 

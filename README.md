@@ -17,6 +17,15 @@ sudo apt-get install libjsoncpp-dev
 pip install enum argparse coloredlogs
 ```
 
+5. Experiment dependencies
+
+**LibTiff**
+To define ```JPEG_SUPPORT```  in the configuration:
+```
+sudo apt-get install libjpeg-dev
+```
+
+
 ### Installation
 1. Clone Crash-free-fix and its submodules
 ```
@@ -39,6 +48,6 @@ cd src/sanitizer/LowFat; ./build.sh
 ```
 4. Compile Crash-free-fix
 ```
-mkdir build; cd build; LLVM_HOME=[your-llvm-build-path] cmake ../src; make
+mkdir build; cd build; LLVM_HOME=[your-llvm-build-path] LOWFAT_CLANG=[your-lowfat-clang-path] cmake ../src; make
 ```
 
