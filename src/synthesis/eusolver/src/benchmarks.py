@@ -309,12 +309,12 @@ def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, 
         grammar = grammar_map[synth_funs[0]]
 
     #term_generator = grammar.to_generator(generator_factory)
-    term_generator = distance_enumerators.DistanceBasedEnumerator(grammar, sketch, sketch_expression)
 
     fa_map = {}
     for synth_fun in synth_funs:
         fa_map.update(synth_fun.formal_actual_map())
     sketch_info = [sketch, fa_map]
+    term_generator = distance_enumerators.DistanceBasedEnumerator(grammar, sketch, fa_map, sketch_expression)
 
     term_solver = TermSolver(specification.term_signature, term_generator, sketch_info)
     term_solver.stopping_condition = termsolvers.StoppingCondition.one_term_sufficiency

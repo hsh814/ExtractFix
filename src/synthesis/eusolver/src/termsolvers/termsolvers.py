@@ -214,12 +214,12 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             return False
 
         print("Start generate more terms", len(bunch))
-        for term in bunch:
-            print(exprs.expression_to_string(term))
+        for term in reversed(bunch):
+            # print(exprs.expression_to_string(term))
             if transform_term is not None:
                 term = transform_term(term)
             sig = self._compute_term_signature(term)
-            print("gaoxiang expr: ", exprs.expression_to_string(term))
+            # print("gaoxiang expr: ", exprs.expression_to_string(term))
             # print("     ", str(sig))
             # for temp_sig in signature_to_term:
             #     print("        ",temp_sig) 

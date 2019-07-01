@@ -18,9 +18,10 @@ class ExtendUnit:
 
 class DistanceBasedEnumerator():
 
-    def __init__(self, grammars, sketch, sketch_expression):
+    def __init__(self, grammars, sketch, fa_map, sketch_expression):
         self.grammars = grammars
         self.sketch = sketch
+        self.fa_map = fa_map
         self.sketch_expression = sketch_expression
 
         '''rules = grammars.rules
@@ -53,7 +54,7 @@ class DistanceBasedEnumerator():
             for symbol, extensions in self.grammars.rules.items():
                 if symbol == exprs.normalize_variable_name(expression.variable_info.variable_name):
                     for extension in extensions:
-                        yield extension.to_template_expr()[2]
+                        yield extension.to_template_expr(True)[2]
         else:
             for (pos, subexpr) in enumerate(expression.children):
                 gen = self._subGenerator(subexpr)
@@ -63,7 +64,7 @@ class DistanceBasedEnumerator():
                         childrenList[pos] = next(gen)
                         yield exprs.FunctionExpression(expression.function_info, tuple(childrenList))
                 except StopIteration:
-                    continue
+                    pass
             for symbol, extensions in self.grammars.rules.items():
                 if symbol == "ConstantIntegerType":
                     continue
@@ -75,17 +76,22 @@ class DistanceBasedEnumerator():
     def _get_cost(self, expression):
         return len(exprs.get_all_variables(expression))
 
+    def _get_distance(self, expression):
+        candidate_list = exprs.expression_to_list(expression, self.fa_map)
+        return distance.levenshtein_distance(self.sketch, candidate_list)
+
     def generate(self):
+        # print("Start")
         Q = queue.PriorityQueue()
         Q.put_nowait(ExtendUnit(0, self.sketch_expression))
-        dic = {self.sketch_expression}
+        dic = {exprs.expression_to_string(self.sketch_expression)}
         while Q.not_empty:
             current_unit = Q.get_nowait()
             expression = current_unit.expression
-            distance = current_unit.distance - self._get_cost(expression)
             generator = self._subGenerator(expression)
             #print("Deal with")
-            #print(exprs.expression_to_string(expression))
+            #print(exprs.expression_to_string(expression), current_unit.distance)
+            #input()
             try:
                 while True:
                     next_expression = next(generator)
@@ -93,9 +99,10 @@ class DistanceBasedEnumerator():
                     #print("result ", str_expr)
                     if str_expr not in dic:
                         dic.add(str_expr)
-                        next_distance = self._get_cost(next_expression)
-                        Q.put_nowait(ExtendUnit(next_distance + distance, next_expression))
-                        if next_distance == 0:
+                        next_distance = self._get_distance(next_expression)
+                        # print("new ", str_expr, next_distance)
+                        Q.put_nowait(ExtendUnit(next_distance, next_expression))
+                        if self._get_cost(next_expression) == 0:
                             yield next_expression
             except StopIteration:
                 continue

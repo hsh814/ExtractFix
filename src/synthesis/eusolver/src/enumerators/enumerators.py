@@ -503,7 +503,7 @@ class BunchedGenerator(GeneratorBase):
     def rank(self, candidates):
         candidate_size = len(candidates)
         candidate_weight = [0] * candidate_size
-        print("sketch is ", self.sketch)
+        # print("sketch is ", self.sketch)
         original = self.sketch
         #original = ['(', '-', '(', '-', '(', '-', '_arg_2', '_arg_1', ')',  '_arg_0', ')', '3', ')']
         for i in range(candidate_size):
@@ -535,10 +535,10 @@ class BunchedGenerator(GeneratorBase):
                 current.append(next(sub_gen))
             except StopIteration:
                 if len(current) > 0:
-                    yield current
+                    yield self.rank(current)
                 return None
             if len(current) >= self.max_size:
-                yield current
+                yield self.rank(current)
                 current = []
         max_size = self.max_size
 

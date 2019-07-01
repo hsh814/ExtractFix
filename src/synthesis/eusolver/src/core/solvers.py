@@ -79,7 +79,7 @@ class Solver(object):
         import time
 
         time_origin = time.clock()
-        verify_term_solve = True
+        # verify_term_solve = True
 
         while (True):
             # print('________________')

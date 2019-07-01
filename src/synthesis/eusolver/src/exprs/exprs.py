@@ -515,8 +515,6 @@ def normalize_variable_name(name):
         return name[:pos]
 
 def soft_equals(e1, e2):
-    # print("1:", expression_to_string(e1))
-    # print("2:", expression_to_string(e2))
     if e1.expr_kind != e2.expr_kind:
         ret = False
     else:
@@ -526,7 +524,7 @@ def soft_equals(e1, e2):
             info_e2 = e2.variable_info
             info_e1.variable_name = normalize_variable_name(info_e1.variable_name)
             info_e2.variable_name = normalize_variable_name(info_e2.variable_name)
-            ret = e1.variable_info == e2.variable_info
+            return info_e1.variable_name == info_e2.variable_name
         elif (kind == _formal_parameter_expression):
             ret = ((e1.unknown_function_info == e2.unknown_function_info) and
                     (e1.parameter_position == e2.parameter_position))
@@ -541,6 +539,7 @@ def soft_equals(e1, e2):
             assert False
     # print(ret)
     return ret
+
 
 #
 # exprs.py ends here
