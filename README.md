@@ -48,6 +48,7 @@ cd src/sanitizer/LowFat; ./build.sh
 ```
 4. Compile Crash-free-fix
 ```
-mkdir build; cd build; LLVM_HOME=[your-llvm-build-path] LOWFAT_CLANG=[your-lowfat-clang-path] cmake ../src; make
+- export LOWFAT_CLANG=[your-lowfat-clang-path]
+- mkdir build; cd build; LLVM_HOME=[your-llvm-build-path] cmake ../src; make
 ```
 
