@@ -41,38 +41,33 @@ using namespace std;
 
 string OutputStr;
 llvm::raw_string_ostream output(OutputStr);
-bool hasInsertedVars = false;
-bool hasInsertedCFC = false;
 
 static llvm::cl::OptionCategory SVCategory("Symbolic variable inserter");
 
-static llvm::cl::opt<int> fixLoc("fix",
+static llvm::cl::opt<string> mission("mission",
+                                     llvm::cl::desc("the mission type"),
+                                     llvm::cl::Required, llvm::cl::cat(SVCategory));
+
+
+static llvm::cl::opt<int> loc("loc",
                                  llvm::cl::desc("the line number of fix location"),
                                  llvm::cl::Required, llvm::cl::cat(SVCategory));
 
-static llvm::cl::opt<int> crashLoc("crash",
-                                   llvm::cl::desc("the line number of crash location"),
-                                   llvm::cl::Required, llvm::cl::cat(SVCategory));
-
-static llvm::cl::opt<string> vars("vars",
+static llvm::cl::opt<string> args("args",
                                  llvm::cl::desc("the variables to symbolize"),
                                  llvm::cl::Required, llvm::cl::cat(SVCategory));
-
-static llvm::cl::opt<string> cfc("cfc",
-                                  llvm::cl::desc("the crash-free constraints at crash location"),
-                                  llvm::cl::Required, llvm::cl::cat(SVCategory));
 
 vector<string> getVars(){
     vector<string> var_vector;
     size_t pos = 0;
     std::string token;
     // TODO: check crash function
-    while ((pos = vars.find(" ")) != std::string::npos) {
-        token = vars.substr(0, pos);
+    while ((pos = args.find(" ")) != std::string::npos) {
+        token = args.substr(0, pos);
         var_vector.push_back(token);
-        vars.erase(0, pos + 1);
+        args.erase(0, pos + 1);
     }
-    var_vector.push_back(vars);
+    var_vector.push_back(args);
     assert (!var_vector.empty());
     return var_vector;
 }
@@ -88,16 +83,14 @@ public:
 
         bool isInsertPoint = false;
         string varToInsert;
-        if (!hasInsertedVars && fixLoc == curLineNo){
-            hasInsertedVars = true;
+        if (mission == "symbolize" && loc == curLineNo){
             isInsertPoint = true;
             vector<string> var_vector = getVars();
             for (const string &var: var_vector)
                 varToInsert += "klee_make_symbolic(&" + var + ", sizeof(" + var + "), \"" + var + "\");";
-        } else if (!hasInsertedCFC && crashLoc == curLineNo){
+        } else if (mission == "cfc" && loc == curLineNo){
             isInsertPoint = true;
-            hasInsertedCFC = true;
-            varToInsert = "klee_assume(" + cfc + ");";
+            varToInsert = "klee_assume(" + args + ");";
         }
 
         if (isInsertPoint){
@@ -110,13 +103,21 @@ public:
                 TheRewriter.ReplaceText(startPoint, u_int(oriStm.length()), newStmt);
             }
             else if (isa<Stmt>(s)){
-                string newStmt = varToInsert + oriStm;
-                TheRewriter.ReplaceText(startPoint, u_int(oriStm.length()), newStmt);
-            }
-        }
+                const auto& parents  = Compiler.getASTContext().getParents(*s);
+                auto it = parents.begin();
+                string replace;
+                if(it == parents.end()){ // parent cannot be found
+                    replace = varToInsert + oriStm;
+                } else if(parents[0].get<IfStmt>() || parents[0].get<WhileStmt>() || parents[0].get<SwitchStmt>()){
+                    replace = "{" + varToInsert + oriStm + ";}";
+                } else{
+                    replace = varToInsert + oriStm;
+                }
 
-        if (hasInsertedVars && hasInsertedCFC)
+                TheRewriter.ReplaceText(startPoint, u_int(oriStm.length()), replace);
+            }
             return false;
+        }
 
         return true;
     }
@@ -184,7 +185,10 @@ int main(int argc, const char **argv) {
             string fileName = op.getSourcePathList()[0];
             ofstream srcFile;
             srcFile.open(fileName);
-            srcFile << "#include<klee/klee.h>\n" << output.str();
+            if(output.str().find("#include<klee/klee.h>")== string::npos)
+                srcFile << "#include<klee/klee.h>\n" << output.str();
+            else
+                srcFile << output.str();
             srcFile.close();
         }
     }

@@ -3,7 +3,7 @@ compile_type=$1
 
 current_dir=`pwd`
 # get project and set to corresponding version
-#git clone https://github.com/vadz/libtiff.git project
+# git clone https://gitlab.gnome.org/GNOME/libxml2/ project
 cd project
 #git checkout d9783e4
 
@@ -21,11 +21,11 @@ then
     compiler=wllvm
 elif [ $compile_type == 'lowfat' ];
 then
-    compiler=/home/gaoxiang/project/crash-free-fix/src/sanitizer/LowFat/build/bin/clang
+    compiler=${LOWFAT_CLANG}
     cflags="$cflags -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-symbolize -lstlimpl"
 fi
 
-CC=$compiler ../configure --disable-nls CFLAGS="$cflags"
+CC=$compiler CFLAGS="$cflags" ../autogen.sh --enable-static
 
 cd ../..
 

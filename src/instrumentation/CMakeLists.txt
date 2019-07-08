@@ -161,4 +161,6 @@ configure_file(ProjPreprocessor.py ProjPreprocessor.py COPYONLY)
 configure_file(FuncTracer.py FuncTracer.py COPYONLY)
 configure_file(__init__.py __init__.py COPYONLY)
 configure_file(SymVarInserter.py SymVarInserter.py COPYONLY)
+configure_file(instrumentation_utils.py instrumentation_utils.py COPYONLY)
+
 

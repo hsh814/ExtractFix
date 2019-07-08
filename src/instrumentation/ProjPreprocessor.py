@@ -1,57 +1,19 @@
 import sys
 import os
-import re
+from instrumentation_utils import *
 import logging
 import commands
 import argparse
 
 # from GSInserter import getFiles, getImportHeadFolders
 # TODO: may need to change in different system
-system_header = ['/usr/local/lib/clang/6.0.1/include']
 
 callee_tmp_file = '/tmp/callee.txt'
 
 source_dir = os.path.dirname(os.path.realpath(__file__))
 
 
-def get_import_head_folders(project_base, system_header=[]):
-    headers = get_files(project_base, '.h')
-    cpp_args = []
-
-    for folder in system_header:
-        opt = '-I' + folder
-        if opt not in cpp_args:
-            cpp_args.append(opt)
-
-    for header in headers:
-        opt = '-I' + header[0:header.rfind('/')]
-        if opt not in cpp_args:
-            cpp_args.append(opt)
-
-    return cpp_args
-
-
-def get_files(target_dir, exetension):
-    item_list = os.listdir(target_dir)
-
-    file_list = list()
-    for item in item_list:
-        item_dir = os.path.join(target_dir, item)
-        if os.path.isdir(item_dir):
-            if item_dir.endswith('/test'):
-                continue
-
-            file_list += get_files(item_dir, exetension)
-        else:
-            if item_dir.endswith(exetension):
-                file_list.append(item_dir)
-    return file_list
-
-
 def preprocess_single_file(mission, f, tail, logger):
-    # if 'tif_ovrcache.c' not in f:
-    #     return ''
-
     cmd = source_dir+'/GSInserter -mission=' + mission + " " + f + tail
 
     # logger.debug('Executing >>>>>>>>'+cmd)
