@@ -57,8 +57,8 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         logger.debug("crash info: "+str(crash_info))
 
     # TODO: remove
-    # crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})
-    crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, {"count>=0"}) #3186
+    # crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})  # 5321
+    crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
 
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
@@ -80,6 +80,8 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     fl = FaultLocalization.FaultLocalization(project_path, binary_name, func_list, crash_info, logger)
     potential_funcs = fl.get_potential_fault_locs()
 
+    # adjust line number because of include<klee/klee.h> injection in the following instrumentation
+    crash_info.line_no += 1
     for fix_loc in potential_funcs:
         sym_var_inserter = SymVarInserter.SymVarInserter(project_path, logger, crash_info)
         # insert symbolic variables at source code level

@@ -1,0 +1,3 @@
+ffmpeg_deps/*
+!ffmpeg_deps/build_ffmpeg.sh
+!ffmpeg_deps/afl_driver.cpp

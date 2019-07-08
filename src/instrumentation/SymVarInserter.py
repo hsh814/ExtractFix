@@ -19,7 +19,9 @@
 ###########################################################################
 
 from Global import *
-import subprocess, os
+import subprocess
+from instrumentation_utils import *
+import os
 
 
 class SymVarInserter:
@@ -29,20 +31,69 @@ class SymVarInserter:
         self.crash_info = crash_info
         self.copied_files = {}
         self.file_index = 0
+        self.cur_dir = os.path.dirname(os.path.abspath(__file__))
 
     def insert_sym_vars(self, fix_loc):
-        # TODO: insert symbolic variable at fix location, FixLoc is defined in Global
-        file_name = fix_loc.get_file_name()
-        file_name = file_name.replace("../", "")
-        self.save_original_file(file_name)
 
         self.insert_cfc()
 
+        # TODO: insert symbolic variable at fix location, FixLoc is defined in Global
+        file_name = fix_loc.get_file_name()
+        file_name = file_name.replace("../", "")
+
+        fix_file = os.path.join(self.project_dir,
+                                file_name)
+        self.save_original_file(file_name)
+
+        fix_line_no = fix_loc.get_line_no()
+        sys_vars = fix_loc.get_sym_vars()
+        args = " ".join(sys_vars)
+
+        inserter = os.path.join(self.cur_dir, "SVInserter")
+
+        include_options = get_import_head_folders(self.project_dir, system_header)
+        tail = ' '.join(include_options)
+        command = inserter + \
+                  " -mission symbolize" + \
+                  " -loc " + str(fix_line_no) + \
+                  " -args \"" + args + "\"" + \
+                  " " + fix_file +\
+                  " -- " + tail + \
+                  " 2> /dev/null"
+
+        self.logger.debug("compile command: " + command)
+        try:
+            subprocess.check_output(command, cwd=self.project_dir, shell=True)
+        except subprocess.CalledProcessError as e:
+            self.logger.fatal("error, command line: " + command)
+            exit(1)
+
     def insert_cfc(self):
-        source_dir = os.path.join(self.project_dir,
+        crash_line_no = self.crash_info.get_line_no() - 1
+        cfc = self.crash_info.get_cfc()
+        crash_file = os.path.join(self.project_dir,
                                   self.crash_info.file_path,
                                   self.crash_info.file_name)
-        self.save_original_file(source_dir)
+        self.save_original_file(crash_file)
+
+        include_options = get_import_head_folders(self.project_dir, system_header)
+
+        inserter = os.path.join(self.cur_dir, "SVInserter")
+
+        tail = ' '.join(include_options)
+        command = inserter + " -mission cfc" + \
+                  " -loc " + str(crash_line_no) + \
+                  " -args \"" + cfc + "\"" + \
+                  " " + crash_file + \
+                  " -- " + tail + \
+                  " 2> /dev/null"
+
+        self.logger.debug("compile command: " + command)
+        try:
+            subprocess.check_output(command, cwd=self.project_dir, shell=True)
+        except subprocess.CalledProcessError as e:
+            self.logger.fatal("compile error, command line: " + command)
+            exit(1)
 
     def save_original_file(self, file_name):
         self.logger.debug("save original file " + file_name)

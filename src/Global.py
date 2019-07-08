@@ -53,7 +53,7 @@ class CrashInfo:
     def get_line_no(self):
         return self.line_no
 
-    def get_cfg(self):
+    def get_cfc(self):
         return self.cfc
 
     def __str__(self):
