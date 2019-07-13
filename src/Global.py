@@ -27,6 +27,8 @@ class BugType(Enum):
     integer_overflow = 2
     null_pointer = 3
     assertion_failure = 4
+    api_specific = 5
+    divide_by_0 = 6
 
     @staticmethod
     def list():

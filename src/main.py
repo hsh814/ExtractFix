@@ -34,7 +34,7 @@ import Global
 
 
 def clear_log():
-    command = "rm -rf run_info callee.txt fixlocations.json callee.txt"
+    command = "rm -rf /tmp/run_info /tmp/callee.txt /tmp/fixlocations.json /tmp/callee.txt /tmp/cfc.out"
     subprocess.call(command, cwd="/tmp", shell=True)
 
 
@@ -48,7 +48,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     runtime.project_config(work_dir, logger, "to_bc")
     ProjPreprocessor.__preprocess(project_path, lib=True, logger=logger)
 
-    if bug_type == 'buffer_overflow':
+    if bug_type == 'buffer_overflow' or bug_type == 'divide_by_0':
         # insert global variable for malloc, which is then used to generate crash-free-constraints
         ProjPreprocessor.__preprocess(project_path, globalize=True, logger=logger)
         sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
@@ -56,9 +56,10 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         crash_info = sanitizer.generate_crash_info()
         logger.debug("crash info: "+str(crash_info))
 
-    # TODO: remove
-    # crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})  # 5321
-    crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
+    elif bug_type == 'api_specific':
+        # TODO: remove
+        # crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})  # 5321
+        crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
 
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
@@ -71,7 +72,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     binary_full_path_with_func_tracer = runtime.compile_llvm6(work_dir, bc_full_path_with_func_tracer, logger)
 
     # run function tracer to generate function trace
-    func_trace = runtime.run(work_dir, driver, binary_full_path_with_func_tracer, test_list, logger)
+    runtime.run(work_dir, driver, binary_full_path_with_func_tracer, test_list, logger)
     func_trace = open("/tmp/run_info", 'r').readlines()
     func_list = process_func_trace(func_trace, crash_info)
     # logger.debug("function trace" + str(func_list))
@@ -128,7 +129,7 @@ if __name__ == '__main__':
                         help='the type of the crash/vulnerability(supported type: '+BugType.list()+')', required=True)
 
     parser.add_argument('-n', '--binary-name', dest='binary_name', type=str, nargs=1,
-                        help='the binary name', required=False)
+                        help='the binary name', required=True)
 
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose',
                         help='show debug information', required=False)

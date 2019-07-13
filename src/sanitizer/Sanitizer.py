@@ -54,7 +54,7 @@ class BufferOverflowSanitizer(Sanitizer):
         return crash_info
 
     def parse_crash_info(self):
-        f= open("/tmp/cfc.out","r")
+        f= open("/tmp/cfc.out", "r")
         line = f.readline()
         loc_cfc = line.split("#")
         assert (len(loc_cfc) == 2)
@@ -62,7 +62,7 @@ class BufferOverflowSanitizer(Sanitizer):
         location = loc_cfc[0]
         path_func_lineno = location.split(":")
         assert len(path_func_lineno) == 3
-        line_no = path_func_lineno[2]
+        line_no = int(path_func_lineno[2])
         function_name = path_func_lineno[1]
 
         file_path = path_func_lineno[0].replace("../", "")
@@ -72,7 +72,7 @@ class BufferOverflowSanitizer(Sanitizer):
 
         cfc = loc_cfc[1]
         start = cfc.find("(")
-        end = cfc.find(")")
+        end = cfc.rfind(")")
         assert (start < end)
         cfc = cfc[start+1:end]
 
