@@ -22,7 +22,7 @@ then
 elif [ $compile_type == 'lowfat' ];
 then
     compiler=${LOWFAT_CLANG}
-    cflags="$cflags -fsanitize=integer-divide-by-zero -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-symbolize -lstlimpl"
+    cflags="$cflags -fsanitize=integer-divide-by-zero -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-no-replace-globals -mllvm -lowfat-symbolize -lstlimpl"
 fi
 
 CC=$compiler ../configure --disable-nls CFLAGS="$cflags"
