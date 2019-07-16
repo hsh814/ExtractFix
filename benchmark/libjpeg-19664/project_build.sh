@@ -1,15 +1,15 @@
 #!/bin/bash
 compile_type=$1
 
-subject=tiffcp
+subject=tiffcrop
 current_dir="$( cd "$(dirname "$0")" ; pwd -P )"
 
 cd project/klee
 export LLVM_COMPILER=clang
-make -j32 # &> /dev/null
+make -j32 &> /dev/null
 
 # copy target to root dir
-cp tools/${subject} ../
+cp tools/tiffcrop ../
 
 if [ $compile_type == 'to_bc' ];
 then
@@ -21,7 +21,7 @@ then
 
     cd ../..
     # copy target bc to root dir
-    cp klee/tools/${subject}.bc .
+    cp klee/tools/tiffcrop.bc .
 fi
 
 cd ..
