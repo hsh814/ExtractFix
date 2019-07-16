@@ -41,7 +41,7 @@ if [ x"$HAVE_Z3" = "xno" ]; then
 	Z3_PYTHON_PATH="$EUSOLVER_ROOT"/thirdparty/z3/build/python
 else
 	echo "Using provided z3 paths"
-	if python3 -c "import sys; sys.path.append('"$Z3_PYTHON_PATH"'); import z3"; then
+	if python3 -c "import sys; import z3"; then
 		echo "Found z3 python bits"
 	else
 		echo "Did not find z3 python bits or z3 python bits can't find libz3.so..."

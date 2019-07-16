@@ -24,4 +24,4 @@
 
 (check-synth)
 
-(sketch (- (- (- x2 x0) x1) 3))
+(sketch f (- (- (- x2 x0) x1) 3))

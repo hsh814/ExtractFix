@@ -347,7 +347,7 @@ def make_solver(file_sexp):
             file_sexp
             ) = benchmark_tuple
     sketch = sketch_parser.extract_sketch(file_sexp)
-    # print(sketch, sketch_expression)
+    print(sketch, sketch_expression)
 
     assert len(theories) == 1
     theory = theories[0]
@@ -457,6 +457,7 @@ def find_grammar_anamolies():
 
 if __name__ == "__main__":
     import sys
-    benchmark_files = sys.argv[1:]
+    #benchmark_files = sys.argv[1:]
+    benchmark_files = ["test.sl"]
     test_make_solver(benchmark_files)
     # find_grammar_anamolies()
