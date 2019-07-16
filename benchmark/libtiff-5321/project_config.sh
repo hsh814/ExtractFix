@@ -6,6 +6,7 @@ current_dir=`pwd`
 #git clone https://github.com/vadz/libtiff.git project
 cd project
 #git checkout d9783e4
+sed -i '992s/s = 0/s/' tools/tiffcrop.c
 
 # create build diretory and config
 rm -rf klee

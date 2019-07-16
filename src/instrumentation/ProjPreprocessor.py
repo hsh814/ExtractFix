@@ -38,7 +38,7 @@ def __preprocess(project_base, lib=False, globalize=False, logger=logging):
     # TODO: configure fisrt
     # configure the project to generate the full headers
     # check the configure file exists
-    assert os.path.isfile(project_base + "/configure")
+    # assert os.path.isfile(project_base + "/configure")
 
     if os.path.exists(callee_tmp_file):
         os.remove(callee_tmp_file)
