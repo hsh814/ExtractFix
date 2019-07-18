@@ -91,15 +91,16 @@ def synthesis(task):
     soft_list = []
     for function_name, function_tree in task.function_tree_list.items():
         function_tree.get_structure_constraint(hard_list, soft_list)
-        function_info = task.function_list[function_name]
-        arg_list = function_info.arg_list
-        symbolic_input1 = common.get_new_symbolic_input(arg_list)
-        symbolic_input2 = common.get_new_symbolic_input(arg_list)
+        function_tree.get_heuristic_constraint(hard_list, soft_list)
+        #function_info = task.function_list[function_name]
+        #arg_list = function_info.arg_list
+        #symbolic_input1 = common.get_new_symbolic_input(arg_list)
+        #symbolic_input2 = common.get_new_symbolic_input(arg_list)
         #hard_list = []
         #print(symbolic_input1)
         #print(symbolic_input2)
-        hard_list.append(function_tree.get_o(symbolic_input1, hard_list) !=
-                         function_tree.get_o(symbolic_input2, hard_list))
+        #hard_list.append(function_tree.get_o(symbolic_input1, hard_list) !=
+        #                 function_tree.get_o(symbolic_input2, hard_list))
         #pp.pprint(hard_list)
     #input()
     solver = z3.Solver()
@@ -120,7 +121,8 @@ def synthesis(task):
                 model = solver.model()
                 function_result_list = {}
                 for function_name, function_tree in task.function_tree_list.items():
-                    function_result_list[function_name] = function_tree.root.parse_output(model)
+                    #print("parse", function_name)
+                    function_result_list[function_name] = function_tree.root.node_parse_output(model)
                 solver.pop()
                 break
             unsat_core = solver.unsat_core()
@@ -139,6 +141,7 @@ def synthesis(task):
 
         solver.push()
         constraint_list = []
+        #print(function_result_list)
         for constraint in task.constraint:
             constraint_list.append(_parse_constraint_with_function(constraint, function_result_list, task))
         solver.add(z3.Not(z3.And(constraint_list)))

@@ -6,7 +6,7 @@ from synthesis.solver import synthesis
 from util import common
 
 if __name__ == "__main__":
-    sys.argv = [None, "test3.sl"]
+    sys.argv = [None, "test4.sl"]
     file_name = sys.argv[1]
     synthesis_task = task.SynthesisTask(file_name)
     function_tree_list = {}
