@@ -25,6 +25,10 @@ To define ```JPEG_SUPPORT```  in the configuration:
 sudo apt-get install libjpeg-dev
 ```
 
+**Libjpeg**
+```
+sudo apt install nasm
+```
 
 ### Installation
 1. Clone Crash-free-fix and its submodules
