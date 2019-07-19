@@ -58,3 +58,18 @@ def get_new_symbolic_input(input_list):
         variable_type = var.type
         inp[variable_name] = new_variable(variable_type)
     return inp
+
+def parse_input_from_model(arg_list, symbolic_inp, model):
+    inp = {}
+    for var_info in arg_list:
+        symbolic_var = symbolic_inp[var_info.name]
+        if model[symbolic_var] is not None:
+            if var_info.type == "Int":
+                inp[var_info.name] = model[symbolic_var].as_long()
+            elif var_info.type == "Bool":
+                inp[var_info.name] = z3.is_true(model[symbolic_var])
+            else:
+                assert False
+        else:
+            inp[var_info.name] = get_random(var_info.type)
+    return inp

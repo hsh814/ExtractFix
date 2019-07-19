@@ -17,7 +17,7 @@
 (declare-var s Int)
 (declare-var spp Int)
 
-(constraint (=> (f s spp) (and (< s spp) (< s 8))))
+(constraint (=> (= (f s spp) false) (and (< s spp) (< s 8))))
 
 (check-synth)
 

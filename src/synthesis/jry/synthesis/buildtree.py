@@ -252,3 +252,6 @@ class FunctionTree:
             #print(symbolic_input2)
             soft_list.append(self.get_o(symbolic_input1, hard_list) !=
                              self.get_o(symbolic_input2, hard_list))
+
+    def parse_output(self, model):
+        return self.root.node_parse_output(model)
