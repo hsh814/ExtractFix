@@ -8,8 +8,7 @@
                  3
                  4
                  (+ Start Start)
-                 (- Start Start)
-                 (ite StartBool Start Start)))
+                 (- Start Start)))
      (StartBool Bool ((and StartBool StartBool)
                       (or  StartBool StartBool)
                       (not StartBool)
