@@ -1,169 +1,192 @@
 from synthesis import buildtree
 from parser import task
-from util import common, operators
+from util import common, operators, synthesis
 import z3
+import config
 import pprint as pp
 
-def _parse_constraint(constraint, parsed_list, task, inp, hard_list):
-    if type(constraint) == tuple:
-        assert constraint[0] == "Int"
-        return int(constraint[1])
-    if type(constraint) == str:
-        assert constraint in task.variable_list
-        if constraint in inp:
-            return inp[constraint]
-        return common.get_random(task.variable_list[constraint].type)
-    if type(constraint) == list:
-        operator = constraint[0]
-        if operator in task.function_list.keys():
-            function_tree = task.function_tree_list[operator]
-            function_info = task.function_list[operator]
-            arg = list(map(lambda x: _parse_constraint(x, parsed_list, task, inp, hard_list),
-                           constraint[1:]))
-            id = operator + str(arg)
-            if id in parsed_list:
-                return parsed_list[id]
-            return_variable = common.new_variable(function_info.return_type)
-            function_inp = {}
-            for (i, var) in enumerate(function_info.arg_list):
-                function_inp[var.name] = arg[i]
-            #for (i, var) in function_info.arg_table.items():
-            #    function_inp[var.name] = arg[i]
-            function_tree.get_io_constraint(function_inp, return_variable, hard_list)
-            parsed_list[id] = return_variable
-            return return_variable
-        elif operator in operators.string2z3:
-            arg = list(map(lambda x: _parse_constraint(x, parsed_list, task, inp, hard_list),
-                           constraint[1:]))
-            return operators.string2z3[operator](arg)
+class Solver:
+    def solve(self, task):
+        assert False
+
+class SyntaxSolver(Solver):
+    def solve(self, task):
+        hard_list = []
+        soft_list = []
+        for function_name, function_tree in task.function_tree_list.items():
+            function_tree.get_structure_constraint(hard_list, soft_list)
+            function_tree.get_heuristic_constraint(hard_list, soft_list)
+        solver = z3.Solver()
+        solver.set(unsat_core=True)
+        step = 0
+        all_result = []
+        while True:
+            step += 1
+            while True:
+                solver.push()
+                for (pos, constraint) in enumerate(hard_list):
+                    solver.assert_and_track(constraint, "hard" + str(pos))
+                for (pos, constraint) in enumerate(soft_list):
+                    solver.assert_and_track(constraint, "soft" + str(pos))
+                result = solver.check()
+                if result == z3.sat:
+                    model = solver.model()
+                    function_result_list = {}
+                    for function_name, function_tree in task.function_tree_list.items():
+                        function_result_list[function_name] = function_tree.parse_output(model)
+                    solver.pop()
+                    break
+                unsat_core = solver.unsat_core()
+                solver.pop()
+                relax_list = []
+                for i in range(len(soft_list)):
+                    if z3.Bool("soft" + str(i)) in unsat_core:
+                        relax_var = common.new_variable("Bool")
+                        relax_list.append(relax_var)
+                        soft_list[i] = z3.Or(soft_list[i], relax_var)
+                if len(relax_list) == 0:
+                    return all_result
+                common.build_only_one(relax_list, hard_list)
+
+            solver.push()
+            constraint_list = []
+            for constraint in task.constraint:
+                constraint_list.append(synthesis.parse_constraint_with_function(constraint, function_result_list, task))
+            solver.add(z3.Not(z3.And(constraint_list)))
+            result = solver.check()
+            if result == z3.unsat:
+                solver.pop()
+                all_result.append(function_result_list)
+                #print("find", function_result_list)
+                if len(all_result) >= config.result_num:
+                    return all_result
+                #hard_list.extend(soft_list)
+                #soft_list = []
+                function_constraint_list = []
+                for function_name, function_info in task.function_list.items():
+                    function_tree = task.function_tree_list[function_name]
+                    current_expression = function_result_list[function_name]
+                    inp = common.get_new_symbolic_input(function_info.arg_list)
+                    function_constraint_list.append(function_tree.get_o(inp, hard_list) !=
+                                                    synthesis.parse_function_with_input(current_expression, inp))
+                hard_list.append(z3.Or(function_constraint_list))
+                continue
+
+            model = solver.model()
+            point = {}
+            for (name, var) in task.variable_list.items():
+                result = model[var.z3_var]
+                if result is None:
+                    point[name] = common.get_random(var.type)
+                elif var.type == "Int":
+                    point[name] = result.as_long()
+                elif var.type == "Bool":
+                    point[name] = z3.is_true(result)
+            synthesis.parse_constraint_with_input(task, point, hard_list)
+            solver.pop()
+
+class SemanticsSolver(Solver):
+    def _better_cons(self, standard, oup1, oup2, return_type):
+        if return_type == "Bool":
+            return (standard == oup1) and (standard != oup2)
+        elif return_type == "Int":
+            return z3.If(standard < oup1, oup1 - standard, standard - oup1) < \
+                   z3.If(standard < oup2, oup2 - standard, standard - oup2)
         else:
             assert False
-    assert False
 
-def _parse_function_with_input(expression, inp):
-    #print("_parse_function_with_input", expression)
-    if type(expression) == tuple:
-        assert expression[0] == "Int"
-        return int(expression[1])
-    if type(expression) == str:
-        assert expression in inp
-        return inp[expression]
-    if type(expression) == list:
-        operator = expression[0]
-        arg = list(map(lambda x: _parse_function_with_input(x, inp), expression[1:]))
-        return operators.string2z3[operator](arg)
-    assert False
-
-def _parse_constraint_with_function(constraint, function_list, task):
-    #print("_parse_constraint_with_function", constraint)
-    if type(constraint) == tuple:
-        assert constraint[0] == "Int"
-        return int(constraint[1])
-    if type(constraint) == str:
-        #(task.variable_list)
-        assert constraint in task.variable_list
-        return task.variable_list[constraint].z3_var
-    if type(constraint) == list:
-        operator = constraint[0]
-        arg = list(map(lambda x: _parse_constraint_with_function(x, function_list, task),
-                       constraint[1:]))
-        if operator in task.function_list.keys():
-            function_info = task.function_list[operator]
-            function_value = function_list[operator]
-            function_arg = {}
-            for (i, var) in enumerate(function_info.arg_list):
-                function_arg[var.name] = arg[i]
-            return _parse_function_with_input(function_value, function_arg)
-        else:
-            return operators.string2z3[operator](arg)
-    assert False
-
-def parse_constraint_with_input(task, inp, hard_list):
-    constraints = task.constraint
-    parsed_list = {}
-    constraint_list = []
-    for constraint in constraints:
-        constraint_list.append(_parse_constraint(constraint, parsed_list, task, inp, hard_list))
-    hard_list.append(z3.And(constraint_list))
-
-def synthesis(task):
-    hard_list = []
-    soft_list = []
-    for function_name, function_tree in task.function_tree_list.items():
-        function_tree.get_structure_constraint(hard_list, soft_list)
-        function_info = task.function_list[function_name]
-        arg_list = function_info.arg_list
-        symbolic_input1 = common.get_new_symbolic_input(arg_list)
-        symbolic_input2 = common.get_new_symbolic_input(arg_list)
-        #hard_list = []
-        #print(symbolic_input1)
-        #print(symbolic_input2)
-        hard_list.append(function_tree.get_o(symbolic_input1, hard_list) !=
-                         function_tree.get_o(symbolic_input2, hard_list))
-        #pp.pprint(hard_list)
-    #input()
-    solver = z3.Solver()
-    solver.set(unsat_core=True)
-    step = 0
-    while True:
-        step += 1
+    def _get_new_candidate(self, task, candidate_list):
+        solver = z3.Solver()
+        hard_list = []
+        soft_list = []
+        for function_name, function_info in task.function_list.items():
+            function_tree = task.function_tree_list[function_name]
+            function_tree.get_structure_constraint(hard_list, soft_list)
+            soft_list = []
+            function_tree.get_heuristic_constraint(hard_list, soft_list)
+            hard_list.extend(soft_list)
+        symbol_input_list = []
+        for candidate in candidate_list:
+            oup_list = []
+            current_input = {}
+            for function_name, function_expr in candidate.items():
+                function_info = task.function_list[function_name]
+                function_tree = task.function_tree_list[function_name]
+                symbolic_inp = common.get_new_symbolic_input(function_info.arg_list)
+                current_input[function_name] = symbolic_inp
+                oup1 = function_tree.get_o(symbolic_inp, hard_list)
+                oup2 = synthesis.parse_function_with_input(function_expr, symbolic_inp)
+                standard = synthesis.parse_function_with_input(function_info.sketch, symbolic_inp)
+                oup_list.append(self._better_cons(standard, oup1, oup2, function_info.return_type))
+            #print(oup_list)
+            hard_list.append(z3.Or(oup_list))
+            symbol_input_list.append(current_input)
+        solver.add(z3.And(hard_list))
+        checker = z3.Solver()
         while True:
             solver.push()
-            for (pos, constraint) in enumerate(hard_list):
-                solver.assert_and_track(constraint, "hard" + str(pos))
-            for (pos, constraint) in enumerate(soft_list):
-                solver.assert_and_track(constraint, "soft" + str(pos))
-            #print("start solve")
             result = solver.check()
-            #print("end solve")
-            if result == z3.sat:
-                model = solver.model()
-                function_result_list = {}
-                for function_name, function_tree in task.function_tree_list.items():
-                    function_result_list[function_name] = function_tree.root.parse_output(model)
+            if result == z3.unsat:
                 solver.pop()
-                break
-            unsat_core = solver.unsat_core()
-            #print("unsat", unsat_core)
+                return None
+            model = solver.model()
             solver.pop()
-            relax_list = []
-            for i in range(len(soft_list)):
-                if z3.Bool("soft" + str(i)) in unsat_core:
-                    relax_var = common.new_variable("Bool")
-                    relax_list.append(relax_var)
-                    soft_list[i] = z3.Or(soft_list[i], relax_var)
-            if len(relax_list) == 0:
-                return -1
-            common.build_only_one(relax_list, hard_list)
-            #print("add cost")
+            function_result = {}
+            for function_name, function_tree in task.function_tree_list.items():
+                function_result[function_name] = function_tree.parse_output(model)
+            for (i, candidate) in enumerate(candidate_list):
+                flag = False
+                symbolic_inputs = symbol_input_list[i]
+                for function_name, function_info in task.function_list.items():
+                    inp = common.parse_input_from_model(function_info.arg_list,
+                                                        symbolic_inputs[function_name], model)
+                    oup2 = synthesis.parse_function_with_input(candidate[function_name], inp, False)
+                    oup1 = synthesis.parse_function_with_input(function_result[function_name], inp, False)
+                    standard = synthesis.parse_function_with_input(function_info.sketch, inp, False)
+                    if function_info.return_type == "Bool":
+                        if oup1 == standard and oup2 != standard:
+                            flag = True
+                    else:
+                        assert function_info.return_type == "Int"
+                        if abs(oup1 - standard) < abs(oup2 - standard):
+                            flag = True
+                assert flag
+            checker.push()
+            constraint_list = []
+            for constraint in task.constraint:
+                constraint_list.append(synthesis.parse_constraint_with_function(
+                    constraint, function_result, task))
+            checker.add(z3.Not(z3.And(constraint_list)))
+            result = checker.check()
+            if result == z3.unsat:
+                checker.pop()
+                return function_result
+            model = checker.model()
+            checker.pop()
+            point = {}
+            for (name, var) in task.variable_list.items():
+                result = model[var.z3_var]
+                if result is None:
+                    point[name] = common.get_random(var.type)
+                elif var.type == "Int":
+                    point[name] = result.as_long()
+                elif var.type == "Bool":
+                    point[name] = z3.is_true(result)
+            print("new point", point)
+            print(function_result)
+            hard_list = []
+            synthesis.parse_constraint_with_input(task, point, hard_list)
+            solver.add(z3.And(hard_list))
 
-        solver.push()
-        constraint_list = []
-        for constraint in task.constraint:
-            constraint_list.append(_parse_constraint_with_function(constraint, function_result_list, task))
-        solver.add(z3.Not(z3.And(constraint_list)))
-        #print("step", step)
-        #print(function_result_list)
-        #pp.pprint(constraint_list)
-        #print(solver)
-        #input()
-        result = solver.check()
-        if result == z3.unsat:
-            solver.pop()
-            task.set_result(function_result_list)
-            return 0
-        model = solver.model()
-        point = {}
-        for (name, var) in task.variable_list.items():
-            result = model[var.z3_var]
-            if result is None:
-                point[name] = common.get_random(var.type)
-            elif var.type == "Int":
-                point[name] = result.as_long()
-            elif var.type == "Bool":
-                point[name] = z3.is_true(result)
-        #print("counterexample", model)
-        #print(point)
-        #input()
-        parse_constraint_with_input(task, point, hard_list)
-        solver.pop()
+    def solve(self, task):
+        config.result_num = 1
+        pre_solver = SyntaxSolver()
+        candidate_list = pre_solver.solve(task)
+        assert len(candidate_list) == 1
+        print("first", candidate_list[0])
+        while True:
+            new_candidate = self._get_new_candidate(task, candidate_list)
+            if new_candidate is None:
+                return candidate_list
+            print("new candidate:", new_candidate)
+            candidate_list.append(new_candidate)
