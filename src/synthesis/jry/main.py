@@ -3,11 +3,11 @@ sys.path.append("/Users/pro/Desktop/work/2019S/z3/build/python")
 from parser import task
 from synthesis.buildtree import FunctionTree
 from synthesis import solver
-from filter import trivial
+from filter import trivial, correctside
 from util import common
 
 if __name__ == "__main__":
-    sys.argv = [None, "test2.sl"]
+    sys.argv = [None, "test3.sl"]
     file_name = sys.argv[1]
     synthesis_task = task.SynthesisTask(file_name)
     function_tree_list = {}
@@ -18,5 +18,5 @@ if __name__ == "__main__":
     synthesizer = solver.SyntaxSolver()
     candidates = synthesizer.solve(synthesis_task)
     assert len(candidates) > 0
-    result = trivial.filter(candidates, synthesis_task)
+    result = correctside.filter(candidates, synthesis_task)
     print(result)

@@ -60,8 +60,8 @@ class SyntaxSolver(Solver):
                 #print("find", function_result_list)
                 if len(all_result) >= config.result_num:
                     return all_result
-                hard_list.extend(soft_list)
-                soft_list = []
+                #hard_list.extend(soft_list)
+                #soft_list = []
                 function_constraint_list = []
                 for function_name, function_info in task.function_list.items():
                     function_tree = task.function_tree_list[function_name]

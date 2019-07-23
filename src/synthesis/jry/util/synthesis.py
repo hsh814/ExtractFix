@@ -59,7 +59,7 @@ def parse_function_with_input(expression, inp, is_symbolic=True):
             return operators.string2python[operator](arg)
     assert False
 
-def parse_constraint_with_function(constraint, function_list, task):
+def parse_constraint_with_function_and_input(constraint, function_list, task, symbolic_inp):
     #print("_parse_constraint_with_function", constraint)
     if type(constraint) == tuple:
         if constraint[0] == "Int":
@@ -71,7 +71,7 @@ def parse_constraint_with_function(constraint, function_list, task):
     if type(constraint) == str:
         #(task.variable_list)
         assert constraint in task.variable_list
-        return task.variable_list[constraint].z3_var
+        return symbolic_inp[constraint]
     if type(constraint) == list:
         operator = constraint[0]
         arg = list(map(lambda x: parse_constraint_with_function(x, function_list, task),
@@ -86,6 +86,12 @@ def parse_constraint_with_function(constraint, function_list, task):
         else:
             return operators.string2z3[operator](arg)
     assert False
+
+def parse_constraint_with_function(constraint, function_list, task):
+    var_table = {}
+    for name, var in task.variable_list.items():
+        var_table[name] = var.z3_var
+    return parse_constraint_with_function_and_input(constraint, function_list, task, var_table)
 
 def parse_constraint_with_input(task, inp, hard_list):
     constraints = task.constraint

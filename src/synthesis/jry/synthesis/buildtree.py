@@ -234,6 +234,18 @@ class FunctionTree:
     def get_io_constraint(self, input, output, hard_cons_list):
         hard_cons_list.append(self.get_o(input, hard_cons_list) == output)
 
+    def _check_inp_variable_used(self, expression, name):
+        if type(expression) == str:
+            return expression == name
+        if type(expression) == tuple:
+            return False
+        if type(expression) == list:
+            for subexpr in expression[1:]:
+                if self._check_inp_variable_used(subexpr, name):
+                    return True
+            return False
+        assert False
+
     def get_heuristic_constraint(self, hard_list, soft_list):
         arg_list = self.function.arg_list
         symbolic_input1 = get_new_symbolic_input(arg_list)
@@ -250,8 +262,9 @@ class FunctionTree:
             #print("addsymbolic")
             #print(symbolic_input1)
             #print(symbolic_input2)
-            hard_list.append(self.get_o(symbolic_input1, hard_list) !=
-                             self.get_o(symbolic_input2, hard_list))
+            if self._check_inp_variable_used(self.function.sketch, arg_info.name):
+                hard_list.append(self.get_o(symbolic_input1, hard_list) !=
+                                 self.get_o(symbolic_input2, hard_list))
 
     def parse_output(self, model):
         return self.root.node_parse_output(model)
