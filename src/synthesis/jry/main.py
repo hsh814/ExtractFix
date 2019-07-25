@@ -4,12 +4,13 @@ from parser import task
 from synthesis.buildtree import FunctionTree
 from synthesis import solver
 from filter import trivial, correctside
+from translator import trans
 from util import common
 
 if __name__ == "__main__":
-    sys.argv = [None, "test4.sl"]
-    file_name = sys.argv[1]
-    synthesis_task = task.SynthesisTask(file_name)
+    sys.argv = [None, "test2.txt"]
+    trans.trans(sys.argv[1])
+    synthesis_task = task.SynthesisTask("mid.sl")
     function_tree_list = {}
     for function_name, function_info in synthesis_task.function_list.items():
         function_tree = FunctionTree(function_info)

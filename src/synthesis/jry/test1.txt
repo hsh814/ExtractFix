@@ -1,0 +1,14 @@
+(Or
+    (Not
+        (And
+            (Sge x0 1)
+            (Sge x1 2)
+        )
+    )
+    (Sge y 3)
+)
+
+
+int y=(x0+x1-1)
+
+
