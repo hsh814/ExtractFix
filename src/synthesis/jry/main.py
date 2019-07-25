@@ -3,7 +3,7 @@ sys.path.append("/Users/pro/Desktop/work/2019S/z3/build/python")
 from parser import task
 from synthesis.buildtree import FunctionTree
 from synthesis import solver
-from filter import trivial, correctside
+from filter import trivial, correctside, condition
 from translator import trans
 from util import common
 
@@ -19,7 +19,9 @@ if __name__ == "__main__":
     synthesizer = solver.SyntaxSolver()
     candidates = synthesizer.solve(synthesis_task)
     assert len(candidates) > 0
-    result = correctside.filter(candidates, synthesis_task)
+    result = condition.filter(candidates, synthesis_task)
+    if result is None:
+        result = correctside.filter(candidates, synthesis_task)
     #TODO: support multiline fix
     assert len(result) == 1
     patch = None

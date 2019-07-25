@@ -43,7 +43,6 @@ def _get_all_function_call(expr, inp, is_symbolic, candidate, result_list, task)
                 return operators.string2python[operator](arg)
     assert False
 
-
 def filter(candidates, task):
     while True:
         #print("filter")
