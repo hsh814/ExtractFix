@@ -99,7 +99,50 @@ def _parse_assign(expr):
     expr[0].set_type(expr[2].type)
     return ExprInfo(["=", expr[0], expr[2]], "Assign")
 
+def _pre_process(sketch_str):
+    sketch = sketch_str.strip()
+    if sketch[-1] in '{;': sketch = sketch[:-1]
+    # if (condition) then {
+    if sketch[:2] == "if":
+        sketch = sketch[2:]
+        left = sketch.index('(')
+        count = 0
+        right = -1
+        for i in range(left, len(sketch)):
+            if sketch[i] == '(':
+                count += 1
+            elif sketch[i] == ')':
+                count -= 1
+                if count == 0:
+                    right = i
+                    break
+        assert right >= 0
+        sketch = sketch[left+1: right]
+    elif sketch[:3] == "for":
+        first = sketch.index(';')
+        second = sketch.index(';', first + 1)
+        if second == first + 1:
+            return "true"
+        else:
+            return sketch[first + 1: second]
+    elif sketch[:5] == "while":
+        left = sketch.index("(")
+        count = 0
+        right = -1
+        for i in range(left, len(sketch)):
+            if sketch[i] == "(":
+                count += 1
+            elif sketch[i] == ")":
+                count -= 1
+                if count == 0:
+                    right = i
+                    break
+        assert right >= 0
+        return sketch[left+1: right]
+    return sketch
+
 def parse_sketch(sketch_str):
+    sketch_str = _pre_process(sketch_str)
     decimal = Regex(r'-?0|-?[0-9]\d*').setParseAction(lambda x: ExprInfo(int(x[0]), "Int"))
     var = Regex(r'(?!(true|false))[_a-zA-Z][_a-zA-Z0-9]*').setParseAction(lambda x: ExprInfo(x[0]))
     LPAR, RPAR = "()"
@@ -135,7 +178,11 @@ def parse_sketch(sketch_str):
     return result
 
 if __name__ == "__main__":
-    tests = ["int x = 1+3",
+    tests = ["while (((x > y) && (y < z)) || !w) {",
+             "for (;;) {",
+             "for (int i = 1; i <= 10 && y > z; i += 5)",
+             "if (x > 10) then x = 1;",
+             "int x = 1+3",
              "!!!!!x",
              "bool x = (y+z) != 0|| !!!(!(!!(!(w))))",
              "(((x)))",

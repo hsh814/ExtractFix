@@ -1,0 +1,5 @@
+(And (Slt s spp) (Slt s 8))
+
+for (int s = 0; s < spp; ++s) {
+
+

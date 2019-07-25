@@ -8,7 +8,7 @@ from translator import trans
 from util import common
 
 if __name__ == "__main__":
-    sys.argv = [None, "test2.txt"]
+    sys.argv = [None, "test3.txt"]
     trans.trans(sys.argv[1])
     synthesis_task = task.SynthesisTask("mid.sl")
     function_tree_list = {}
