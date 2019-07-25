@@ -8,8 +8,8 @@ from translator import trans
 from util import common
 
 if __name__ == "__main__":
-    sys.argv = [None, "test3.txt"]
-    trans.trans(sys.argv[1])
+    sys.argv = [None, "test2.txt"]
+    left_sketch, right_sketch = trans.trans(sys.argv[1])
     synthesis_task = task.SynthesisTask("mid.sl")
     function_tree_list = {}
     for function_name, function_info in synthesis_task.function_list.items():
@@ -20,4 +20,9 @@ if __name__ == "__main__":
     candidates = synthesizer.solve(synthesis_task)
     assert len(candidates) > 0
     result = correctside.filter(candidates, synthesis_task)
-    print(result)
+    #TODO: support multiline fix
+    assert len(result) == 1
+    patch = None
+    for name, res in result.items():
+        patch = trans.trans_to_cpp(res)
+    print(left_sketch + patch + right_sketch)

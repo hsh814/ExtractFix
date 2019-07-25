@@ -1,5 +1,5 @@
 (And (Slt s spp) (Slt s 8))
 
-s<spp
+if (s<spp) then {
 
 

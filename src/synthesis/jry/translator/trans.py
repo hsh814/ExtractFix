@@ -140,7 +140,7 @@ def trans(file):
     all_inp = list(filter(lambda x: len(x) > 0, all_inp))
     #TODO support multiline fix
     #print(all_inp[-1])
-    sketch = sketch_translator.parse_sketch(all_inp[-1])
+    left_sketch, sketch, right_sketch = sketch_translator.parse_sketch(all_inp[-1])
     constraint = _parse_constraint(" ".join(all_inp[:-1]))
     variable_table = {}
     constant_table = {"Int": [], "Bool": []}
@@ -156,6 +156,7 @@ def trans(file):
         sketch = sketch.expr[2]
         assert func.type is not None
         assert func.expr in variable_table
+        left_sketch += func.expr + " = "
         del variable_table[func.expr]
     else:
         func = ExprInfo("condition", "Bool")
@@ -180,3 +181,26 @@ def trans(file):
     #pp.pprint(sl_result)
     with open("mid.sl", "w") as oup:
         oup.write("\n".join(list(map(lambda x: _list_to_str(x), sl_result))))
+    return left_sketch, right_sketch
+
+def trans_to_cpp(patch):
+    if type(patch) == list:
+        operator = operators.z32cpp[patch[0]]
+        arg = list(map(lambda x: trans_to_cpp(x), patch[1:]))
+        if len(arg) == 1:
+            return operator + "(" + arg[0] + ")"
+        elif len(arg) == 2:
+            return "(" + arg[0] + operator + arg[1] + ")"
+        else:
+            assert False
+    elif type(patch) == str:
+        return patch
+    elif type(patch) == tuple:
+        if patch[0] == "Int":
+            return str(patch[1])
+        elif patch[0] == "Bool":
+            return "true" if patch[1] else "false"
+        else:
+            assert False
+    else:
+        assert False

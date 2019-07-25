@@ -16,6 +16,7 @@ class ExprInfo:
     def __init__(self, expr, expr_type=None):
         self.type = expr_type
         self.expr = expr
+        self.extra_left = ""
 
     def set_type(self, expr_type):
         if expr_type is None:
@@ -88,6 +89,7 @@ def _parse_left_first(expr):
 
 def _parse_assign(expr):
     assert len(expr) == 3 or len(expr) == 4
+    extra_left = ""
     if len(expr) == 4:
         if expr[0] == "int":
             expr[3].set_type("Int")
@@ -95,16 +97,17 @@ def _parse_assign(expr):
             expr[3].set_type("Bool")
         else:
             assert False
+        extra_left = expr[0] + " "
         expr = expr[1:]
     expr[0].set_type(expr[2].type)
-    return ExprInfo(["=", expr[0], expr[2]], "Assign")
+    res = ExprInfo(["=", expr[0], expr[2]], "Assign")
+    res.extra_left = extra_left
+    return res
 
 def _pre_process(sketch_str):
     sketch = sketch_str.strip()
-    if sketch[-1] in '{;': sketch = sketch[:-1]
     # if (condition) then {
     if sketch[:2] == "if":
-        sketch = sketch[2:]
         left = sketch.index('(')
         count = 0
         right = -1
@@ -117,14 +120,14 @@ def _pre_process(sketch_str):
                     right = i
                     break
         assert right >= 0
-        sketch = sketch[left+1: right]
+        return sketch[:left+1], sketch[left+1: right], sketch[right:]
     elif sketch[:3] == "for":
         first = sketch.index(';')
         second = sketch.index(';', first + 1)
         if second == first + 1:
-            return "true"
+            return sketch[:first+1], "true", sketch[second:]
         else:
-            return sketch[first + 1: second]
+            return sketch[:first+1], sketch[first+1: second], sketch[second:]
     elif sketch[:5] == "while":
         left = sketch.index("(")
         count = 0
@@ -138,11 +141,13 @@ def _pre_process(sketch_str):
                     right = i
                     break
         assert right >= 0
-        return sketch[left+1: right]
-    return sketch
+        return sketch[:left+1], sketch[left+1: right], sketch[right:]
+    if sketch[-1] == ';':
+        return "", sketch[:-1], ';'
+    return "", sketch, ""
 
 def parse_sketch(sketch_str):
-    sketch_str = _pre_process(sketch_str)
+    left, sketch_str, right = _pre_process(sketch_str)
     decimal = Regex(r'-?0|-?[0-9]\d*').setParseAction(lambda x: ExprInfo(int(x[0]), "Int"))
     var = Regex(r'(?!(true|false))[_a-zA-Z][_a-zA-Z0-9]*').setParseAction(lambda x: ExprInfo(x[0]))
     LPAR, RPAR = "()"
@@ -173,9 +178,10 @@ def parse_sketch(sketch_str):
               (Optional(bool_type) + var + op_assign + bool_A).setParseAction(_parse_assign))
     expr = bool_A ^ assign
     result = expr.parseString(sketch_str, parseAll=True)[0]
+    left += result.extra_left
     if result.type is None:
         result.set_type("Bool")
-    return result
+    return left, result, right
 
 if __name__ == "__main__":
     tests = ["while (((x > y) && (y < z)) || !w) {",
@@ -192,5 +198,5 @@ if __name__ == "__main__":
              "result = x*y+z-w*10+k",
              "x=y"]
     for test in tests:
-        result = parse_sketch(test)
-        print(str(result.type) + ":", result)
+        left, result, right = parse_sketch(test)
+        print(str(result.type) + ":", result, left, right)
