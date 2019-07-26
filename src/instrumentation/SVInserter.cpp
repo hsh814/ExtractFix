@@ -185,10 +185,10 @@ int main(int argc, const char **argv) {
             string fileName = op.getSourcePathList()[0];
             ofstream srcFile;
             srcFile.open(fileName);
-            if(output.str().find("#include<klee/klee.h>")== string::npos)
-                srcFile << "#include<klee/klee.h>\n" << output.str();
-            else
-                srcFile << output.str();
+            //if(output.str().find("#include<klee/klee.h>")== string::npos)
+            //    srcFile << "#include<klee/klee.h>\n" << output.str();
+            //else
+            srcFile << output.str();
             srcFile.close();
         }
     }
