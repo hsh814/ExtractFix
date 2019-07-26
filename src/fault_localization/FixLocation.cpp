@@ -361,6 +361,11 @@ set<FixEntry> determineVarsToSymbolize(std::set<SeenEntry> seen, map<Value*, str
     for (FixEntry fixEntry: pFixLocs){
         for(map<Value*, struct variable>::iterator it=value2Meta.begin(); it!=value2Meta.end(); ++it){
             if (it->second.declareLineNo < fixEntry.lineNo){
+
+                // skip unsupported type
+                if (!it->first->getType()->isIntegerTy())
+                    continue;
+
                 if(std::find(vars.begin(), vars.end(), it->second.varName) != vars.end())
                     fixEntry.varsToSymbolize.push_back(it->second);
                 else{
