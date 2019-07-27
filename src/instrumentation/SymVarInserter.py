@@ -35,7 +35,12 @@ class SymVarInserter:
 
     def insert_sym_vars(self, fix_loc):
 
-        self.insert_cfc()
+        crash_line_no = self.crash_info.get_line_no() - 1
+        cfc = self.crash_info.get_cfc()
+        crash_file = os.path.join(self.project_dir,
+                                  self.crash_info.file_path,
+                                  self.crash_info.file_name)
+        self.insert_cfc(crash_line_no, cfc, crash_file)
 
         # TODO: insert symbolic variable at fix location, FixLoc is defined in Global
         file_name = fix_loc.get_file_name()
@@ -61,19 +66,16 @@ class SymVarInserter:
                   " -- " + tail + \
                   " 2> /dev/null"
 
-        self.logger.debug("compile command: " + command)
+        self.logger.debug("insert symbolic variable command: " + command)
         try:
             subprocess.check_output(command, cwd=self.project_dir, shell=True)
         except subprocess.CalledProcessError as e:
             self.logger.fatal("error, command line: " + command)
             exit(1)
+        self.insert_header(fix_file)
+        self.insert_header(crash_file)
 
-    def insert_cfc(self):
-        crash_line_no = self.crash_info.get_line_no() - 1
-        cfc = self.crash_info.get_cfc()
-        crash_file = os.path.join(self.project_dir,
-                                  self.crash_info.file_path,
-                                  self.crash_info.file_name)
+    def insert_cfc(self, crash_line_no, cfc, crash_file):
         self.save_original_file(crash_file)
 
         include_options = get_import_head_folders(self.project_dir, system_header)
@@ -88,12 +90,20 @@ class SymVarInserter:
                   " -- " + tail + \
                   " 2> /dev/null"
 
-        self.logger.debug("compile command: " + command)
+        self.logger.debug("insert klee assume command: " + command)
         try:
             subprocess.check_output(command, cwd=self.project_dir, shell=True)
         except subprocess.CalledProcessError as e:
-            self.logger.fatal("compile error, command line: " + command)
+            self.logger.fatal("error, command line: " + command)
             exit(1)
+
+    def insert_header(self, target_file):
+        """ insert klee.h headers """
+        with open(target_file, 'r+') as f:
+            content = f.read()
+            if "#include<klee/klee.h>" not in content:
+                f.seek(0, 0)
+                f.write("#include<klee/klee.h>\n" + content)
 
     def save_original_file(self, file_name):
         self.logger.debug("save original file " + file_name)

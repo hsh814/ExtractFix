@@ -80,6 +80,7 @@ class SynthesisTask:
                 continue
             else:
                 assert False
+        #print(self.constraint)
 
     def set_function_tree(self, function_tree_list):
         self.function_tree_list = function_tree_list

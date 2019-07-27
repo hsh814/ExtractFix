@@ -20,6 +20,7 @@
 
 import os, subprocess
 from Global import *
+import re
 
 
 class FaultLocalization:
@@ -52,10 +53,14 @@ class FaultLocalization:
         binary_name = self.binary_name+".bc"
         lib_fix_loc = os.path.join(self.dir_path, "libLLVMFixLoc.so")
 
+        # split the crash-free constraints as single variables
+        crash_vars = re.sub(r'\W', " ", self.crash_info.cfc).split()
+        crash_vars_list = " ".join(str(item) for item in crash_vars)
         command = "opt -S -load=" + lib_fix_loc + " -fixloc " + binary_name + \
                   " -fun " + self.crash_info.function_name + \
                   " -no " + str(self.crash_info.line_no) + \
                   " -lf " + "\"" + func_list + "\"" + \
+                  " -cv " + "\"" + crash_vars_list + "\"" + \
                   " > /dev/null"
 
         self.logger.debug("run FixLoc pass command: " + command)

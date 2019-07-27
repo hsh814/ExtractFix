@@ -79,6 +79,10 @@ static cl::opt<int> targetNO("no",
                              cl::desc("Specify the crash line number"),
                              cl::value_desc("LINE_NUMBER"));
 
+static cl::opt<string> crashRelatedVars("cv",
+                                        cl::desc("Specify the variables that are related to the crash"),
+                                        cl::value_desc("V1 V2 ... Vn"));
+
 static cl::opt<bool> verbose("v",
                              cl::desc("debug mode"));
 
@@ -141,7 +145,7 @@ static void recordFixLoc(const char* message, const string funcName,
                          const Instruction* inst, set<FixEntry> &pFixLocs){
     const DebugLoc debugLoc = inst->getDebugLoc();
     // the instruction does not contain debug location
-    if (!debugLoc && verbose){
+    if (!debugLoc){
         fprintf(stderr, "debug information is not found.");;
     }
     int lineNo = debugLoc.getLine();
@@ -341,11 +345,46 @@ set<FixEntry> determineVarsToSymbolize(std::set<SeenEntry> seen, map<Value*, str
             value2Meta.erase(it->first);
         }
     }
+
+    // TODO: check crash function
+    vector<string> vars;
+    size_t pos = 0;
+    std::string token;
+    while ((pos = crashRelatedVars.find(" ")) != std::string::npos) {
+        token = crashRelatedVars.substr(0, pos);
+        vars.push_back(token);
+        crashRelatedVars.erase(0, pos + 1);
+    }
+    vars.push_back(crashRelatedVars);
+
     set<FixEntry> newPFixLocs;
     for (FixEntry fixEntry: pFixLocs){
         for(map<Value*, struct variable>::iterator it=value2Meta.begin(); it!=value2Meta.end(); ++it){
             if (it->second.declareLineNo < fixEntry.lineNo){
-                fixEntry.varsToSymbolize.push_back(it->second);
+
+                // skip unsupported type
+                if (!it->first->getType()->isIntegerTy())
+                    continue;
+
+                if(std::find(vars.begin(), vars.end(), it->second.varName) != vars.end())
+                    fixEntry.varsToSymbolize.push_back(it->second);
+                else{
+                    // the variable is used in the fix line
+                    for (auto *User: it->first->users())
+                    {
+                        if (auto* u = dyn_cast<Instruction>(User)) {
+                            const DebugLoc debugLoc = u->getDebugLoc();
+                            if (!debugLoc) {
+                                continue;
+                            }
+                            int lineNo = debugLoc.getLine();
+                            if (lineNo == fixEntry.lineNo){
+                                fixEntry.varsToSymbolize.push_back(it->second);
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
         newPFixLocs.insert(fixEntry);
@@ -375,7 +414,7 @@ static void suggestFixLocs(Module &M)
         Function *F = M.getFunction(current_function);
 
         std::map<Value*, struct variable> value2Meta = collect_local_variable_full_metadata(*F);
-        //for (std::map<Value*, struct variable>::iterator it=value2Meta.begin(); it!=value2Meta.end(); ++it){
+        //for (std::map<Value*, struct variable>::iterator it=aEvalue2Meta.begin(); it!=value2Meta.end(); ++it){
         //    errs() << *(it->first) << " => " << it->second.varName << " => " << it->second.declareLineNo << '\n';
         //}
 
@@ -402,10 +441,8 @@ static void suggestFixLocs(Module &M)
                         int lineNo = debugLoc.getLine();
                         if (lineNo != targetNO)
                             continue;
-        		if (verbose){
-            			fprintf(stderr, "\nFound target line\n");
-	                        inst->print(errs());
-			}
+
+                        // inst->print(errs());
                         findFixLocsDataFlow(DT, Seen, pFixLocs, inst, inst, F);
                     }
                 }
