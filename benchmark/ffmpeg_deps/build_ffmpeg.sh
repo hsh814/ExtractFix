@@ -1,24 +1,24 @@
 
 
-#wget https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.0.tar.bz2
-#git clone --depth 1 git://anongit.freedesktop.org/mesa/drm
-#git clone --depth 1 https://github.com/mstorsjo/fdk-aac.git
-#https://sourceforge.net/projects/lame/files/latest/download lame.tar.gz
-#git clone --depth 1 git://anongit.freedesktop.org/xorg/lib/libXext
-#git clone --depth 1 git://anongit.freedesktop.org/git/xorg/lib/libXfixes
-#git clone --depth 1 https://github.com/01org/libva
-#git clone --depth 1 -b libvdpau-1.2 git://people.freedesktop.org/~aplattner/libvdpau
-#git clone --depth 1 https://chromium.googlesource.com/webm/libvpx
-#git clone --depth 1 git://git.xiph.org/ogg.git
-#git clone --depth 1 git://git.xiph.org/opus.git
-#git clone --depth 1 git://git.xiph.org/theora.git
-#git clone --depth 1 git://git.xiph.org/vorbis.git
-#git clone --depth 1 git://git.videolan.org/git/x264.git
-#hg clone https://bitbucket.org/multicoreware/x265
+wget https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.0.tar.bz2
+git clone --depth 1 git://anongit.freedesktop.org/mesa/drm
+git clone --depth 1 https://github.com/mstorsjo/fdk-aac.git
+https://sourceforge.net/projects/lame/files/latest/download lame.tar.gz
+git clone --depth 1 git://anongit.freedesktop.org/xorg/lib/libXext
+git clone --depth 1 git://anongit.freedesktop.org/git/xorg/lib/libXfixes
+git clone --depth 1 https://github.com/01org/libva
+git clone --depth 1 -b libvdpau-1.2 git://people.freedesktop.org/~aplattner/libvdpau
+git clone --depth 1 https://chromium.googlesource.com/webm/libvpx
+git clone --depth 1 git://git.xiph.org/ogg.git
+git clone --depth 1 git://git.xiph.org/opus.git
+git clone --depth 1 git://git.xiph.org/theora.git
+git clone --depth 1 git://git.xiph.org/vorbis.git
+git clone --depth 1 git://git.videolan.org/git/x264.git
+hg clone https://bitbucket.org/multicoreware/x265
 
 CC=clang
 CXX=clang++
-SRC=/home/gaoxiang/project/crash-free-fix/benchmark/ffmpeg_deps
+SRC=/home/nightwish/workspace/bug_repair/crash-free-fix/benchmark/ffmpeg_deps
 
 export FFMPEG_DEPS_PATH=$SRC/libs
 mkdir -p $FFMPEG_DEPS_PATH

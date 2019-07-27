@@ -22,7 +22,7 @@ pip install enum argparse coloredlogs
 **LibTiff**
 To define ```JPEG_SUPPORT```  in the configuration:
 ```
-sudo apt-get install libjpeg-dev
+sudo apt-get install libjpeg-dev libjbig-dev 
 ```
 
 **Libjpeg**
