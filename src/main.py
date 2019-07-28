@@ -38,6 +38,17 @@ def clear_log():
     subprocess.call(command, cwd="/tmp", shell=True)
 
 
+def save_log(project_path, source_path):
+    log_path = os.path.join(source_path, "logs")
+    if os.path.isdir(log_path):
+        command = "mkdir " + log_path
+        subprocess.call(command, shell=True)
+    command = "mv /tmp/run_info /tmp/callee.txt /tmp/fixlocations.json /tmp/callee.txt /tmp/cfc.out " + \
+              project_path + "/constraints.txt " + log_path
+    subprocess.call(command, shell=True)
+    logger.debug("logs are save to directory " + log_path)
+
+
 def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     clear_log()  # clear the log of last run
     work_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
@@ -95,6 +106,8 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         # restore original source code
         sym_var_inserter.mv_original_file_back()
         break
+
+    save_log(project_path, source_path)
 
 
 def process_func_trace(func_trace, crash_info):
