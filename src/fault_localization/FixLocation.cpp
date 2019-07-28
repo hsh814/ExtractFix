@@ -363,8 +363,8 @@ set<FixEntry> determineVarsToSymbolize(std::set<SeenEntry> seen, map<Value*, str
             if (it->second.declareLineNo < fixEntry.lineNo){
 
                 // skip unsupported type
-                if (!it->first->getType()->isIntegerTy())
-                    continue;
+//                if (!(it->first->getType()->isIntegerTy()))
+//                    continue;
 
                 if(std::find(vars.begin(), vars.end(), it->second.varName) != vars.end())
                     fixEntry.varsToSymbolize.push_back(it->second);
