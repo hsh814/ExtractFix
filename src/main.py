@@ -90,7 +90,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         # compile the program to bc file and optimize it using mem2reg
         runtime.project_build(work_dir, logger, "to_bc")
         binary_full_path = os.path.join(project_path, binary_name+".bc")
-        runtime.run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger)
+        runtime.run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger, fix_loc)
 
         # restore original source code
         sym_var_inserter.mv_original_file_back()
