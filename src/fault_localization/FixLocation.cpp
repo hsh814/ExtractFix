@@ -360,11 +360,15 @@ set<FixEntry> determineVarsToSymbolize(std::set<SeenEntry> seen, map<Value*, str
     set<FixEntry> newPFixLocs;
     for (FixEntry fixEntry: pFixLocs){
         for(map<Value*, struct variable>::iterator it=value2Meta.begin(); it!=value2Meta.end(); ++it){
-            if (it->second.declareLineNo < fixEntry.lineNo){
+            if (it->second.declareLineNo <= fixEntry.lineNo){
 
                 // skip unsupported type
-//                if (!(it->first->getType()->isIntegerTy()))
-//                    continue;
+                Type* T = it->first->getType();
+                if (PointerType* PT = dyn_cast<PointerType>(T)) {
+                    if (!PT->getPointerElementType()->isIntegerTy()) {
+                        continue;
+                    }
+                }
 
                 if(std::find(vars.begin(), vars.end(), it->second.varName) != vars.end())
                     fixEntry.varsToSymbolize.push_back(it->second);
@@ -485,6 +489,8 @@ static void writeToJsonFile(string &fileName, set<FixEntry> &fixLocs){
         // inst->print(errs());
 
         Json::Value sysVars;
+        if (fixEntry.varsToSymbolize.size() <= 0)
+            continue;
         for (int i = 0; i<fixEntry.varsToSymbolize.size(); i++){
             sysVars.append(fixEntry.varsToSymbolize[i].varName);
         }

@@ -32,19 +32,23 @@ from fault_localization import FaultLocalization
 import runtime
 import Global
 
+index = 0
+
 
 def clear_log():
     command = "rm -rf /tmp/run_info /tmp/callee.txt /tmp/fixlocations.json /tmp/callee.txt /tmp/cfc.out"
     subprocess.call(command, cwd="/tmp", shell=True)
 
 
-def save_log(project_path, source_path):
-    log_path = os.path.join(source_path, "logs")
-    if os.path.isdir(log_path):
+def save_log(source_path, file_path, logs):
+    log_path = os.path.join(source_path, logs)
+
+    if not os.path.isdir(log_path):
         command = "mkdir " + log_path
         subprocess.call(command, shell=True)
-    command = "mv /tmp/run_info /tmp/callee.txt /tmp/fixlocations.json /tmp/callee.txt /tmp/cfc.out " + \
-              project_path + "/constraints.txt " + log_path
+
+    command = "mv " + " " + file_path + " " + log_path
+    logger.debug("saving log" + command)
     subprocess.call(command, shell=True)
     logger.debug("logs are save to directory " + log_path)
 
@@ -69,7 +73,6 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
     elif bug_type == 'api_specific':
         # TODO: remove
-        # crash_info = Global.CrashInfo("tools", "tiffcrop.c", "readSeparateTilesIntoBuffer", 995, {})  # 5321
         crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
 
     runtime.project_config(work_dir, logger, "to_bc")
@@ -92,8 +95,13 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     fl = FaultLocalization.FaultLocalization(project_path, binary_name, func_list, crash_info, logger)
     potential_funcs = fl.get_potential_fault_locs()
 
+    save_log(source_path, "/tmp/run_info", "logs")
+    save_log(source_path, "/tmp/callee.txt", "logs")
+    save_log(source_path, "/tmp/fixlocations.json", "logs")
+    save_log(source_path, "/tmp/cfc.out", "logs")
+
     # adjust line number because of include<klee/klee.h> injection in the following instrumentation
-    crash_info.line_no += 1
+    crash_info.line_no += 2
     for fix_loc in potential_funcs:
         sym_var_inserter = SymVarInserter.SymVarInserter(project_path, logger, crash_info)
         # insert symbolic variables at source code level
@@ -105,9 +113,11 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
         # restore original source code
         sym_var_inserter.mv_original_file_back()
+        
+        global index
+        save_log(source_path, work_dir + "/constraints.txt", "result"+str(index))
+        index += 1
         break
-
-    save_log(project_path, source_path)
 
 
 def process_func_trace(func_trace, crash_info):

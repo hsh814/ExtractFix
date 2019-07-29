@@ -1,0 +1,25 @@
+IN >>>> main
+: Success
+IN >>>> makegamtab
+: Invalid argument
+OUT >>>> makegamtab
+: Invalid argument
+IN >>>> convert
+: No such file or directory
+IN >>>> checksignature
+: No such file or directory
+OUT >>>> checksignature
+: No such file or directory
+IN >>>> readscreen
+: No such file or directory
+OUT >>>> readscreen
+: No such file or directory
+IN >>>> readextension
+: No such file or directory
+short read from file ./test_case (Bad address)
+OUT >>>> readextension
+: Bad address
+OUT >>>> convert
+: Bad address
+OUT >>>> main
+: Bad address
