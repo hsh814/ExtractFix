@@ -90,7 +90,7 @@ public:
                 varToInsert += "klee_make_symbolic(&" + var + ", sizeof(" + var + "), \"" + var + "\");";
         } else if (mission == "cfc" && loc == curLineNo){
             isInsertPoint = true;
-            varToInsert = "klee_assume(" + args + ");";
+            varToInsert = "klee_assume(" + args + ");\n";
         }
 
         if (isInsertPoint){

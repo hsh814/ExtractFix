@@ -134,7 +134,7 @@ private:
 public:
     LibReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {
         Libs["fabs"] = "fabs_fk";
-        Func2Signature["fabs"] = "double fabs_fk(double x);";
+        Func2Signature["fabs"] = "double fabs_fk(double x){return x>0? x: -x;}";
     }
 
     bool VisitExpr(Expr *e){
@@ -161,7 +161,7 @@ public:
                             return true;
                         }
 
-                        string declStmt = "/*LOWFAT_D*/ extern " + Func2Signature[callee] + "\n";
+                        string declStmt = "/*LOWFAT_D*/" + Func2Signature[callee] + "\n";
                         TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
                         FuncDeclInserted = true;
                     }

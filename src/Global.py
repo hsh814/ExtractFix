@@ -32,7 +32,7 @@ class BugType(Enum):
 
     @staticmethod
     def list():
-        return "[buffer_overflow, integer_overflow, null_pointer, assertion_failure]"
+        return "[buffer_overflow, integer_overflow, null_pointer, assertion_failure, divide_by_0, api_specific]"
 
 
 class CrashInfo:

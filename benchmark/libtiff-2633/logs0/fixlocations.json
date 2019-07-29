@@ -1,0 +1,45 @@
+[
+   [
+      "control flow",
+      "../../tools/tiff2ps.c",
+      "PSDataColorContig",
+      2465,
+      [ "breaklen", "nc" ]
+   ],
+   [
+      "control flow",
+      "../../tools/tiff2ps.c",
+      "PSDataColorContig",
+      2461,
+      [ "nc" ]
+   ],
+   [
+      "control flow",
+      "../../tools/tiff2ps.c",
+      "PSDataColorContig",
+      2451,
+      [ "row", "nc" ]
+   ],
+   [
+      "control flow",
+      "../../tools/tiff2ps.c",
+      "PSDataColorContig",
+      2450,
+      [ "row", "h", "nc" ]
+   ],
+   [
+      "control flow",
+      "../../tools/tiff2ps.c",
+      "PSDataColorContig",
+      2446,
+      [ "nc" ]
+   ],
+   [
+      "data flow",
+      "../../tools/tiff2ps.c",
+      "PSDataColorContig",
+      2439,
+      [ "breaklen", "es", "nc" ]
+   ]
+]
+

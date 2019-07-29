@@ -7,6 +7,8 @@ current_dir=`pwd`
 cd project
 #git checkout d9783e4
 
+sed -i '352s/while ((count = getc(infile)) && count <= 255)/count = getc(infile);\nwhile (count <= 255)/' tools/gif2tiff.c
+
 # create build diretory and config
 rm -rf klee
 mkdir klee

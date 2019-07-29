@@ -35,20 +35,21 @@ class SymVarInserter:
 
     def insert_sym_vars(self, fix_loc):
 
-        crash_line_no = self.crash_info.get_line_no() - 1
+        crash_line_no = self.crash_info.get_line_no() - 2
         cfc = self.crash_info.get_cfc()
         crash_file = os.path.join(self.project_dir,
                                   self.crash_info.file_path,
                                   self.crash_info.file_name)
-        self.insert_cfc(crash_line_no, cfc, crash_file)
+        self.save_original_file(crash_file)
 
         # TODO: insert symbolic variable at fix location, FixLoc is defined in Global
         file_name = fix_loc.get_file_name()
         file_name = file_name.replace("../", "")
-
         fix_file = os.path.join(self.project_dir,
                                 file_name)
-        self.save_original_file(file_name)
+        self.save_original_file(fix_file)
+
+        self.insert_cfc(crash_line_no, cfc, crash_file)
 
         fix_line_no = fix_loc.get_line_no()
         sys_vars = fix_loc.get_sym_vars()
@@ -76,8 +77,6 @@ class SymVarInserter:
         self.insert_header(crash_file)
 
     def insert_cfc(self, crash_line_no, cfc, crash_file):
-        self.save_original_file(crash_file)
-
         include_options = get_import_head_folders(self.project_dir, system_header)
 
         inserter = os.path.join(self.cur_dir, "SVInserter")
