@@ -112,7 +112,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         runtime.run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger, fix_loc)
 
         # restore original source code
-        sym_var_inserter.mv_original_file_back()
+        # sym_var_inserter.mv_original_file_back()
         
         global index
         save_log(source_path, work_dir + "/constraints.txt", "result"+str(index))
