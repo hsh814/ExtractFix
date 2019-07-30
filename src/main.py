@@ -73,7 +73,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
     elif bug_type == 'api_specific':
         # TODO: remove
-        crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
+        crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 354, "count>=0")  # 3186
 
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg

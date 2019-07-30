@@ -150,8 +150,9 @@ public:
 
                     FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(call->getLocStart());
 
-                    llvm::errs()<<"Replace "<<FullLocation.getFileEntry()->getName()<<" # "<<
-                                FullLocation.getLineNumber()<<" "<<callee<<" ==>> "<<target<<"\n";
+                    if(FullLocation.getFileEntry())
+                        llvm::errs()<<"Replace "<<FullLocation.getFileEntry()->getName()<<" # "<<
+                                    FullLocation.getLineNumber()<<" "<<callee<<" ==>> "<<target<<"\n";
 
                     if(!FuncDeclInserted){
                         const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);

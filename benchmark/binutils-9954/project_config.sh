@@ -3,7 +3,7 @@ compile_type=$1
 
 current_dir=`pwd`
 # get project and set to corresponding version
-# git clone https://gitlab.gnome.org/GNOME/libxml2/ project
+#git clone https://github.com/vadz/libtiff.git project
 cd project
 #git checkout d9783e4
 
@@ -12,9 +12,7 @@ rm -rf klee
 mkdir klee
 cd klee
 
-sed -i 's/xmlMallocAtomic/malloc/g' ../parser.c
-
-cflags="-g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__ -lkleeRuntest -lkleeBasic -I${current_dir}/project_specific_lib/ -lhook -L${current_dir}/project_specific_lib/ -Wno-everything"
+cflags="-g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__ -lkleeRuntest -lkleeBasic -Wno-everything"
 
 if [ $compile_type == 'to_bc' ];
 then
@@ -23,12 +21,11 @@ then
     compiler=wllvm
 elif [ $compile_type == 'lowfat' ];
 then
-    compiler=${LOWFAT_CLANG}-NR
+    compiler=${LOWFAT_CLANG}
     cflags="$cflags -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-symbolize -lstlimpl"
 fi
 
-CC=$compiler CFLAGS="$cflags" ../autogen.sh --enable-static
+CC=$compiler ../configure --disable-nls CFLAGS="$cflags"
 
 cd ../..
-
 

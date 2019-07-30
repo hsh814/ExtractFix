@@ -14,7 +14,11 @@ def get_import_head_folders(project_base, system_header=[]):
             cpp_args.append(opt)
 
     for header in headers:
-        opt = '-I' + header[0:header.rfind('/')]
+        if '/include/' in header:
+            opt = '-I' + header[0 : header.rfind('/include/') + len('/include/')]
+        else:
+            opt = '-I' + header[0:header.rfind('/')]
+
         if opt not in cpp_args:
             cpp_args.append(opt)
 
