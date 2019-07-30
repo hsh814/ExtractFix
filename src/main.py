@@ -55,7 +55,11 @@ def save_log(source_path, file_path, logs):
 
 def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     clear_log()  # clear the log of last run
-    work_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
+    source_file = open(source_path, "r")
+    proj_name = source_file.name
+    proj_name = proj_name[proj_name.rfind('/') + 1 : ]
+
+    work_dir = "/tmp/proj_work_dir_" + proj_name + "_" + str(int(time.time()))
     logger.info("project working directory " + work_dir)
     subprocess.check_output(['cp', '-r', str(source_path), work_dir])
     project_path = os.path.join(work_dir, "project")
