@@ -18,7 +18,7 @@ def preprocess_single_file(mission, f, tail, logger):
 
     #if 'xmalloc.c' in f:
     # if 'parser.c' in f:
-    logger.debug('Executing >>>>>>>> '+cmd)
+    # logger.debug('replacing command: '+cmd)
 
     try:
         (status, output) = commands.getstatusoutput(cmd)
