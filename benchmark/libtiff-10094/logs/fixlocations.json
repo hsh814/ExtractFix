@@ -3,13 +3,6 @@
       "data flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
-      2905,
-      [ "bufferoffset" ]
-   ],
-   [
-      "data flow",
-      "../../tools/tiff2pdf.c",
-      "t2p_readwrite_pdf_image_tile",
       2903,
       [ "count", "bufferoffset" ]
    ],

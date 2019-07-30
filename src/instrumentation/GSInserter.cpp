@@ -46,15 +46,15 @@ using namespace std;
 static llvm::cl::OptionCategory PreprocessorCategory("Target Project Preprocessor");
 
 static llvm::cl::opt<string> MissionType("mission",
-                                                llvm::cl::desc("Mission type:\n"
-                                                               "\t-replace-size : replace malloc size with global variable\n"
-                                                               "\t-declare-size : declare the replaced global variable\n"
-                                                               "\t-replace-flib : replace the float libc usages"),
-                                                llvm::cl::Required, llvm::cl::cat(PreprocessorCategory));
+                                         llvm::cl::desc("Mission type:\n"
+                                                        "\t-replace-size : replace malloc size with global variable\n"
+                                                        "\t-declare-size : declare the replaced global variable\n"
+                                                        "\t-replace-flib : replace the float libc usages"),
+                                         llvm::cl::Required, llvm::cl::cat(PreprocessorCategory));
 
 static llvm::cl::opt<string> CalleeOutFile("callee-out",
-                                              llvm::cl::desc("the file to record callees of malloc"),
-                                              llvm::cl::Optional, llvm::cl::cat(PreprocessorCategory));
+                                           llvm::cl::desc("the file to record callees of malloc"),
+                                           llvm::cl::Optional, llvm::cl::cat(PreprocessorCategory));
 
 static const string GL_PREFIX = "LOWFAT_GLOBAL_MS_";
 
@@ -134,7 +134,7 @@ private:
 public:
     LibReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {
         Libs["fabs"] = "fabs_fk";
-        Func2Signature["fabs"] = "double fabs_fk(double x){return x>0? x: -x;}";
+        Func2Signature["fabs"] = "static double fabs_fk(double x){return x>0? x:-x;}";
     }
 
     bool VisitExpr(Expr *e){
@@ -149,9 +149,9 @@ public:
                     TheRewriter.ReplaceText(call->getLocStart(), callee.length(), target);
 
                     FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(call->getLocStart());
-
-                    llvm::errs()<<"Replace "<<FullLocation.getFileEntry()->getName()<<" # "<<
-                                FullLocation.getLineNumber()<<" "<<callee<<" ==>> "<<target<<"\n";
+                    if(FullLocation.getFileEntry())
+                        llvm::errs()<<"Replace "<<FullLocation.getFileEntry()->getName()<<" # "<<
+                                    FullLocation.getLineNumber()<<" "<<callee<<" ==>> "<<target<<"\n";
 
                     if(!FuncDeclInserted){
                         const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
@@ -161,7 +161,7 @@ public:
                             return true;
                         }
 
-                        string declStmt = "/*LOWFAT_D*/" + Func2Signature[callee] + "\n";
+                        string declStmt = "/*LOWFAT_D*/ " + Func2Signature[callee] + "\n";
                         TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
                         FuncDeclInserted = true;
                     }
@@ -190,15 +190,12 @@ private:
     map<string, vector<string>> Func2Global;
     map<string, string> Func2InsertedCaller;
 public:
-    GSDeclVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C)
-    {
+    GSDeclVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {
 
         ifstream calleeFile(CalleeOutFile);
-        if (calleeFile.is_open())
-        {
+        if (calleeFile.is_open()) {
             string line;
-            while (getline (calleeFile, line))
-            {
+            while (getline (calleeFile, line)) {
                 int idx = line.find(' ');
                 assert(idx > 0);
                 string fileName = line.substr(0, idx);
@@ -210,9 +207,9 @@ public:
                 string mtd = remaining.substr(0, idx);
                 string gv = remaining.substr(idx + 1);
 
-                if(Func2Global.find(mtd) == Func2Global.end())
+                if(Func2Global.find(mtd) == Func2Global.end()){
                     Func2Global[mtd] = vector<string>();
-
+                }
 
                 Func2Global[mtd].push_back(gv);
 
@@ -223,14 +220,11 @@ public:
         //llvm::errs()<<Func2Global["xmalloc"]<<"  \n";
     }
 
-    bool VisitExpr(Expr *e)
-    {
-        if (isa<CallExpr>(e))
-        {
+    bool VisitExpr(Expr *e){
+        if (isa<CallExpr>(e)) {
             CallExpr *call = cast<CallExpr>(e);
 
-            if(call->getDirectCallee())
-            {
+            if(call->getDirectCallee()){
 
                 SourceManager &SM = Compiler.getSourceManager();
 
@@ -244,13 +238,11 @@ public:
 
                 // the function to be called contains malloc
                 // and the called function has not been inserted yet
-                if (Func2Global.count(callee) > 0)
-                {
+                if (Func2Global.count(callee) > 0) {
 
                     const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
 
-                    if(!currFunc)
-                    {
+                    if(!currFunc) {
                         call->dump();
                         llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
                         return true;
@@ -258,10 +250,9 @@ public:
 
                     string funcName = currFunc->getName().str();
 
-                    if(Func2InsertedCaller.find(funcName) == Func2InsertedCaller.end())
-                    {
-                        for(string globalName : Func2Global[callee])
-                        {
+                    if(Func2InsertedCaller.find(funcName) == Func2InsertedCaller.end()){
+
+                        for(string globalName : Func2Global[callee]){
 
                             string declStmt = "/*M_SIZE_G*/ extern size_t " + globalName + ";\n";
                             TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
@@ -280,11 +271,10 @@ public:
         return true;
     }
 
-    bool VisitFunctionDecl(FunctionDecl *f)
-    {
-        if (!(f->hasBody()) || f->isInlined())
+    bool VisitFunctionDecl(FunctionDecl *f) {
+        if (!(f->hasBody()) || f->isInlined()) {
             return false;
-
+        }
         //f->dump();
         return true;
     }
@@ -300,123 +290,97 @@ private:
 public:
     GSReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {}
 
-    /**
-     *  For malloc(s), change to malloc(({GV = s; GV}))
-     *  For realloc(ptr, s), change to realloc(ptr, ({GV = s; GV}))
-     *  For calloc(n, s), change to calloc(1, ({GV = n * s; GV}))
-     *
-     * */
-    bool VisitExpr(Expr *e)
-    {
+    bool VisitExpr(Expr *e){
         if (isa<CallExpr>(e)) {
             CallExpr *call = cast<CallExpr>(e);
             //call->dump();
 
-            FunctionDecl* callee = call->getDirectCallee();
-            if(!callee)
-                return true;
+            if(call->getDirectCallee()){
+                if(call->getDirectCallee()->getName() == "malloc"){
 
-            if(callee->getName() == "malloc" || callee->getName() == "realloc" || callee->getName() == "calloc")
-            {
-                SourceManager &SM = Compiler.getSourceManager();
-                LangOptions &OPT = Compiler.getLangOpts();
+                    SourceManager &SM = Compiler.getSourceManager();
+                    LangOptions &OPT = Compiler.getLangOpts();
 
-                Expr* size;
-                if(callee->getName() == "malloc")
-                    size = call->getArg(0);
-                else
-                    size = call->getArg(1);
+                    Expr* size = call->getArg(0);
 
-                const string oriSize = Lexer::getSourceText(CharSourceRange::getTokenRange(size->getSourceRange()), SM, OPT);
+                    const string oriSize = Lexer::getSourceText(CharSourceRange::getTokenRange(size->getSourceRange()), SM, OPT);
 
-                const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
-                if(!currFunc) {
-                    call->dump();
-                    llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
-                    return true;
-                }
+                    const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
 
-                //currFunc->dump();
-                string oriFileName(SM.getFileEntryForID(SM.getMainFileID())->getName().str());
-                string fileName = SM.getFileEntryForID(SM.getMainFileID())->getName().str();
-                int idx = fileName.rfind("/");
-                if(idx > 0) {
-                    fileName = fileName.substr(idx + 1);
-                }
-                idx = fileName.find(".");
-                if(idx > 0) {
-                    fileName = fileName.substr(0, idx);
-                }
-                replace(fileName.begin(), fileName.end(), '-', '_');
-
-                FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(call->getLocStart());
-
-                string funcName = currFunc->getName().str();
-
-                string globalName = GL_PREFIX + "_" + fileName + "_" + funcName + "_" +
-                        std::to_string(FullLocation.getSpellingLineNumber());
-
-                string newArg;
-                if (callee->getName() != "calloc")
-                    newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriSize + "; " + globalName + ";} )";
-                else {
-                    Expr* nmemb = call->getArg(0);
-                    const string oriN = Lexer::getSourceText(CharSourceRange::getTokenRange(nmemb->getSourceRange()), SM, OPT);
-                    newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriN + " * " + oriSize + "; " + globalName + ";} )";
-                }
-
-                llvm::errs()<<">>>>>>>> "<<oriFileName<<" @ "<<funcName<<"()\n";
-                if (callee->getName() == "malloc")
-                    llvm::errs()<<"\tMALLOC ARG : "<<oriSize<<" -->> "<<newArg<<"\n";
-                else if (callee->getName() == "realloc")
-                    llvm::errs()<<"\tREALLOC ARG: "<<oriSize<<" -->> "<<newArg<<"\n";
-                else
-                    llvm::errs()<<"\tCALLOC ARG : "<<oriSize<<" -->> "<<newArg<<"\n";
-                
-                //size->dump();
-                llvm::errs()<<" "<<oriSize.length()<<" "<<newArg<<"\n";
-
-                // repalce calloc(n, s) to calloc(1, s)
-                if(callee->getName() == "calloc"){
-                    Expr* nmemb = call->getArg(0);
-                    const string oriN = Lexer::getSourceText(CharSourceRange::getTokenRange(nmemb->getSourceRange()), SM, OPT);
-
-                    SourceLocation nmembStart = nmemb->getLocStart();
-                    if(nmembStart.isMacroID() ) {
-                        std::pair< SourceLocation, SourceLocation > expansionRange = TheRewriter.getSourceMgr().getImmediateExpansionRange(nmembStart);
-                        nmembStart = expansionRange.first;
+                    if(!currFunc) {
+                        call->dump();
+                        llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
+                        return true;
                     }
-                    TheRewriter.ReplaceText(nmembStart, oriN.length(), "1"); // oriSize.length()
-                }
 
-                SourceLocation sizeStart = size->getLocStart();
-                if(sizeStart.isMacroID() ) {
-                    std::pair< SourceLocation, SourceLocation > expansionRange = TheRewriter.getSourceMgr().getImmediateExpansionRange(sizeStart);
-                    sizeStart = expansionRange.first;
-                }
+                    SourceLocation callStart = call->getLocStart();
+                    if(callStart.isMacroID() ) {
+                        llvm::errs()<<"UNSUPPORT MACRO CALL START!!!\n";
+                        return true;
+                    }
 
-                TheRewriter.ReplaceText(sizeStart, oriSize.length(), newArg); // oriSize.length()
+                    SourceLocation funStart = currFunc->getLocStart();
+                    if(funStart.isMacroID() ) {
+                        llvm::errs()<<"UNSUPPORT MACRO !!!\n";
+                        return true;
+                    }
 
+                    //currFunc->dump();
+                    string oriFileName(SM.getFileEntryForID(SM.getMainFileID())->getName().str());
+                    string fileName = SM.getFileEntryForID(SM.getMainFileID())->getName().str();
+                    int idx = fileName.rfind("/");
+                    if(idx > 0) {
+                        fileName = fileName.substr(idx + 1);
+                    }
+                    idx = fileName.find(".");
+                    if(idx > 0) {
+                        fileName = fileName.substr(0, idx);
+                    }
+                    replace(fileName.begin(), fileName.end(), '-', '_');
 
-                string declStmt = "/*LOWFAT_GS*/ size_t " + globalName + ";\n";
-                TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
+                    FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(call->getLocStart());
 
-                if(funcName != "main"){
-                    string calleeLine = oriFileName + " " + funcName + " " + globalName + "\n";
-                    llvm::errs()<<"ADDING INTO CALLEE FILE: "<<calleeLine;
-                    CalleeFileLines.push_back(calleeLine);
+                    string funcName = currFunc->getName().str();
+
+                    string globalName = GL_PREFIX + "_" + fileName + "_" + funcName + "_" +
+                                        std::to_string(FullLocation.getSpellingLineNumber());
+
+                    string newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriSize + "; " + globalName + ";} )";
+
+                    llvm::errs()<<">>>>>>>> "<<oriFileName<<" @ "<<funcName<<"()\n\tMALLOC ARG: "<<oriSize<<" -->> "<<newArg<<"\n";
+
+                    //size->dump();
+                    llvm::errs()<<" "<<oriSize.length()<<" "<<newArg<<"\n";
+
+                    SourceLocation sizeStart = size->getLocStart();
+                    if(sizeStart.isMacroID() ) {
+                        std::pair< SourceLocation, SourceLocation > expansionRange = TheRewriter.getSourceMgr().getImmediateExpansionRange(sizeStart);
+                        sizeStart = expansionRange.first;
+                    }
+
+                    TheRewriter.ReplaceText(sizeStart, oriSize.length(), newArg); // oriSize.length()
+
+                    string declStmt = "/*LOWFAT_GS*/ size_t " + globalName + ";\n";
+
+                    //SourceLocation funStart = currFunc->getLocStart();
+                    TheRewriter.InsertText(funStart, declStmt, true, true);
+
+                    if(funcName != "main"){
+                        string calleeLine = oriFileName + " " + funcName + " " + globalName + "\n";
+                        llvm::errs()<<"ADDING INTO CALLEE FILE: "<<calleeLine;
+                        CalleeFileLines.push_back(calleeLine);
+                    }
                 }
             }
-
         }
 
         return true;
     }
 
-    bool VisitFunctionDecl(FunctionDecl *f)
-    {
-        if (!(f->hasBody()) || f->isInlined())
+    bool VisitFunctionDecl(FunctionDecl *f) {
+        if (!(f->hasBody()) || f->isInlined()) {
             return false;
+        }
 
         return true;
     }
@@ -428,16 +392,16 @@ class PreprocessASTConsumer : public ASTConsumer {
 public:
     PreprocessASTConsumer(Rewriter &R, CompilerInstance &Compiler) {
 
-      if(MissionType == OPT_RS ){
-          ReplaceVisitor = new GSReplaceVisitor(R, Compiler);
-      } else if (MissionType == OPT_RF) {
-          LibVisitor = new LibReplaceVisitor(R, Compiler);
-      } else if (MissionType == OPT_DS){
-          DeclVisitor = new GSDeclVisitor(R, Compiler);
-      } else {
-          llvm::errs()<<"ERROR MISSION TYPE\n";
-          abort();
-      }
+        if(MissionType == OPT_RS ){
+            ReplaceVisitor = new GSReplaceVisitor(R, Compiler);
+        } else if (MissionType == OPT_RF) {
+            LibVisitor = new LibReplaceVisitor(R, Compiler);
+        } else if (MissionType == OPT_DS){
+            DeclVisitor = new GSDeclVisitor(R, Compiler);
+        } else {
+            llvm::errs()<<"ERROR MISSION TYPE\n";
+            abort();
+        }
     }
 
     // Override the method that gets called for each parsed top-level
@@ -484,7 +448,7 @@ public:
 
 
     std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
-                                                 StringRef file) override {
+                                                   StringRef file) override {
 
         llvm::errs() << "** Creating AST consumer for: " << file << "\n";
         TheRewriter.setSourceMgr(CI.getSourceManager(), CI.getLangOpts());
@@ -523,8 +487,11 @@ static bool processOptionsSucc(){
 
 /**
  *  Usage example:
- *  ./GSInserter -mission=replace-size -callee-out="callee.txt"  /home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/lib/xmalloc.c -- -I/home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/src -I/home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/lib -I/usr/local/lib/clang/6.0.1/include
- *  ./GSInserter -mission=declare-size -callee-out="callee.txt"  /home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/src/pwd.c -- -I/home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/src -I/home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/lib -I/usr/local/lib/clang/6.0.1/include
+ *  ./GSInserter -mission=replace-size -callee-out="callee.txt"
+ *      /home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/lib/xmalloc.c
+ *      -- -I/home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/src
+ *      -I/home/nightwish/workspace/subjects/crash_free/coreutils_ig/coreutils/lib
+ *      -I/usr/local/lib/clang/6.0.1/include
  */
 int main(int argc, const char **argv) {
     CommonOptionsParser op(argc, argv, PreprocessorCategory);
@@ -541,7 +508,7 @@ int main(int argc, const char **argv) {
     int ret = Tool.run(newFrontendActionFactory<PreprocessFrontendAction>().get());
     if(ret == 0){
         for(string line : CalleeFileLines){
-            CalleeOFS<<line;
+            CalleeOFS << line;
         }
         CalleeOFS.close();
 
@@ -550,7 +517,7 @@ int main(int argc, const char **argv) {
             string fileName = op.getSourcePathList()[0];
             ofstream srcFile;
             srcFile.open(fileName);
-            srcFile<<OS.str();
+            srcFile << OS.str();
             srcFile.close();
         }
     }

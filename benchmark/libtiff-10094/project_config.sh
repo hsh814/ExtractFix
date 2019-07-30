@@ -8,8 +8,8 @@ cd project
 #git checkout d9783e4
 
 sed -i '2901s/_TIFFmemcpy(buffer, jpt, count - 2)/\/\/_TIFFmemcpy(buffer, jpt, count - 2);/' tools/tiff2pdf.c
-sed -i '2904s/table_end[0] = buffer[bufferoffset-2];/table_end[1]=buffer[bufferoffset-1];/' tools/tiff2pdf.c
-sed -i '2905s/table_end[1] = buffer[bufferoffset-1];/table_end[0]=buffer[bufferoffset-2];/' tools/tiff2pdf.c
+sed -i '2904s/table_end\[0\] = buffer\[bufferoffset-2\]/table_end[1]=buffer[bufferoffset-1]/' tools/tiff2pdf.c
+sed -i '2905s/table_end\[1\] = buffer\[bufferoffset-1\];/table_end[0]=buffer[bufferoffset-2];/' tools/tiff2pdf.c
 
 # create build diretory and config
 rm -rf klee
