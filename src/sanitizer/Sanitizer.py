@@ -70,8 +70,12 @@ class BufferOverflowSanitizer(Sanitizer):
 
         file_path = path_func_lineno[0].replace("../", "")
         index = file_path.rfind("/")
-        path = file_path[0:index]
-        file_name = file_path[index+1:]
+        if index < 0:
+            path = "."
+            file_name = file_path
+        else:
+            path = file_path[0:index]
+            file_name = file_path[index+1:]
 
         cfc = loc_cfc[1]
         start = cfc.find("(")

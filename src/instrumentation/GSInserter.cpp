@@ -70,9 +70,9 @@ static const FunctionDecl* getParentFuncDecl(ASTContext &Context, const Stmt *s)
     const Stmt& currentStmt = *s;
 
     const auto& parents  = Context.getParents(currentStmt);
-    auto it = Context.getParents(currentStmt).begin();
-    if(it == Context.getParents(currentStmt).end()){
-        llvm::errs()<< "parents not found\n";
+    auto it = parents.begin();
+    if(it == parents.end()){
+        llvm::errs()<< "parents not found "<<__BASE_FILE__<<":"<< __func__<<":"<<__LINE__<<"\n";
         s->dump();
         return nullptr;
     }
@@ -87,10 +87,12 @@ static const FunctionDecl* getParentFuncDecl(ASTContext &Context, const Stmt *s)
         } else if (const Stmt* parentStmt =  parents[0].get<Stmt>()){
             return getParentFuncDecl(Context, parentStmt);
         } else {
-            llvm::errs()<< "parents not found\n";
+            llvm::errs()<< "parents not found "<<__BASE_FILE__<<":"<< __func__<<":"<<__LINE__<<"\n";
             s->dump();
             return nullptr;
         }
+    } else {
+        return nullptr;
     }
 }
 
@@ -98,9 +100,9 @@ static const FunctionDecl* getParentFuncDecl(ASTContext &Context, const Decl *d)
     const Decl& currentDecl = *d;
 
     const auto& parents  = Context.getParents(currentDecl);
-    auto it = Context.getParents(currentDecl).begin();
-    if(it == Context.getParents(currentDecl).end()){
-        llvm::errs()<< "parents not found\n";
+    auto it = parents.begin();
+    if(it == parents.end()){
+        llvm::errs()<< "parents not found "<<__BASE_FILE__<<":"<< __func__<<":"<<__LINE__<<"\n";
         d->dump();
         return nullptr;
     }
@@ -116,10 +118,12 @@ static const FunctionDecl* getParentFuncDecl(ASTContext &Context, const Decl *d)
         } else if (const Stmt* parentStmt =  parents[0].get<Stmt>()){
             return getParentFuncDecl(Context, parentStmt);
         } else {
-            llvm::errs()<< "parents not found\n";
+            llvm::errs()<< "parents not found "<<__BASE_FILE__<<":"<< __func__<<":"<<__LINE__<<"\n";
             d->dump();
             return nullptr;
         }
+    } else {
+        return nullptr;
     }
 }
 
@@ -129,12 +133,16 @@ private:
     CompilerInstance &Compiler;
     map<string, string> Libs;
     map<string, string> Func2Signature;
-    bool FuncDeclInserted = false;
+    set<string> FuncDeclInserted;
+    FunctionDecl* CurrFunc;
 
 public:
-    LibReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {
+    LibReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C), CurrFunc(nullptr) {
         Libs["fabs"] = "fabs_fk";
         Func2Signature["fabs"] = "static double fabs_fk(double x){return x>0? x:-x;}";
+
+        Libs["floor"] = "floor_fk";
+        Func2Signature["floor"] = "static double floor_fk(double x){ int xi = (int)x; return x < xi ? xi - 1 : xi;}";
     }
 
     bool VisitExpr(Expr *e){
@@ -153,23 +161,28 @@ public:
                         llvm::errs()<<"Replace "<<FullLocation.getFileEntry()->getName()<<" # "<<
                                     FullLocation.getLineNumber()<<" "<<callee<<" ==>> "<<target<<"\n";
 
-                    if(!FuncDeclInserted){
-                        const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
-                        if(!currFunc) {
+                    if(FuncDeclInserted.find(callee) == FuncDeclInserted.end()){
+                        if(!CurrFunc) {
                             call->dump();
-                            llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
+                            llvm::errs()<<"ERROR: NULL PARENT FUNCTION "<<__BASE_FILE__<<":"<< __func__<<":"<<__LINE__<<"\n";
                             return true;
                         }
 
                         string declStmt = "/*LOWFAT_D*/ " + Func2Signature[callee] + "\n";
-                        TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
-                        FuncDeclInserted = true;
+                        TheRewriter.InsertText(CurrFunc->getLocStart(), declStmt, true, true);
+                        FuncDeclInserted.insert(callee);
                     }
 
                 }
             }
         }
 
+        return true;
+    }
+
+    bool VisitDecl(Decl *decl) {
+        if (decl->isFunctionOrFunctionTemplate())
+            CurrFunc = decl->getAsFunction();
         return true;
     }
 
@@ -189,8 +202,10 @@ private:
     CompilerInstance &Compiler;
     map<string, vector<string>> Func2Global;
     map<string, string> Func2InsertedCaller;
+    FunctionDecl* CurrFunc;
+
 public:
-    GSDeclVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {
+    GSDeclVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C), CurrFunc(nullptr) {
 
         ifstream calleeFile(CalleeOutFile);
         if (calleeFile.is_open()) {
@@ -240,22 +255,20 @@ public:
                 // and the called function has not been inserted yet
                 if (Func2Global.count(callee) > 0) {
 
-                    const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
-
-                    if(!currFunc) {
+                    if(!CurrFunc) {
                         call->dump();
-                        llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
+                        llvm::errs()<<"ERROR: NULL PARENT FUNCTION "<<__BASE_FILE__<<":"<< __func__<<":"<<__LINE__<<"\n";
                         return true;
                     }
 
-                    string funcName = currFunc->getName().str();
+                    string funcName = CurrFunc->getName().str();
 
                     if(Func2InsertedCaller.find(funcName) == Func2InsertedCaller.end()){
 
                         for(string globalName : Func2Global[callee]){
 
                             string declStmt = "/*M_SIZE_G*/ extern size_t " + globalName + ";\n";
-                            TheRewriter.InsertText(currFunc->getLocStart(), declStmt, true, true);
+                            TheRewriter.InsertText(CurrFunc->getLocStart(), declStmt, true, true);
 
                             Func2InsertedCaller[funcName] = callee;
 
@@ -268,6 +281,12 @@ public:
             }
 
         }
+        return true;
+    }
+
+    bool VisitDecl(Decl *decl) {
+        if (decl->isFunctionOrFunctionTemplate())
+            CurrFunc = decl->getAsFunction();
         return true;
     }
 
@@ -286,94 +305,106 @@ class GSReplaceVisitor : public RecursiveASTVisitor<GSReplaceVisitor> {
 private:
     Rewriter &TheRewriter;
     CompilerInstance &Compiler;
+    FunctionDecl* CurrFunc;
 
 public:
-    GSReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {}
+    GSReplaceVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C), CurrFunc(nullptr) {}
 
     bool VisitExpr(Expr *e){
-        if (isa<CallExpr>(e)) {
-            CallExpr *call = cast<CallExpr>(e);
-            //call->dump();
+        if (!isa<CallExpr>(e))
+            return true;
 
-            if(call->getDirectCallee()){
-                if(call->getDirectCallee()->getName() == "malloc"){
+        CallExpr *call = cast<CallExpr>(e);
+        //call->dump();
 
-                    SourceManager &SM = Compiler.getSourceManager();
-                    LangOptions &OPT = Compiler.getLangOpts();
+        FunctionDecl* DireCallee = call->getDirectCallee();
+        if(!DireCallee)
+            return true;
 
-                    Expr* size = call->getArg(0);
+        if(DireCallee->getName() == "malloc" || DireCallee->getName() == "realloc"){
 
-                    const string oriSize = Lexer::getSourceText(CharSourceRange::getTokenRange(size->getSourceRange()), SM, OPT);
-
-                    const FunctionDecl* currFunc = getParentFuncDecl(Compiler.getASTContext(), call);
-
-                    if(!currFunc) {
-                        call->dump();
-                        llvm::errs()<<"ERROR: NULL PARENT FUNCTION!!!\n";
-                        return true;
-                    }
-
-                    SourceLocation callStart = call->getLocStart();
-                    if(callStart.isMacroID() ) {
-                        llvm::errs()<<"UNSUPPORT MACRO CALL START!!!\n";
-                        return true;
-                    }
-
-                    SourceLocation funStart = currFunc->getLocStart();
-                    if(funStart.isMacroID() ) {
-                        llvm::errs()<<"UNSUPPORT MACRO !!!\n";
-                        return true;
-                    }
-
-                    //currFunc->dump();
-                    string oriFileName(SM.getFileEntryForID(SM.getMainFileID())->getName().str());
-                    string fileName = SM.getFileEntryForID(SM.getMainFileID())->getName().str();
-                    int idx = fileName.rfind("/");
-                    if(idx > 0) {
-                        fileName = fileName.substr(idx + 1);
-                    }
-                    idx = fileName.find(".");
-                    if(idx > 0) {
-                        fileName = fileName.substr(0, idx);
-                    }
-                    replace(fileName.begin(), fileName.end(), '-', '_');
-
-                    FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(call->getLocStart());
-
-                    string funcName = currFunc->getName().str();
-
-                    string globalName = GL_PREFIX + "_" + fileName + "_" + funcName + "_" +
-                                        std::to_string(FullLocation.getSpellingLineNumber());
-
-                    string newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriSize + "; " + globalName + ";} )";
-
-                    llvm::errs()<<">>>>>>>> "<<oriFileName<<" @ "<<funcName<<"()\n\tMALLOC ARG: "<<oriSize<<" -->> "<<newArg<<"\n";
-
-                    //size->dump();
-                    llvm::errs()<<" "<<oriSize.length()<<" "<<newArg<<"\n";
-
-                    SourceLocation sizeStart = size->getLocStart();
-                    if(sizeStart.isMacroID() ) {
-                        std::pair< SourceLocation, SourceLocation > expansionRange = TheRewriter.getSourceMgr().getImmediateExpansionRange(sizeStart);
-                        sizeStart = expansionRange.first;
-                    }
-
-                    TheRewriter.ReplaceText(sizeStart, oriSize.length(), newArg); // oriSize.length()
-
-                    string declStmt = "/*LOWFAT_GS*/ size_t " + globalName + ";\n";
-
-                    //SourceLocation funStart = currFunc->getLocStart();
-                    TheRewriter.InsertText(funStart, declStmt, true, true);
-
-                    if(funcName != "main"){
-                        string calleeLine = oriFileName + " " + funcName + " " + globalName + "\n";
-                        llvm::errs()<<"ADDING INTO CALLEE FILE: "<<calleeLine;
-                        CalleeFileLines.push_back(calleeLine);
-                    }
-                }
+            SourceLocation callStart = call->getLocStart();
+            if(callStart.isMacroID() ) {
+                llvm::errs()<<"UNSUPPORT MACRO CALL START!!!\n";
+                return true;
             }
+
+            SourceManager &SM = Compiler.getSourceManager();
+            LangOptions &OPT = Compiler.getLangOpts();
+
+            Expr* size;
+            if(DireCallee->getName() == "malloc")
+                size = call->getArg(0);
+            else if (DireCallee->getName() == "realloc")
+                size = call->getArg(1);
+
+            const string oriSize = Lexer::getSourceText(CharSourceRange::getTokenRange(size->getSourceRange()), SM, OPT);
+
+            if(!CurrFunc) {
+                llvm::errs()<<"\nERROR: NULL PARENT FUNCTION "<<__BASE_FILE__<< __func__<<":"<<__LINE__<<"\n";
+                llvm::errs()<<"AT: "<<callStart.printToString(SM)<<"\n";
+                call->dump();
+                return true;
+            }
+
+            SourceLocation funStart = CurrFunc->getLocStart();
+            if(funStart.isMacroID() ) {
+                llvm::errs()<<"UNSUPPORT MACRO FUNC !!!\n";
+                return true;
+            }
+
+            //currFunc->dump();
+            string oriFileName(SM.getFileEntryForID(SM.getMainFileID())->getName().str());
+            string fileName = SM.getFileEntryForID(SM.getMainFileID())->getName().str();
+            int idx = fileName.rfind("/");
+            if(idx > 0) {
+                fileName = fileName.substr(idx + 1);
+            }
+            idx = fileName.find(".");
+            if(idx > 0) {
+                fileName = fileName.substr(0, idx);
+            }
+            replace(fileName.begin(), fileName.end(), '-', '_');
+
+            FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(call->getLocStart());
+
+            string funcName = CurrFunc->getName().str();
+
+            string globalName = GL_PREFIX + "_" + fileName + "_" + funcName + "_" +
+                                std::to_string(FullLocation.getSpellingLineNumber());
+
+            string newArg = "( /*LOWFAT_GS*/ {" + globalName + " = " + oriSize + "; " + globalName + ";} )";
+
+            //llvm::errs()<<">>>>>>>> "<<oriFileName<<" @ "<<funcName<<"()\n\tMALLOC ARG: "<<oriSize<<" -->> "<<newArg<<"\n";
+            //size->dump();
+            //llvm::errs()<<" "<<oriSize.length()<<" "<<newArg<<"\n";
+
+            SourceLocation sizeStart = size->getLocStart();
+            if(sizeStart.isMacroID() ) {
+                std::pair< SourceLocation, SourceLocation > expansionRange = TheRewriter.getSourceMgr().getImmediateExpansionRange(sizeStart);
+                sizeStart = expansionRange.first;
+            }
+
+            TheRewriter.ReplaceText(sizeStart, oriSize.length(), newArg); // oriSize.length()
+
+            string declStmt = "/*LOWFAT_GS*/ size_t " + globalName + ";\n";
+
+            TheRewriter.InsertText(funStart, declStmt, true, true);
+
+            if(funcName != "main"){
+                string calleeLine = oriFileName + " " + funcName + " " + globalName + "\n";
+                llvm::errs()<<"ADDING INTO CALLEE FILE: "<<calleeLine;
+                CalleeFileLines.push_back(calleeLine);
+            }
+
         }
 
+        return true;
+    }
+
+    bool VisitDecl(Decl *decl) {
+        if (decl->isFunctionOrFunctionTemplate())
+            CurrFunc = decl->getAsFunction();
         return true;
     }
 
@@ -381,7 +412,7 @@ public:
         if (!(f->hasBody()) || f->isInlined()) {
             return false;
         }
-
+        //f->dump();
         return true;
     }
 };
