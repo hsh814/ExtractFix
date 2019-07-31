@@ -1,0 +1,77 @@
+IN >>>> main
+: Success
+IN >>>> set_program_name
+: Invalid argument
+OUT >>>> set_program_name
+: Invalid argument
+IN >>>> bad_cast
+: Invalid argument
+OUT >>>> bad_cast
+: Invalid argument
+IN >>>> bad_cast
+: Invalid argument
+OUT >>>> bad_cast
+: Invalid argument
+IN >>>> to_uchar
+: Invalid argument
+OUT >>>> to_uchar
+: Invalid argument
+IN >>>> parse_chunk
+: Invalid argument
+IN >>>> xdectoumax
+: Invalid argument
+IN >>>> xnumtoumax
+: Invalid argument
+IN >>>> xstrtoumax
+: Invalid argument
+OUT >>>> xstrtoumax
+: Success
+OUT >>>> xnumtoumax
+: Success
+OUT >>>> xdectoumax
+: Success
+IN >>>> xdectoumax
+: Success
+IN >>>> xnumtoumax
+: Success
+IN >>>> xstrtoumax
+: Success
+OUT >>>> xstrtoumax
+: Success
+OUT >>>> xnumtoumax
+: Success
+OUT >>>> xdectoumax
+: Success
+OUT >>>> parse_chunk
+: Success
+IN >>>> set_suffix_length
+: Success
+OUT >>>> set_suffix_length
+: Success
+IN >>>> fd_reopen
+: Success
+OUT >>>> fd_reopen
+: Success
+IN >>>> io_blksize
+: Success
+OUT >>>> io_blksize
+: Success
+IN >>>> xmalloc
+: Success
+OUT >>>> xmalloc
+: Success
+IN >>>> ptr_align
+: Success
+OUT >>>> ptr_align
+: Success
+IN >>>> input_file_size
+: Success
+IN >>>> safe_read
+: Success
+OUT >>>> safe_read
+: Success
+OUT >>>> input_file_size
+: Success
+IN >>>> bytes_chunk_extract
+: Success
+Segmentation fault (core dumped)
