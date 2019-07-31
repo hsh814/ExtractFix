@@ -57,17 +57,17 @@ static llvm::cl::opt<string> args("args",
                                  llvm::cl::desc("the variables to symbolize"),
                                  llvm::cl::Required, llvm::cl::cat(SVCategory));
 
-vector<string> getVars(){
-    vector<string> var_vector;
+vector<string> getVars(vector<string> var_vector){
+    string args_temp = args;
     size_t pos = 0;
     std::string token;
     // TODO: check crash function
-    while ((pos = args.find(" ")) != std::string::npos) {
-        token = args.substr(0, pos);
+    while ((pos = args_temp.find(" ")) != std::string::npos) {
+        token = args_temp.substr(0, pos);
         var_vector.push_back(token);
-        args.erase(0, pos + 1);
+        args_temp.erase(0, pos + 1);
     }
-    var_vector.push_back(args);
+    var_vector.push_back(args_temp);
     assert (!var_vector.empty());
     return var_vector;
 }
@@ -76,24 +76,24 @@ class MyASTVisitor : public RecursiveASTVisitor<MyASTVisitor> {
 public:
     MyASTVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {}
 
-    bool VisitStmt(Stmt *s) {
 
+    bool VisitStmt(Stmt *s) {
         FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(s->getLocStart());
         int curLineNo = FullLocation.getLineNumber();
 
-        bool isInsertPoint = false;
         string varToInsert;
-        if (mission == "symbolize" && loc == curLineNo){
-            isInsertPoint = true;
-            vector<string> var_vector = getVars();
-            for (const string &var: var_vector)
-                varToInsert += "klee_make_symbolic(&" + var + ", sizeof(" + var + "), \"" + var + "\");";
-        } else if (mission == "cfc" && loc == curLineNo){
-            isInsertPoint = true;
-            varToInsert = "klee_assume(" + args + ");\n";
-        }
 
-        if (isInsertPoint){
+        if (loc == curLineNo){
+            if (mission == "symbolize"){
+                vector<string> var_vector;
+                var_vector = getVars(var_vector);
+                for (const string &var: var_vector){
+                    varToInsert += "klee_make_symbolic(&" + var + ", sizeof(" + var + "), \"" + var + "\");";
+                }
+            } else if (mission == "cfc"){
+                varToInsert = "klee_assume(" + args + ");\n";
+            }
+
             SourceManager &SM = Compiler.getSourceManager();
             LangOptions &OPT = Compiler.getLangOpts();
             SourceLocation startPoint = s->getLocStart();

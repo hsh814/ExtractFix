@@ -20,7 +20,7 @@
 
 import argparse
 import coloredlogs, logging
-import sys, time, os
+import sys, time, os, ntpath
 # add the current path to PYTHONPATH
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
@@ -53,9 +53,15 @@ def save_log(source_path, file_path, logs):
     logger.debug("logs are save to directory " + log_path)
 
 
+def path_leaf(path):
+    head, tail = ntpath.split(path)
+    return tail or ntpath.basename(head)
+
+
 def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     clear_log()  # clear the log of last run
-    work_dir = "/tmp/proj_work_dir_" + str(int(time.time()))
+    proj_name = path_leaf(source_path)
+    work_dir = "/tmp/proj_work_dir_" + proj_name + "_" + str(int(time.time()))
     logger.info("project working directory " + work_dir)
     subprocess.check_output(['cp', '-r', str(source_path), work_dir])
     project_path = os.path.join(work_dir, "project")
@@ -73,7 +79,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
     elif bug_type == 'api_specific':
         # TODO: remove
-        crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 354, "count>=0")  # 3186
+        crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
 
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
@@ -113,7 +119,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
         # restore original source code
         # sym_var_inserter.mv_original_file_back()
-        
+
         global index
         save_log(source_path, work_dir + "/constraints.txt", "result"+str(index))
         index += 1
