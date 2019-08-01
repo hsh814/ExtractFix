@@ -1,4 +1,4 @@
-depth = 2
+depth = 1
 result_num = 5
 filter_example = 20
 constant_expend_size = 1

@@ -21,7 +21,7 @@ if __name__ == "__main__":
     assert len(candidates) > 0
     result = condition.filter(candidates, synthesis_task)
     if result is None:
-        result = correctside.filter(candidates, synthesis_task)
+        result = trivial.filter(candidates, synthesis_task)
     #TODO: support multiline fix
     assert len(result) == 1
     patch = None

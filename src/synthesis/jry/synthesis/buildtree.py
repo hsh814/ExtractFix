@@ -248,10 +248,10 @@ class FunctionTree:
 
     def get_heuristic_constraint(self, hard_list, soft_list):
         arg_list = self.function.arg_list
-        symbolic_input1 = get_new_symbolic_input(arg_list)
-        symbolic_input2 = get_new_symbolic_input(arg_list)
-        hard_list.append(self.get_o(symbolic_input1, hard_list) !=
-                         self.get_o(symbolic_input2, hard_list))
+        #symbolic_input1 = get_new_symbolic_input(arg_list)
+        #symbolic_input2 = get_new_symbolic_input(arg_list)
+        #hard_list.append(self.get_o(symbolic_input1, hard_list) !=
+        #                 self.get_o(symbolic_input2, hard_list))
         for arg_info in arg_list:
             symbolic_input1 = get_new_symbolic_input(arg_list)
             symbolic_input2 = {}
@@ -263,7 +263,7 @@ class FunctionTree:
             #print(symbolic_input1)
             #print(symbolic_input2)
             if self._check_inp_variable_used(self.function.sketch, arg_info.name):
-                hard_list.append(self.get_o(symbolic_input1, hard_list) !=
+                soft_list.append(self.get_o(symbolic_input1, hard_list) !=
                                  self.get_o(symbolic_input2, hard_list))
 
     def parse_output(self, model):
