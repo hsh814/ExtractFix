@@ -1,0 +1,59 @@
+[
+   [
+      "control flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      574,
+      [ "nrows", "limit", "err" ]
+   ],
+   [
+      "data flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      573,
+      [ "sy", "nrows" ]
+   ],
+   [
+      "data flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      572,
+      [ "nrows", "limit", "err" ]
+   ],
+   [
+      "control flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      571,
+      [ "nrows", "limit", "err" ]
+   ],
+   [
+      "data flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      570,
+      [ "nrows", "step", "err" ]
+   ],
+   [
+      "data flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      569,
+      [ "bpr", "sy", "nrows" ]
+   ],
+   [
+      "control flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      565,
+      [ "dy" ]
+   ],
+   [
+      "control flow",
+      "../../tools/thumbnail.c",
+      "setImage1",
+      561,
+      [ "bpr", "rw" ]
+   ]
+]
+

@@ -22,13 +22,13 @@ fi
 
 if [ $compile_type == 'to_bc' ];
 then
-    wllvm ${cflags} -I../include/ -I./include .libs/libxml2.a ../../poc.c -c 
+    wllvm ${cflags} -I../include/ -I./include .libs/libxml2.a ../../poc.c -c
 
     cd ..
     # copy target bc to root dir
     cp klee/${subject}.bc .
 else
-	cd ../../	
+	cd ../../
     $LOWFAT_CLANG -fsanitize=signed-integer-overflow,unsigned-integer-overflow -I./project/klee/include/ -I./project/include -L./project/klee/.libs/ -lxml2 -lstlimpl /home/nightwish/workspace/bug_repair/LowFat/lowfat.o poc.c -o poc
     cd ..
 fi
