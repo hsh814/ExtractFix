@@ -2,6 +2,7 @@
 compile_type=$1
 
 current_dir=`pwd`
+
 # get project and set to corresponding version
 # git clone https://gitlab.gnome.org/GNOME/libxml2/ project
 cd project
@@ -22,12 +23,15 @@ then
 elif [ $compile_type == 'lowfat' ];
 then
     compiler=${LOWFAT_CLANG}
-    cflags="$cflags -fsanitize= inte"
-#-mllvm -lowfat-debug -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-symbolize -lstlimpl"
+    cflags="$cflags -fsanitize=signed-integer-overflow,unsigned-integer-overflow -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-no-check-reads -mllvm -lowfat-no-check-writes -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-check-whole-access -mllvm -lowfat-no-replace-globals -mllvm -lowfat-no-replace-alloca -mllvm -lowfat-no-replace-malloc -mllvm -lowfat-symbolize -lstlimpl"
 fi
 
-CC=$compiler CFLAGS="$cflags" ../autogen.sh --enable-static
+CC=$compiler CFLAGS="$cflags" ../autogen.sh --enable-static &> /dev/null
 
 cd ../..
 
 
+
+#$LOWFAT_CLANG -fsanitize=signed-integer-overflow,unsigned-integer-overflow -I./project/klee/include/ -I./project/include -L./project/klee/.libs/ -lxml2 -lstlimpl /home/nightwish/workspace/bug_repair/LowFat/lowfat.o poc.c -o poc
+
+#LD_PRELOAD=$LD_PRELOAD:./project/klee/.libs/libxml2.so ./poc
