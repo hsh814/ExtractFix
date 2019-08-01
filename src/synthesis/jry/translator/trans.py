@@ -133,15 +133,19 @@ def _substitute_function_call(expr, function_name, function_call):
         return list(map(lambda x: _substitute_function_call(x, function_name, function_call), expr))
     return expr
 
-def trans(file):
-    with open(file, "r") as f:
+def trans(constraint_file, sketch_file):
+    with open(constraint_file, "r") as f:
         all_inp = f.readlines()
+    with open(sketch_file) as f:
+        sketch = f.readlines()
+        assert len(sketch) == 1
+        sketch = sketch[0]
     all_inp = list(map(lambda x: x.strip(), all_inp))
     all_inp = list(filter(lambda x: len(x) > 0, all_inp))
     #TODO support multiline fix
     #print(all_inp[-1])
-    left_sketch, sketch, right_sketch = sketch_translator.parse_sketch(all_inp[-1])
-    constraint = _parse_constraint(" ".join(all_inp[:-1]))
+    left_sketch, sketch, right_sketch = sketch_translator.parse_sketch(sketch)
+    constraint = _parse_constraint(" ".join(all_inp))
     variable_table = {}
     constant_table = {"Int": [], "Bool": []}
     operator_list = ["+", "-", "<", "<=", "and", "or", "not"]

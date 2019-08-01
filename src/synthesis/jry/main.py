@@ -8,8 +8,8 @@ from translator import trans
 from util import common
 
 if __name__ == "__main__":
-    sys.argv = [None, "test2.txt"]
-    left_sketch, right_sketch = trans.trans(sys.argv[1])
+    #sys.argv = [None, "test1.txt"]
+    left_sketch, right_sketch = trans.trans(sys.argv[1], sys.argv[2])
     synthesis_task = task.SynthesisTask("mid.sl")
     function_tree_list = {}
     for function_name, function_info in synthesis_task.function_list.items():
