@@ -79,7 +79,13 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
     elif bug_type == 'api_specific':
         # TODO: remove
-        crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
+        if "libtiff-3186" in source_path:
+            crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
+        elif "coreutils-25003" in source_path:
+            crash_info = Global.CrashInfo("src", "split.c", "bytes_chunk_extract", 987, "initial_read - start>=0")  # 25003
+        else:
+            logger.fatal("unsupported api misuse case")
+            exit(1)
 
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg

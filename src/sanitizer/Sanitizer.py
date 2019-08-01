@@ -54,6 +54,9 @@ class BufferOverflowSanitizer(Sanitizer):
         return crash_info
 
     def parse_crash_info(self):
+        if not os.path.isfile("/tmp/cfc.out"):
+            self.logger.fatal("failed to generate crash free constraints")
+            exit(2)
         f= open("/tmp/cfc.out", "r")
         line = f.readline()
         loc_cfc = line.split("#")

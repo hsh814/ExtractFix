@@ -390,9 +390,12 @@ set<FixEntry> determineVarsToSymbolize(std::set<SeenEntry> seen, map<Value*, str
                     }
                 }
             }
-            if(std::find(vars.begin(), vars.end(), "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316") != vars.end()){
-                struct variable global_var = {"LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316", 0, nullptr};
-                fixEntry.varsToSymbolize.push_back(global_var);
+            for (int i=0; i < vars.size(); i++) {
+                string var = vars[i];
+                if (var.find("LOWFAT_GLOBAL_")!=string::npos){
+                    struct variable global_var = {var, 0, nullptr};
+                    fixEntry.varsToSymbolize.push_back(global_var);
+                }
             }
         }
         newPFixLocs.insert(fixEntry);

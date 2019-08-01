@@ -1,5 +1,5 @@
 binary=$1
 test=$2
-${binary} ${test} temp
+${binary} -colors 256 -bmp ${test}
 
 exit 0

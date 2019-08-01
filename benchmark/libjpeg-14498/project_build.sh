@@ -1,7 +1,7 @@
 #!/bin/bash
 compile_type=$1
 
-subject=djpeg
+subject=cjpeg
 current_dir="$( cd "$(dirname "$0")" ; pwd -P )"
 
 cd project/klee
