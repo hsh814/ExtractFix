@@ -82,7 +82,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     elif bug_type == 'api_specific':
         # TODO: remove
         if "libtiff-3186" in source_path:
-            crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 353, "count>=0")  # 3186
+            crash_info = Global.CrashInfo("tools", "gif2tiff.c", "readextension", 354, "count>=0")  # 3186
         elif "coreutils-25003" in source_path:
             crash_info = Global.CrashInfo("src", "split.c", "bytes_chunk_extract", 987, "initial_read - start>=0")  # 25003
         else:
@@ -130,9 +130,13 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         sym_var_inserter.mv_original_file_back()
 
         global index
-        fix_line = read_fix_line(project_path, fix_loc.get_refined_file_name(), fix_loc.line_no-1)
+        log_path = os.path.join(source_path, "result"+str(index))
+        fix_stm = os.path.join(log_path, "fix_stm.txt")
+        if not os.path.isdir(log_path):
+            command = "mkdir " + log_path
+            subprocess.call(command, shell=True)
 
-        fix_stm = os.path.join(source_path, "result"+str(index), "fix_stm.txt")
+        fix_line = read_fix_line(project_path, fix_loc.get_refined_file_name(), fix_loc.line_no-1)
         with open(fix_stm, 'w+') as f:
             f.write(fix_line)
 

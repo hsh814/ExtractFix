@@ -2,4 +2,4 @@
            (Add  bufferoffset
                 (Add 4294967294
                       count)))
-      1)
+       LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316)
