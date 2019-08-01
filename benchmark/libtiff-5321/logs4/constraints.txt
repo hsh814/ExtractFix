@@ -1,4 +1,0 @@
-(And (Slt  s
-            spp)
-      (Slt  s
-           8))
