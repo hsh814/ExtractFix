@@ -1,4 +1,0 @@
-/tmp/proj_work_dir_1564376977/project/contrib/iptcutil/iptcutil.c formatIPTC LOWFAT_GLOBAL_MS__iptcutil_formatIPTC_296
-/tmp/proj_work_dir_1564376977/project/contrib/addtiffo/tif_overview.c TIFF_DownSample LOWFAT_GLOBAL_MS__tif_overview_TIFF_DownSample_295
-/tmp/proj_work_dir_1564376977/project/tools/tiffdump.c dump LOWFAT_GLOBAL_MS__tiffdump_dump_253
-/tmp/proj_work_dir_1564376977/project/libtiff/tif_unix.c _TIFFmalloc LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316

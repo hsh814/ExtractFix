@@ -76,6 +76,9 @@ class FixLoc:
     def get_file_name(self):
         return self.file_name
 
+    def get_refined_file_name(self):
+        return self.file_name.replace("../", "")
+
     def get_function_name(self):
         return self.function_name
 

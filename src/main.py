@@ -20,7 +20,7 @@
 
 import argparse
 import coloredlogs, logging
-import sys, time, os, ntpath
+import sys, time, os, ntpath, time
 # add the current path to PYTHONPATH
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
@@ -59,6 +59,8 @@ def path_leaf(path):
 
 
 def repair(source_path, binary_name, driver, test_list, bug_type, logger):
+    start_time = time.time()
+
     clear_log()  # clear the log of last run
     proj_name = path_leaf(source_path)
     work_dir = "/tmp/proj_work_dir_" + proj_name + "_" + str(int(time.time()))
@@ -69,7 +71,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     runtime.project_config(work_dir, logger, "to_bc")
     ProjPreprocessor.__preprocess(project_path, lib=True, logger=logger)
 
-    if bug_type == 'buffer_overflow' or bug_type == 'divide_by_0' or bug_type == 'integer_overflow':
+    if bug_type == 'buffer_overflow' or bug_type == 'divide_by_0':
         # insert global variable for malloc, which is then used to generate crash-free-constraints
         ProjPreprocessor.__preprocess(project_path, globalize=True, logger=logger)
         sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
@@ -86,6 +88,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         else:
             logger.fatal("unsupported api misuse case")
             exit(1)
+        logger.debug("crash info: "+str(crash_info))
 
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
@@ -124,12 +127,30 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         runtime.run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger, fix_loc)
 
         # restore original source code
-        # sym_var_inserter.mv_original_file_back()
+        sym_var_inserter.mv_original_file_back()
 
         global index
+        fix_line = read_fix_line(project_path, fix_loc.get_refined_file_name(), fix_loc.line_no-1)
+
+        fix_stm = os.path.join(source_path, "result"+str(index), "fix_stm.txt")
+        with open(fix_stm, 'w+') as f:
+            f.write(fix_line)
+
+        logger.info("fix_line is " + fix_line)
         save_log(source_path, work_dir + "/constraints.txt", "result"+str(index))
+
+        # TODO: invoke ruyi's interface
+
         index += 1
         break
+    logger.info("execution time (in minutes) is: " + str((time.time()-start_time)/60))
+
+
+def read_fix_line(project_path, file_path, line_no):
+    full_path = os.path.join(project_path, file_path)
+    with open(full_path) as f:
+        contents = f.readlines()
+        return contents[line_no]
 
 
 def process_func_trace(func_trace, crash_info):
