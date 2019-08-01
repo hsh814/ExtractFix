@@ -390,12 +390,12 @@ set<FixEntry> determineVarsToSymbolize(std::set<SeenEntry> seen, map<Value*, str
                     }
                 }
             }
-            for (int i=0; i < vars.size(); i++) {
-                string var = vars[i];
-                if (var.find("LOWFAT_GLOBAL_")!=string::npos){
-                    struct variable global_var = {var, 0, nullptr};
-                    fixEntry.varsToSymbolize.push_back(global_var);
-                }
+        }
+        for (int i=0; i < vars.size(); i++) {
+            string var = vars[i];
+            if (var.find("LOWFAT_GLOBAL_")!=string::npos){
+                struct variable global_var = {var, 0, nullptr};
+                fixEntry.varsToSymbolize.push_back(global_var);
             }
         }
         newPFixLocs.insert(fixEntry);

@@ -3,85 +3,85 @@
       "data flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
+      2907,
+      [ "count", "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
+   ],
+   [
+      "control flow",
+      "../../tools/tiff2pdf.c",
+      "t2p_readwrite_pdf_image_tile",
       2903,
-      [ "count", "bufferoffset" ]
+      [ "count", "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
-      2899,
-      [ "count", "bufferoffset" ]
+      2902,
+      [ "count", "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
-      2898,
-      [ "count", "bufferoffset" ]
+      2893,
+      [ "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
       2889,
-      [ "bufferoffset" ]
+      [ "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
-      2885,
-      [ "bufferoffset" ]
+      2842,
+      [ "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
-      2838,
-      [ "bufferoffset" ]
+      2821,
+      [ "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
-      2817,
-      [ "bufferoffset" ]
+      2800,
+      [ "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
-      2796,
-      [ "bufferoffset" ]
-   ],
-   [
-      "control flow",
-      "../../tools/tiff2pdf.c",
-      "t2p_readwrite_pdf_image_tile",
-      2789,
-      [ "edge", "bufferoffset" ]
+      2793,
+      [ "edge", "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "data flow",
+      "../../tools/tiff2pdf.c",
+      "t2p_readwrite_pdf_image_tile",
+      2791,
+      [ "edge", "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
+   ],
+   [
+      "data flow",
+      "../../tools/tiff2pdf.c",
+      "t2p_readwrite_pdf_image_tile",
+      2790,
+      [ "edge", "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
+   ],
+   [
+      "control flow",
       "../../tools/tiff2pdf.c",
       "t2p_readwrite_pdf_image_tile",
       2787,
-      [ "edge", "bufferoffset" ]
-   ],
-   [
-      "data flow",
-      "../../tools/tiff2pdf.c",
-      "t2p_readwrite_pdf_image_tile",
-      2786,
-      [ "edge", "bufferoffset" ]
-   ],
-   [
-      "control flow",
-      "../../tools/tiff2pdf.c",
-      "t2p_readwrite_pdf_image_tile",
-      2783,
-      [ "bufferoffset" ]
+      [ "bufferoffset", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ]
 ]
 
