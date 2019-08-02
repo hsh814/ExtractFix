@@ -1,1 +1,1 @@
-../../tools/thumbnail.c:setImage1:572#(nrows < 256)
+../../tools/thumbnail.c:setImage1:575#(nrows < 256)
