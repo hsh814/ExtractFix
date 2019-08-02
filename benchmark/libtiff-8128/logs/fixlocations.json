@@ -3,88 +3,56 @@
       "control flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       574,
-=======
-      571,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
-      [ "nrows", "limit", "err" ]
+      [ "err", "nrows", "limit" ]
    ],
    [
       "data flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       573,
-=======
-      570,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
       [ "sy", "nrows" ]
    ],
    [
       "data flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       572,
-=======
-      569,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
-      [ "nrows", "limit", "err" ]
+      [ "err", "nrows", "limit" ]
    ],
    [
       "control flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       571,
-=======
-      568,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
-      [ "nrows", "limit", "err" ]
+      [ "err", "nrows", "limit" ]
    ],
    [
       "data flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       570,
-=======
-      567,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
-      [ "nrows", "step", "err" ]
+      [ "err", "nrows", "step" ]
    ],
    [
       "data flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       569,
-=======
-      566,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
       [ "bpr", "sy", "nrows" ]
    ],
    [
       "control flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       565,
-=======
-      562,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
       [ "dy" ]
    ],
    [
       "control flow",
       "../../tools/thumbnail.c",
       "setImage1",
-<<<<<<< HEAD
       561,
-=======
-      558,
->>>>>>> 350a4114ba6e8fe35702b56f0908a912ee797955
       [ "bpr", "rw" ]
    ]
 ]

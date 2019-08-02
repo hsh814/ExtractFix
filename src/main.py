@@ -71,7 +71,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     runtime.project_config(work_dir, logger, "to_bc")
     ProjPreprocessor.__preprocess(project_path, lib=True, logger=logger)
 
-    if bug_type == 'buffer_overflow' or bug_type == 'divide_by_0':
+    if bug_type == 'buffer_overflow' or bug_type == 'divide_by_0' or bug_type == 'integer_overflow':
         # insert global variable for malloc, which is then used to generate crash-free-constraints
         ProjPreprocessor.__preprocess(project_path, globalize=True, logger=logger)
         sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
