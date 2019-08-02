@@ -1,1 +1,1 @@
-			if(TIFFGetField(input, TIFFTAG_JPEGTABLES, &count, &jpt) != 0) {
+			if(TIFFGetField(input, TIFFTAG_JPEGTABLES, &count, &jpt) != 0) {

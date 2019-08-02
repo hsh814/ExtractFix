@@ -87,8 +87,25 @@ def _parse_left_first(expr):
         result = _build_expr(expr[i], [result, expr[i + 1]])
     return result
 
+def _rename_left_variable(expr, variable_name):
+    print("rename ", expr)
+    if not isinstance(expr, ExprInfo):
+        return
+    if type(expr.expr) == list:
+        for subexpr in expr.expr:
+            _rename_left_variable(subexpr, variable_name)
+    if type(expr.expr) == str and expr.expr == variable_name:
+        expr.expr = "prevalue__" + expr.expr
+
 def _parse_assign(expr):
+    print(expr)
     assert len(expr) == 3 or len(expr) == 4
+    operator = expr[1]
+    if len(operator) == 2:
+        first_operator = operator[0]
+        left_expr = expr[0] if len(expr) == 3 else expr[1]
+        right_expr = expr[-1]
+        expr[-1] = _build_expr(first_operator, [ExprInfo(left_expr.expr, left_expr.type), right_expr])
     extra_left = ""
     if len(expr) == 4:
         if expr[0] == "int":
@@ -100,6 +117,7 @@ def _parse_assign(expr):
         extra_left = expr[0] + " "
         expr = expr[1:]
     expr[0].set_type(expr[2].type)
+    _rename_left_variable(expr[2], expr[0].expr)
     res = ExprInfo(["=", expr[0], expr[2]], "Assign")
     res.extra_left = extra_left
     return res
@@ -157,7 +175,8 @@ def parse_sketch(sketch_str):
     op_and = Regex(r"&&")
     op_or = Regex(r"\|\|")
     op_not = Regex(r"\!")
-    op_assign = Regex(r"=")
+    op_operator = (op_add ^ op_mul)
+    op_assign = Group((op_operator + "=") ^ "=")
     int_type = Regex(r"int")
     bool_type = Regex(r"bool")
     boolean = Regex(r'true|false').setParseAction(lambda x: ExprInfo(True if x[0] == "true" else False, "Bool"))
@@ -181,6 +200,7 @@ def parse_sketch(sketch_str):
     left += result.extra_left
     if result.type is None:
         result.set_type("Bool")
+    #print(result)
     return left, result, right
 
 if __name__ == "__main__":

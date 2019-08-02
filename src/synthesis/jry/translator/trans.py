@@ -52,6 +52,7 @@ def _assign_type(expr):
         return ExprInfo(result, return_type)
 
 def _parse_constraint(constraint):
+    #print(constraint)
     result = sexp.sexp.parseString(constraint, parseAll=True).asList()[0]
     result = _translate_operator(result, operators.klee2z3str)
     result = _assign_type(result)
@@ -136,6 +137,8 @@ def _substitute_function_call(expr, function_name, function_call):
 def trans(constraint_file, sketch_file):
     with open(constraint_file, "r") as f:
         all_inp = f.readlines()
+        #import pprint as pp
+        #pp.pprint(all_inp)
     with open(sketch_file) as f:
         sketch = f.readlines()
         assert len(sketch) == 1
@@ -146,6 +149,7 @@ def trans(constraint_file, sketch_file):
     #print(all_inp[-1])
     left_sketch, sketch, right_sketch = sketch_translator.parse_sketch(sketch)
     constraint = _parse_constraint(" ".join(all_inp))
+    #print(sketch, constraint)
     variable_table = {}
     constant_table = {"Int": [], "Bool": []}
     operator_list = ["+", "-", "<", "<=", "and", "or", "not"]
