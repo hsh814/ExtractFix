@@ -4,7 +4,7 @@
       "../../tools/thumbnail.c",
       "setImage1",
       574,
-      [ "nrows", "limit", "err" ]
+      [ "err", "nrows", "limit" ]
    ],
    [
       "data flow",
@@ -25,14 +25,14 @@
       "../../tools/thumbnail.c",
       "setImage1",
       571,
-      [ "nrows", "limit", "err" ]
+      [ "err", "nrows", "limit" ]
    ],
    [
       "data flow",
       "../../tools/thumbnail.c",
       "setImage1",
       570,
-      [ "nrows", "step", "err" ]
+      [ "err", "nrows", "step" ]
    ],
    [
       "data flow",

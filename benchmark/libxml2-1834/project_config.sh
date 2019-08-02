@@ -13,6 +13,8 @@ rm -rf klee
 mkdir klee
 cd klee
 
+sed -i 's/#define FQUOTIENT(a,b)                  (floor(((double)a\/(double)b)))/double FQUOTIENT(double a, double b){return floor(((double)a\/(double)b));}/' ../xmlschemastypes.c
+
 cflags="-g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__ -lkleeRuntest -lkleeBasic -I${current_dir}/project_specific_lib/ -lhook -L${current_dir}/project_specific_lib/ -Wno-everything"
 
 if [ $compile_type == 'to_bc' ];
