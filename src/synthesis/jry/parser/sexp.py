@@ -56,11 +56,19 @@ def verifyLen(s, l, t):
             raise ParseFatalException(s, l, "invalid data of length %d, expected %s" % (t1len, t.len))
     return t[1]
 
+def _parseInt(num):
+    _limit = 1000
+    #print("parseInt", num)
+    thresholds = [2 ** 32, 2 ** 64]
+    for threshold in thresholds:
+        if num in range(threshold - _limit, threshold):
+            return num - threshold
+    return num
 
 # define punctuation literals
 LPAR, RPAR, LBRK, RBRK, LBRC, RBRC, VBAR = map(Suppress, "()[]{}|")
 
-decimal = Regex(r'-?0|-?[0-9]\d*').setParseAction(lambda t: ('Int', int(t[0])))
+decimal = Regex(r'-?0|-?[0-9]\d*').setParseAction(lambda t: ('Int', _parseInt(int(t[0]))))
 hexadecimal = ("#x" + OneOrMore(Word(hexnums))) \
     .setParseAction(lambda t: (['BitVec', ('Int', 4 * len(t[1]))], int("".join(t[1:]), 16)))
 bytes = Word(printables)
