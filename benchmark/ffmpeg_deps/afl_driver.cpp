@@ -202,7 +202,18 @@ extern "C" size_t LLVMFuzzerMutate(uint8_t *Data, size_t Size, size_t MaxSize) {
 // Execute any files provided as parameters.
 static int ExecuteFilesOnyByOne(int argc, char **argv) {
   for (int i = 1; i < argc; i++) {
-    std::ifstream in(argv[i], std::ios::binary);
+    FILE *fp;
+    fp=fopen(argv[i], "rb");
+    fseek(fp, 0L, SEEK_END);
+    int length = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+    char content[length+1];
+    for(int i=0; i<length; i++)
+        content[i] = fgetc(fp);
+    LLVMFuzzerTestOneInput((uint8_t *)content, length);
+    fclose(fp);
+
+    /* std::ifstream in(argv[i], std::ios::binary);
     in.seekg(0, in.end);
     size_t length = in.tellg();
     in.seekg (0, in.beg);
@@ -213,7 +224,7 @@ static int ExecuteFilesOnyByOne(int argc, char **argv) {
     assert(in);
     LLVMFuzzerTestOneInput(reinterpret_cast<const uint8_t *>(bytes.data()),
                            bytes.size());
-    std::cout << "Execution successful" << std::endl;
+    std::cout << "Execution successful" << std::endl;*/
   }
   return 0;
 }

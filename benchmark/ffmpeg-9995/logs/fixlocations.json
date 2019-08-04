@@ -1,0 +1,52 @@
+[
+   [
+      "data flow",
+      "libavcodec/dfa.c",
+      "decode_dds1",
+      182,
+      [ "width" ]
+   ],
+   [
+      "control flow",
+      "libavcodec/dfa.c",
+      "decode_dds1",
+      179,
+      [ "width" ]
+   ],
+   [
+      "control flow",
+      "libavcodec/dfa.c",
+      "decode_dds1",
+      173,
+      [ "mask", "bitbuf" ]
+   ],
+   [
+      "control flow",
+      "libavcodec/dfa.c",
+      "decode_dds1",
+      161,
+      [ "mask", "bitbuf" ]
+   ],
+   [
+      "control flow",
+      "libavcodec/dfa.c",
+      "decode_dds1",
+      156,
+      [ "mask" ]
+   ],
+   [
+      "control flow",
+      "libavcodec/dfa.c",
+      "decode_dds1",
+      153,
+      [ "segments" ]
+   ],
+   [
+      "data flow",
+      "libavcodec/dfa.c",
+      "decode_dds1",
+      148,
+      [ "width", "height" ]
+   ]
+]
+

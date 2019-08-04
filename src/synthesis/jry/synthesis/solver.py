@@ -6,20 +6,23 @@ import config
 import pprint as pp
 
 class Solver:
-    def solve(self, task):
+    def solve(self, task, is_use_semantic_heuristic):
         assert False
 
 class SyntaxSolver(Solver):
-    def solve(self, task):
+    def solve(self, task, is_use_semantic_heuristic):
         hard_list = []
         soft_list = []
         for function_name, function_tree in task.function_tree_list.items():
             function_tree.get_structure_constraint(hard_list, soft_list)
-            function_tree.get_heuristic_constraint(hard_list, soft_list)
+            if is_use_semantic_heuristic:
+                #print("add heuristic")
+                function_tree.get_heuristic_constraint(hard_list, soft_list)
         solver = z3.Solver()
         solver.set(unsat_core=True)
         step = 0
         all_result = []
+        total_cost = 0
         while True:
             step += 1
             while True:
@@ -44,7 +47,8 @@ class SyntaxSolver(Solver):
                         relax_var = common.new_variable("Bool")
                         relax_list.append(relax_var)
                         soft_list[i] = z3.Or(soft_list[i], relax_var)
-                if len(relax_list) == 0:
+                total_cost += 1
+                if len(relax_list) == 0 or total_cost >= config.cost_limit:
                     return all_result
                 common.build_only_one(relax_list, hard_list)
 
@@ -83,6 +87,8 @@ class SyntaxSolver(Solver):
                 elif var.type == "Bool":
                     point[name] = z3.is_true(result)
             synthesis.parse_constraint_with_input(task, point, hard_list)
+            #print(function_result_list)
+            #print(point)
             solver.pop()
 
 class SemanticsSolver(Solver):

@@ -72,8 +72,6 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         runtime.project_config(work_dir, logger, "to_bc")
         ProjPreprocessor.__preprocess(project_path, lib=True, logger=logger)
 
-    if bug_type == 'buffer_overflow' or bug_type == 'divide_by_0' or bug_type == 'integer_overflow':
-
         if bug_type == 'buffer_overflow':
             # insert global variable for malloc, which is then used to generate crash-free-constraints
             ProjPreprocessor.__preprocess(project_path, globalize=True, logger=logger)
@@ -81,7 +79,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
         # TODO: implement crash info generation
         crash_info = sanitizer.generate_crash_info()
-        logger.debug("crash info: "+str(crash_info))
+        logger.info("crash info: "+str(crash_info))
 
     elif bug_type == 'api_specific':
         # TODO: remove
@@ -92,7 +90,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         else:
             logger.fatal("unsupported api misuse case")
             exit(1)
-        logger.debug("crash info: "+str(crash_info))
+        logger.info("crash info: "+str(crash_info))
 
 
     if bug_type == 'divide_by_0':
@@ -105,6 +103,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     # compile the program to bc file and optimize it using mem2reg
     runtime.project_build(work_dir, logger, "to_bc")
     # runtime.run_mem2reg(work_dir, logger, binary_name)
+    logger.info("successfully generate bc file: " + project_path + "/" + binary_name + ".bc")
 
     # instrument program by inserting function tracer
     func_tracer = FuncTracer.FuncTracer()
@@ -115,11 +114,12 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     runtime.run(work_dir, driver, binary_full_path_with_func_tracer, test_list, logger)
     func_trace = open("/tmp/run_info", 'r').readlines()
     func_list = process_func_trace(func_trace, crash_info)
-    # logger.debug("function trace" + str(func_list))
+    logger.debug("the length of function trace" + str(len(func_list)))
 
     # fault localization
     fl = FaultLocalization.FaultLocalization(project_path, binary_name, func_list, crash_info, logger)
     potential_funcs = fl.get_potential_fault_locs()
+    logger.info("successfully generate potential fix location: " + "/tmp/fixlocations.json")
 
     save_log(source_path, "/tmp/run_info", "logs")
     save_log(source_path, "/tmp/callee.txt", "logs")
@@ -171,7 +171,14 @@ def read_fix_line(project_path, file_path, line_no):
 def process_func_trace(func_trace, crash_info):
     retval = []
     trace_list = [item[:-1] for item in func_trace]
+    start = False
     for trace in trace_list:
+        if "main" in trace:
+            start = True
+
+        if not start:
+            continue
+
         if ' >>>> ' not in trace:
             continue
         entry = trace.split(' >>>> ')

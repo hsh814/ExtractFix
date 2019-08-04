@@ -29,10 +29,10 @@ klee2z3str = {
     #"AShr":
     "Eq": "=",
     #"Ne":
-    #"Ult":
-    #"Ule":
-    #"Ugt":
-    #"Uge":
+    "Ult": "<",
+    "Ule": "<=",
+    "Ugt": ">",
+    "Uge": ">=",
     "Slt": "<",
     "Sle": "<=",
     "Sgt": ">",

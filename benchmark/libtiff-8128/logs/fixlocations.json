@@ -18,7 +18,7 @@
       "../../tools/thumbnail.c",
       "setImage1",
       572,
-      [ "err", "nrows", "limit" ]
+      [ "nrows", "limit", "err" ]
    ],
    [
       "control flow",

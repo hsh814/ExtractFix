@@ -1,17 +1,22 @@
 #!/bin/bash
-set -x
 compile_type=$1
 
-current_dir=`pwd`
+current_dir="$( cd "$(dirname "$0")" ; pwd -P )"
 # get project and set to corresponding version
 #git clone https://github.com/vadz/libtiff.git project
+
+cp Makefile project/
+cp configure project/
+cp /home/gaoxiang/project/crash-free-fix/benchmark/ffmpeg_deps/afl_driver.cpp project/
+
 cd project
 #git checkout d9783e4
 
+sed -i 's/av_mallocz(avctx->width \* avctx->height)/malloc(avctx->width * avctx->height)/' libavcodec/dfa.c
+sed -i 's/av_cold //' libavcodec/dfa.c
+sed -i 's/NULL_IF_CONFIG_SMALL("Chronomaster DFA")/"Chronomaster DFA"/' libavcodec/dfa.c
+
 # create build diretory and config
-rm -rf klee
-mkdir klee
-cd klee
 
 cflags="-g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__ -lkleeRuntest -lkleeBasic -I${current_dir}/project_specific_lib/ -lhook -L${current_dir}/project_specific_lib/ -Wno-everything"
 
@@ -32,9 +37,7 @@ CFLAGS="$cflags"
 CXXFLAGS="$cflags"
 
 
-FFMPEG_DEPS_PATH=../ffmpeg_deps/libs 
-
-#PKG_CONFIG_PATH="$FFMPEG_DEPS_PATH/lib/pkgconfig" ../configure --target-os=linux --disable-shared --enable-static --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-avdevice --disable-doc --disable-symver --arch=x86_64 --enable-cross-compile --sysroot=$SYSROOT --extra-cflags="$CFLAGS" --extra-ldflags="$LDFLAGS" --cc=${CC} --cxx=${CXX}
+FFMPEG_DEPS_PATH=/home/gaoxiang/project/crash-free-fix/benchmark/ffmpeg_deps/libs
 
 PKG_CONFIG_PATH="$FFMPEG_DEPS_PATH/lib/pkgconfig" CFLAGS="-I$FFMPEG_DEPS_PATH/include $CFLAGS" ../configure \
     --cc=$CC --cxx=$CXX --ld="$CXX $CXXFLAGS -std=c++11" \
@@ -53,7 +56,6 @@ PKG_CONFIG_PATH="$FFMPEG_DEPS_PATH/lib/pkgconfig" CFLAGS="-I$FFMPEG_DEPS_PATH/in
     --enable-libtheora \
     --enable-libvorbis \
     --enable-libvpx \
-    --enable-libx264 \
     --enable-libx265 \
     --enable-nonfree \
     --disable-muxers \
@@ -64,6 +66,6 @@ PKG_CONFIG_PATH="$FFMPEG_DEPS_PATH/lib/pkgconfig" CFLAGS="-I$FFMPEG_DEPS_PATH/in
     --arch=x86_64 \
     --target-os=linux
 
-cd ../..
+cd ..
 
 

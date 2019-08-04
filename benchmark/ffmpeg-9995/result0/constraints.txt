@@ -1,0 +1,5 @@
+(And (Ult (Add 1
+                 width)
+           128)
+      (Ult  width
+           128))
