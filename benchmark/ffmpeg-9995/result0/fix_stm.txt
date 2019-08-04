@@ -1,0 +1,1 @@
+            frame[width] = frame[width + 1] =  bytestream2_get_byte(gb);

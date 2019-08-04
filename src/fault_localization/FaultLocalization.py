@@ -55,7 +55,10 @@ class FaultLocalization:
 
         # split the crash-free constraints as single variables
         crash_vars = re.sub(r'\W', " ", self.crash_info.cfc).split()
-        crash_vars_list = " ".join(str(item) for item in crash_vars)
+        crash_vars_list = ""
+        for item in crash_vars:
+            if item not in crash_vars_list and not str(item).isdigit():
+                crash_vars_list.join(str(item)).join(" ")
         command = "opt -S -load=" + lib_fix_loc + " -fixloc " + binary_name + \
                   " -fun " + self.crash_info.function_name + \
                   " -no " + str(self.crash_info.line_no) + \

@@ -16,8 +16,6 @@ source_dir = os.path.dirname(os.path.realpath(__file__))
 def preprocess_single_file(mission, f, tail, logger):
     cmd = source_dir+'/GSInserter -mission=' + mission + " " + f + tail
 
-    #if 'xmalloc.c' in f:
-    # if 'parser.c' in f:
     # logger.debug('replacing command: '+cmd)
 
     try:
@@ -53,24 +51,37 @@ def __preprocess(project_base, lib=False, globalize=False, logger=logging):
     if lib:
         logger.debug('>>>>>>>> REPLACE UNSUPPORTED LIB >>>>>>>>')
         for c_file in files:
-            output = preprocess_single_file('replace-flib', c_file, tail, logger)
+            if "ffmpeg-9995" in project_base:
+                if "rational.c" in c_file:
+                    output = preprocess_single_file('replace-flib', c_file, tail, logger)
+                    assert 'core dump' not in output
+            else:
+                output = preprocess_single_file('replace-flib', c_file, tail, logger)
+                assert 'core dump' not in output
             # logger.debug(output)
-            assert 'core dump' not in output
 
     if globalize:
         logger.debug('>>>>>>>> INSERT GLOBAL MALLOC SIZE >>>>>>>>')
         for c_file in files:
             cotail = ' -callee-out=' + callee_tmp_file + tail
-            output = preprocess_single_file('replace-size', c_file, cotail, logger)
-            # logger.debug(output)
-            assert 'core dump' not in output
+            if "ffmpeg-9995" in project_base:
+                if "dfa.c" in c_file:
+                    output = preprocess_single_file('replace-size', c_file, cotail, logger)
+                    assert 'core dump' not in output
+            else:
+                output = preprocess_single_file('replace-size', c_file, cotail, logger)
+                assert 'core dump' not in output
 
         logger.debug('>>>>>>>> DECLARE GLOBAL MALLOC SIZE >>>>>>>>')
         for c_file in files:
             cotail = ' -callee-out=' + callee_tmp_file + tail
-            output = preprocess_single_file('declare-size', c_file, cotail, logger)
-            # logger.debug(output)
-            assert 'core dump' not in output
+            if "ffmpeg-9995" in project_base:
+                if "dfa.c" in c_file:
+                    output = preprocess_single_file('declare-size', c_file, cotail, logger)
+                    assert 'core dump' not in output
+            else:
+                output = preprocess_single_file('declare-size', c_file, cotail, logger)
+                assert 'core dump' not in output
 
 
 if __name__ == "__main__":
