@@ -5,7 +5,8 @@ current_dir=`pwd`
 # get project and set to corresponding version
 #git clone https://github.com/vadz/libtiff.git project
 cd project
-#git checkout d9783e4
+
+sed -i '38a #define DEBUGDIR \"/usr/local/lib/debug\"\n' ./bfd/dwarf2.c
 
 # create build diretory and config
 rm -rf klee
@@ -22,7 +23,7 @@ then
 elif [ $compile_type == 'lowfat' ];
 then
     compiler=${LOWFAT_CLANG}
-    cflags="$cflags -fsanitize=signed-integer-overflow,unsigned-integer-overflow -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-no-check-reads -mllvm -lowfat-no-check-writes -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-check-whole-access -mllvm -lowfat-no-replace-globals -mllvm -lowfat-no-replace-alloca -mllvm -lowfat-no-replace-malloc -mllvm -lowfat-symbolize -lstlimpl"
+    cflags="$cflags -fsanitize=integer-divide-by-zero -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-no-check-reads -mllvm -lowfat-no-check-writes -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-check-whole-access -mllvm -lowfat-no-replace-globals -mllvm -lowfat-no-replace-alloca -mllvm -lowfat-no-replace-malloc -mllvm -lowfat-symbolize -lstlimpl"
 fi
 
 CC=$compiler ../configure --disable-nls CFLAGS="$cflags"

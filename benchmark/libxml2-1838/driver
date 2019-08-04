@@ -1,2 +1,5 @@
-subject=$1
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:project/klee/.libs/ $subject
+binary=$1
+test=$2
+${binary} ${test}
+
+exit 0

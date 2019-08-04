@@ -16,9 +16,9 @@ source_dir = os.path.dirname(os.path.realpath(__file__))
 def preprocess_single_file(mission, f, tail, logger):
     cmd = source_dir+'/GSInserter -mission=' + mission + " " + f + tail
 
-    #if 'xmalloc.c' in f:
+    if 'buf.c' in f:
     # if 'parser.c' in f:
-    # logger.debug('replacing command: '+cmd)
+        logger.debug('replacing command: '+cmd)
 
     try:
         (status, output) = commands.getstatusoutput(cmd)

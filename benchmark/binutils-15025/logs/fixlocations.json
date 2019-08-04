@@ -1,0 +1,59 @@
+[
+   [
+      "control flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2284,
+      [ "op_code" ]
+   ],
+   [
+      "data flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2268,
+      [ "is_stmt" ]
+   ],
+   [
+      "control flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2206,
+      [ "i" ]
+   ],
+   [
+      "data flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2202,
+      [ "amt" ]
+   ],
+   [
+      "data flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2201,
+      [ "amt" ]
+   ],
+   [
+      "data flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2161,
+      [ "offset_size" ]
+   ],
+   [
+      "control flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2157,
+      [ "offset_size" ]
+   ],
+   [
+      "control flow",
+      "../../bfd/dwarf2.c",
+      "decode_line_info",
+      2128,
+      [ "offset_size" ]
+   ]
+]
+

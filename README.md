@@ -30,6 +30,11 @@ sudo apt-get install libjpeg-dev libjbig-dev
 sudo apt install nasm
 ```
 
+**ffmpg**
+```
+sudo apt-get install libfreetype6-dev libva-dev libass-dev
+```
+
 ### Installation
 1. Clone Crash-free-fix and its submodules
 ```

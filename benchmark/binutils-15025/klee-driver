@@ -37,6 +37,6 @@ if [[ $# > 0 ]]; then
 fi
 
 
-klee --libc=uclibc --posix-runtime --crash-line=${crash_line} ${fix_line_op} ${binary} ${test}
+klee --libc=uclibc --posix-runtime --crash-line=${crash_line} ${fix_line_op} ${binary} -A -a -l -S -s --special-syms --synthetic --with-symbol-versions -D ${test}
 
 exit 0

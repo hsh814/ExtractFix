@@ -22,7 +22,15 @@ def get_import_head_folders(project_base, system_header=[]):
         remain = True
         if "/tmp/proj_work_dir_coreutils" in project_base:
             if opt.endswith('/lib/sys') or opt.endswith('/lib/sys/'):
-                remain = False;
+                remain = False
+
+        if "/tmp/proj_work_dir_binutils" in project_base:
+            if opt.endswith('/import/sys'):
+                remain = False
+            if opt.endswith('/build-gnulib/import'):
+                remain = False
+            if '/build-gnulib-gdbserver' in opt:
+                remain = False
 
         if remain and opt not in cpp_args:
             cpp_args.append(opt)
