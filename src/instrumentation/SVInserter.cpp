@@ -74,8 +74,21 @@ vector<string> getVars(vector<string> var_vector){
 
 class MyASTVisitor : public RecursiveASTVisitor<MyASTVisitor> {
 public:
-    MyASTVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C) {}
+    MyASTVisitor(Rewriter &R, CompilerInstance &C) : TheRewriter(R), Compiler(C), CurrFunc(nullptr) {}
 
+    bool VisitDecl(Decl *decl) {
+        if (decl->isFunctionOrFunctionTemplate())
+            CurrFunc = decl->getAsFunction();
+        return true;
+    }
+
+    bool VisitFunctionDecl(FunctionDecl *f) {
+        if (!(f->hasBody()) || f->isInlined()) {
+            return false;
+        }
+        //f->dump();
+        return true;
+    }
 
     bool VisitStmt(Stmt *s) {
         FullSourceLoc FullLocation = Compiler.getASTContext().getFullLoc(s->getLocStart());
@@ -92,6 +105,44 @@ public:
                 }
             } else if (mission == "cfc"){
                 varToInsert = "klee_assume(" + args + ");\n";
+                auto LowfatIdx = args.find("LOWFAT_GLOBAL_MS__");
+
+                if (LowfatIdx != std::string::npos) {
+
+                    std::string GV = args.substr(LowfatIdx);
+
+                    auto len = std::string("LOWFAT_GLOBAL_MS__").length();
+
+                    std::string GVFile = GV.substr(len);
+
+                    auto under = GVFile.find("_");
+                    if (under != std::string::npos) {
+                        GVFile = GVFile.substr(0, under);
+                    }
+
+                    SourceManager &SM = Compiler.getSourceManager();
+                    string oriFileName(SM.getFileEntryForID(SM.getMainFileID())->getName().str());
+                    string fileName = SM.getFileEntryForID(SM.getMainFileID())->getName().str();
+                    int idx = fileName.rfind("/");
+                    if(idx > 0) {
+                        fileName = fileName.substr(idx + 1);
+                    }
+                    idx = fileName.find(".");
+                    if(idx > 0) {
+                        fileName = fileName.substr(0, idx);
+                    }
+                    replace(fileName.begin(), fileName.end(), '-', '_');
+
+                    if (fileName != GVFile) {
+                        if(!CurrFunc) {
+                            llvm::errs()<<"ERROR: NULL PARENT FUNCTION\n";
+                            return true;
+                        }
+                        string declStmt = "/*M_SIZE_G*/ extern size_t " + GV + ";    ";
+                        TheRewriter.InsertText(CurrFunc->getLocStart(), declStmt, true, true);
+                    }
+
+                }
             }
 
             SourceManager &SM = Compiler.getSourceManager();
@@ -126,6 +177,7 @@ public:
 private:
     Rewriter &TheRewriter;
     CompilerInstance &Compiler;
+    FunctionDecl* CurrFunc;
 };
 
 // Implementation of the ASTConsumer interface for reading an AST produced

@@ -32,7 +32,7 @@ sudo apt install nasm
 
 **ffmpg**
 ```
-sudo apt-get install libfreetype6-dev libva-dev libass-dev
+sudo apt-get install libfreetype6-dev libva-dev libass-dev libavutil-dev
 ```
 
 ### Installation
