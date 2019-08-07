@@ -1,0 +1,2110 @@
+IN >>>> main
+: Success
+IN >>>> expandargv
+: Invalid argument
+OUT >>>> expandargv
+: Invalid argument
+IN >>>> parse_args
+: Invalid argument
+IN >>>> dwarf_select_sections_all
+: Invalid argument
+OUT >>>> dwarf_select_sections_all
+: Invalid argument
+OUT >>>> parse_args
+: Invalid argument
+IN >>>> process_file
+: Invalid argument
+IN >>>> process_object
+: Invalid argument
+IN >>>> get_file_header
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> get_32bit_section_headers
+: Invalid argument
+IN >>>> get_data
+: Invalid argument
+OUT >>>> get_data
+: Invalid argument
+IN >>>> cmalloc
+: Invalid argument
+IN >>>> xmalloc
+: Invalid argument
+OUT >>>> xmalloc
+: Invalid argument
+OUT >>>> cmalloc
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> get_32bit_section_headers
+: Invalid argument
+OUT >>>> get_file_header
+: Invalid argument
+IN >>>> process_file_header
+: Invalid argument
+IN >>>> init_dwarf_regnames
+: Invalid argument
+IN >>>> init_dwarf_regnames_i386
+: Invalid argument
+OUT >>>> init_dwarf_regnames_i386
+: Invalid argument
+OUT >>>> init_dwarf_regnames
+: Invalid argument
+OUT >>>> process_file_header
+: Invalid argument
+IN >>>> process_section_headers
+: Invalid argument
+IN >>>> get_32bit_section_headers
+: Invalid argument
+IN >>>> get_data
+: Invalid argument
+OUT >>>> get_data
+: Invalid argument
+IN >>>> cmalloc
+: Invalid argument
+IN >>>> xmalloc
+: Invalid argument
+OUT >>>> xmalloc
+: Invalid argument
+OUT >>>> cmalloc
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: Section 0 has an out of range sh_link value of 4160749568
+OUT >>>> warn
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: Section 1 has an out of range sh_link value of 16769792
+OUT >>>> warn
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: Section 2 has an out of range sh_link value of 33554432
+OUT >>>> warn
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: Section 6 has an out of range sh_link value of 247
+OUT >>>> warn
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: Section 7 has an out of range sh_link value of 2130706432
+OUT >>>> warn
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: Section 11 has an out of range sh_link value of 774778414
+OUT >>>> warn
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> byte_get_little_endian
+: Invalid argument
+OUT >>>> byte_get_little_endian
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: Section 12 has an out of range sh_link value of 774778414
+OUT >>>> warn
+: Invalid argument
+OUT >>>> get_32bit_section_headers
+: Invalid argument
+IN >>>> get_data
+: Invalid argument
+OUT >>>> get_data
+: Invalid argument
+IN >>>> request_dump_bynumber
+: Invalid argument
+OUT >>>> request_dump_bynumber
+: Invalid argument
+OUT >>>> process_section_headers
+: Invalid argument
+IN >>>> process_section_groups
+: Invalid argument
+OUT >>>> process_section_groups
+: Invalid argument
+IN >>>> process_program_headers
+: Invalid argument
+IN >>>> warn
+: Invalid argument
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers
+OUT >>>> warn
+: Invalid argument
+OUT >>>> process_program_headers
+: Invalid argument
+IN >>>> process_relocs
+: Invalid argument
+OUT >>>> process_relocs
+: Invalid argument
+IN >>>> process_unwind
+: Invalid argument
+OUT >>>> process_unwind
+: Invalid argument
+IN >>>> process_symbol_table
+: Invalid argument
+OUT >>>> process_symbol_table
+: Invalid argument
+IN >>>> process_syminfo
+: Invalid argument
+OUT >>>> process_syminfo
+: Invalid argument
+IN >>>> process_version_sections
+: Invalid argument
+OUT >>>> process_version_sections
+: Invalid argument
+IN >>>> load_separate_debug_file
+: Invalid argument
+IN >>>> load_debug_section
+: Invalid argument
+IN >>>> find_section_in_set
+: Invalid argument
+IN >>>> find_section
+: Invalid argument
+OUT >>>> find_section
+: Invalid argument
+OUT >>>> find_section_in_set
+: Invalid argument
+IN >>>> find_section_in_set
+: Invalid argument
+IN >>>> find_section
+: Invalid argument
+OUT >>>> find_section
+: Invalid argument
+OUT >>>> find_section_in_set
+: Invalid argument
+OUT >>>> load_debug_section
+: Invalid argument
+IN >>>> load_debug_section
+: Invalid argument
+IN >>>> find_section_in_set
+: Invalid argument
+IN >>>> find_section
+: Invalid argument
+OUT >>>> find_section
+: Invalid argument
+OUT >>>> find_section_in_set
+: Invalid argument
+IN >>>> find_section_in_set
+: Invalid argument
+IN >>>> find_section
+: Invalid argument
+OUT >>>> find_section
+: Invalid argument
+OUT >>>> find_section_in_set
+: Invalid argument
+IN >>>> load_specific_debug_section
+: Invalid argument
+IN >>>> get_data
+: Invalid argument
+OUT >>>> get_data
+: Invalid argument
+OUT >>>> load_specific_debug_section
+: Invalid argument
+OUT >>>> load_debug_section
+: Invalid argument
+IN >>>> load_separate_debug_info
+: Invalid argument
+IN >>>> parse_gnu_debugaltlink
+: Invalid argument
+OUT >>>> parse_gnu_debugaltlink
+: Invalid argument
+IN >>>> lrealpath
+: Invalid argument
+OUT >>>> lrealpath
+: Invalid argument
+IN >>>> check_gnu_debugaltlink
+: Invalid argument
+IN >>>> open_debug_file
+: Invalid argument
+IN >>>> open_file
+: Invalid argument
+OUT >>>> open_file
+: No such file or directory
+OUT >>>> open_debug_file
+: No such file or directory
+OUT >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> open_debug_file
+: No such file or directory
+IN >>>> open_file
+: No such file or directory
+OUT >>>> open_file
+: No such file or directory
+OUT >>>> open_debug_file
+: No such file or directory
+OUT >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> open_debug_file
+: No such file or directory
+IN >>>> open_file
+: No such file or directory
+OUT >>>> open_file
+: No such file or directory
+OUT >>>> open_debug_file
+: No such file or directory
+OUT >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> open_debug_file
+: No such file or directory
+IN >>>> open_file
+: No such file or directory
+OUT >>>> open_file
+: No such file or directory
+OUT >>>> open_debug_file
+: No such file or directory
+OUT >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> open_debug_file
+: No such file or directory
+IN >>>> open_file
+: No such file or directory
+OUT >>>> open_file
+: No such file or directory
+OUT >>>> open_debug_file
+: No such file or directory
+OUT >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> open_debug_file
+: No such file or directory
+IN >>>> open_file
+: No such file or directory
+OUT >>>> open_file
+: No such file or directory
+OUT >>>> open_debug_file
+: No such file or directory
+OUT >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> open_debug_file
+: No such file or directory
+IN >>>> open_file
+: No such file or directory
+OUT >>>> open_file
+: No such file or directory
+OUT >>>> open_debug_file
+: No such file or directory
+OUT >>>> check_gnu_debugaltlink
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: could not find separate debug file ''
+OUT >>>> warn
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: tried: /lib/debug/
+OUT >>>> warn
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: tried: /usr/lib/debug/usr/
+OUT >>>> warn
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: tried: /usr/lib/debug/
+OUT >>>> warn
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: tried: /tmp/proj_work_dir_binutils-10372_1565169295/.debug/
+OUT >>>> warn
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: tried: /tmp/proj_work_dir_binutils-10372_1565169295/
+OUT >>>> warn
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: tried: .debug/
+OUT >>>> warn
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: tried: 
+OUT >>>> warn
+: No such file or directory
+OUT >>>> load_separate_debug_info
+: No such file or directory
+OUT >>>> load_separate_debug_file
+: No such file or directory
+IN >>>> process_section_contents
+: No such file or directory
+IN >>>> initialise_dumps_byname
+: No such file or directory
+OUT >>>> initialise_dumps_byname
+: No such file or directory
+IN >>>> display_debug_section
+: No such file or directory
+IN >>>> printable_section_name
+: No such file or directory
+OUT >>>> printable_section_name
+: No such file or directory
+IN >>>> find_section
+: No such file or directory
+OUT >>>> find_section
+: No such file or directory
+IN >>>> load_specific_debug_section
+: No such file or directory
+IN >>>> get_data
+: No such file or directory
+OUT >>>> get_data
+: No such file or directory
+IN >>>> apply_relocations
+: No such file or directory
+OUT >>>> apply_relocations
+: No such file or directory
+OUT >>>> load_specific_debug_section
+: No such file or directory
+IN >>>> find_cu_tu_set
+: No such file or directory
+IN >>>> load_cu_tu_indexes
+: No such file or directory
+IN >>>> load_debug_section_with_follow
+: No such file or directory
+IN >>>> load_debug_section
+: No such file or directory
+IN >>>> find_section_in_set
+: No such file or directory
+IN >>>> find_section
+: No such file or directory
+OUT >>>> find_section
+: No such file or directory
+OUT >>>> find_section_in_set
+: No such file or directory
+IN >>>> find_section_in_set
+: No such file or directory
+IN >>>> find_section
+: No such file or directory
+OUT >>>> find_section
+: No such file or directory
+OUT >>>> find_section_in_set
+: No such file or directory
+IN >>>> load_specific_debug_section
+: No such file or directory
+IN >>>> get_data
+: No such file or directory
+OUT >>>> get_data
+: No such file or directory
+OUT >>>> load_specific_debug_section
+: No such file or directory
+OUT >>>> load_debug_section
+: No such file or directory
+OUT >>>> load_debug_section_with_follow
+: No such file or directory
+IN >>>> process_cu_tu_index
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> xcalloc2
+: No such file or directory
+IN >>>> xcalloc
+: No such file or directory
+OUT >>>> xcalloc
+: No such file or directory
+OUT >>>> xcalloc2
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> process_cu_tu_index
+: No such file or directory
+IN >>>> load_debug_section_with_follow
+: No such file or directory
+IN >>>> load_debug_section
+: No such file or directory
+IN >>>> find_section_in_set
+: No such file or directory
+IN >>>> find_section
+: No such file or directory
+OUT >>>> find_section
+: No such file or directory
+OUT >>>> find_section_in_set
+: No such file or directory
+IN >>>> find_section_in_set
+: No such file or directory
+IN >>>> find_section
+: No such file or directory
+OUT >>>> find_section
+: No such file or directory
+OUT >>>> find_section_in_set
+: No such file or directory
+IN >>>> load_specific_debug_section
+: No such file or directory
+IN >>>> get_data
+: No such file or directory
+OUT >>>> get_data
+: No such file or directory
+OUT >>>> load_specific_debug_section
+: No such file or directory
+OUT >>>> load_debug_section
+: No such file or directory
+OUT >>>> load_debug_section_with_follow
+: No such file or directory
+IN >>>> process_cu_tu_index
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> xcalloc2
+: No such file or directory
+IN >>>> xcalloc
+: No such file or directory
+OUT >>>> xcalloc
+: No such file or directory
+OUT >>>> xcalloc2
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_64
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> process_cu_tu_index
+: No such file or directory
+OUT >>>> load_cu_tu_indexes
+: No such file or directory
+OUT >>>> find_cu_tu_set
+: No such file or directory
+IN >>>> display_debug_frames
+: No such file or directory
+IN >>>> introduce
+: No such file or directory
+OUT >>>> introduce
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: Invalid length 0x80001400 in FDE at 00000000
+OUT >>>> warn
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> warn
+: No such file or directory
+readelf: Warning: Invalid CIE pointer 0x0000f163 in FDE at 00000000
+OUT >>>> warn
+: No such file or directory
+IN >>>> xmalloc
+: No such file or directory
+OUT >>>> xmalloc
+: No such file or directory
+IN >>>> xmalloc
+: No such file or directory
+OUT >>>> xmalloc
+: No such file or directory
+IN >>>> frame_need_space
+: No such file or directory
+IN >>>> xcrealloc
+: No such file or directory
+IN >>>> xrealloc
+: No such file or directory
+OUT >>>> xrealloc
+: No such file or directory
+OUT >>>> xcrealloc
+: No such file or directory
+IN >>>> xcrealloc
+: No such file or directory
+IN >>>> xrealloc
+: No such file or directory
+OUT >>>> xrealloc
+: No such file or directory
+OUT >>>> xcrealloc
+: No such file or directory
+OUT >>>> frame_need_space
+: No such file or directory
+IN >>>> get_encoded_value
+: No such file or directory
+IN >>>> size_of_encoded_value
+: No such file or directory
+OUT >>>> size_of_encoded_value
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> get_encoded_value
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> frame_need_space
+: No such file or directory
+IN >>>> xcrealloc
+: No such file or directory
+IN >>>> xrealloc
+: No such file or directory
+OUT >>>> xrealloc
+: No such file or directory
+OUT >>>> xcrealloc
+: No such file or directory
+IN >>>> xcrealloc
+: No such file or directory
+IN >>>> xrealloc
+: No such file or directory
+OUT >>>> xrealloc
+: No such file or directory
+OUT >>>> xcrealloc
+: No such file or directory
+OUT >>>> frame_need_space
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> frame_need_space
+: No such file or directory
+IN >>>> xcrealloc
+: No such file or directory
+IN >>>> xrealloc
+: No such file or directory
+OUT >>>> xrealloc
+: No such file or directory
+OUT >>>> xcrealloc
+: No such file or directory
+IN >>>> xcrealloc
+: No such file or directory
+IN >>>> xrealloc
+: No such file or directory
+OUT >>>> xrealloc
+: No such file or directory
+OUT >>>> xcrealloc
+: No such file or directory
+OUT >>>> frame_need_space
+: No such file or directory
+IN >>>> read_sleb128
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_sleb128
+: No such file or directory
+IN >>>> get_encoded_value
+: No such file or directory
+IN >>>> size_of_encoded_value
+: No such file or directory
+OUT >>>> size_of_encoded_value
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> get_encoded_value
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> regname
+: No such file or directory
+OUT >>>> regname
+: No such file or directory
+IN >>>> get_encoded_value
+: No such file or directory
+IN >>>> size_of_encoded_value
+: No such file or directory
+OUT >>>> size_of_encoded_value
+: No such file or directory
+IN >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> byte_get_little_endian
+: No such file or directory
+OUT >>>> get_encoded_value
+: No such file or directory
+IN >>>> dwarf_vmatoa_1
+: No such file or directory
+OUT >>>> dwarf_vmatoa_1
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> regname
+: No such file or directory
+OUT >>>> regname
+: No such file or directory
+IN >>>> decode_location_expression
+: No such file or directory
+OUT >>>> decode_location_expression
+: No such file or directory
+IN >>>> read_uleb128.5943
+: No such file or directory
+IN >>>> read_leb128
+: No such file or directory
+OUT >>>> read_leb128
+: No such file or directory
+OUT >>>> read_uleb128.5943
+: No such file or directory
+OUT >>>> display_debug_frames
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+OUT >>>> display_debug_section
+: No such file or directory
+OUT >>>> process_section_contents
+: No such file or directory
+IN >>>> process_notes
+: No such file or directory
+OUT >>>> process_notes
+: No such file or directory
+IN >>>> process_gnu_liblist
+: No such file or directory
+OUT >>>> process_gnu_liblist
+: No such file or directory
+IN >>>> process_arch_specific
+: No such file or directory
+OUT >>>> process_arch_specific
+: No such file or directory
+IN >>>> free_debug_memory
+: No such file or directory
+IN >>>> free_abbrevs
+: No such file or directory
+OUT >>>> free_abbrevs
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+IN >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_section
+: No such file or directory
+OUT >>>> free_debug_memory
+: No such file or directory
+OUT >>>> process_object
+: No such file or directory
+OUT >>>> process_file
+: No such file or directory
+OUT >>>> main
+: No such file or directory

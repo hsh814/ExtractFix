@@ -16,7 +16,8 @@ source_dir = os.path.dirname(os.path.realpath(__file__))
 def preprocess_single_file(mission, f, tail, logger):
     cmd = source_dir+'/GSInserter -mission=' + mission + " " + f + tail
 
-    # logger.debug('replacing command: '+cmd)
+    #if 'readelf.c' in f or 'dwarf.c' in f:
+    #    logger.debug('replacing command: '+cmd)
 
     try:
         (status, output) = commands.getstatusoutput(cmd)
