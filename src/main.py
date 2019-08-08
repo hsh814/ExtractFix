@@ -94,6 +94,9 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
 
     if bug_type == 'divide_by_0':
+        sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
+        crash_info = sanitizer.generate_crash_info()
+        logger.info("crash info: "+str(crash_info))
         logger.debug("output divide-by-zero constraints")
         save_log('/tmp/cfc.out', work_dir + "/constraints.txt", "result"+str(index))
         return
