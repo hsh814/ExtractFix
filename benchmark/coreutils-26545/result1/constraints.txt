@@ -1,0 +1,12 @@
+(Or (Not (And (Eq false
+                   (Ult  i
+                        (UDiv  size
+                              2)))
+               (Ult  i
+                     size)))
+     (Ule (Add 95109120
+               (Sub  size
+                     i))
+          (Add 95109120
+                i)))
+

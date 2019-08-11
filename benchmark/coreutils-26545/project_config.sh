@@ -3,9 +3,9 @@ compile_type=$1
 
 current_dir=`pwd`
 
-
 cd project
 #git checkout 8d34b45
+sed -i 's/  for (i = 3;/i=3;\nfor(;/' src/shred.c
 
 # TODO: coreutils must run ./bootstrap once after checkout
 #./bootstrap

@@ -1,4 +1,9 @@
-(And (Sle  count
-           255)
-      (Sle 0
-            count))
+(And (Or (Not (Sle  count
+                    255))
+          (Sle 0
+                count))
+      (Or (Not (Eq 0
+                    count))
+          (Sle 0
+                count)))
+
