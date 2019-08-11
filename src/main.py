@@ -22,7 +22,8 @@ import argparse
 import coloredlogs, logging
 import sys, time, os, ntpath, time
 # add the current path to PYTHONPATH
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+full_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(full_path)
 
 import subprocess
 from instrumentation import ProjPreprocessor, FuncTracer, SymVarInserter
@@ -146,6 +147,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         global index
         log_path = os.path.join(source_path, "result"+str(index))
         fix_stm = os.path.join(log_path, "fix_stm.txt")
+        constraint_path = os.path.join(log_path, "constraints.txt")
         if not os.path.isdir(log_path):
             command = "mkdir " + log_path
             subprocess.call(command, shell=True)
@@ -156,12 +158,18 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
         logger.info("fix_line is " + fix_line)
         save_log(source_path, work_dir + "/constraints.txt", "result"+str(index))
+        logger.info("backward propagated constraint is save in " + constraint_path)
 
-        # TODO: invoke ruyi's interface
+        synthesizer = os.path.join(full_path, "synthesis", "second_order", "so_synthesizer.py")
+        # constraint_path = "../benchmark/libtiff-5321/result0/constraints.txt"
+        # fix_stm = "../benchmark/libtiff-5321/result0/fix_stm.txt"
+        command = "python3 " + " " + synthesizer + " " + log_path + " " + constraint_path + " " + fix_stm
+        subprocess.call(command, shell=True)
+        logger.info("generated patches are saved in " + log_path)
 
         index += 1
         break
-    logger.info("execution time (in minutes) is: " + str((time.time()-start_time)/60))
+    logger.info("execution time (in minutes) is: " + str(time.time()-start_time))
 
 
 def read_fix_line(project_path, file_path, line_no):

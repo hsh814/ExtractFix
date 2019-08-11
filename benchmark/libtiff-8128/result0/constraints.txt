@@ -1,4 +1,5 @@
-(And (Sle  limit
-            err)
-      (Ult  nrows
-           256))
+(Or (Not (Sle  limit
+                err))
+     (Ult  nrows
+          256))
+

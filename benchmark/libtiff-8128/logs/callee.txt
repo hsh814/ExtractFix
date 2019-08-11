@@ -1,15 +1,6 @@
-<<<<<<< HEAD
-/tmp/proj_work_dir_libtiff-8128_1564717253/project/contrib/iptcutil/iptcutil.c formatIPTC LOWFAT_GLOBAL_MS__iptcutil_formatIPTC_286
-/tmp/proj_work_dir_libtiff-8128_1564717253/project/contrib/iptcutil/iptcutil.c super_fgets LOWFAT_GLOBAL_MS__iptcutil_super_fgets_344
-/tmp/proj_work_dir_libtiff-8128_1564717253/project/contrib/addtiffo/tif_overview.c TIFF_DownSample LOWFAT_GLOBAL_MS__tif_overview_TIFF_DownSample_278
-/tmp/proj_work_dir_libtiff-8128_1564717253/project/tools/tiffdump.c dump LOWFAT_GLOBAL_MS__tiffdump_dump_236
-/tmp/proj_work_dir_libtiff-8128_1564717253/project/libtiff/tif_unix.c _TIFFmalloc LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_263
-/tmp/proj_work_dir_libtiff-8128_1564717253/project/libtiff/tif_unix.c _TIFFrealloc LOWFAT_GLOBAL_MS__tif_unix__TIFFrealloc_275
-=======
-/tmp/proj_work_dir_libtiff-8128_1564673835/project/libtiff/tif_unix.c _TIFFmalloc LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_263
-/tmp/proj_work_dir_libtiff-8128_1564673835/project/libtiff/tif_unix.c _TIFFrealloc LOWFAT_GLOBAL_MS__tif_unix__TIFFrealloc_275
-/tmp/proj_work_dir_libtiff-8128_1564673835/project/tools/tiffdump.c dump LOWFAT_GLOBAL_MS__tiffdump_dump_236
-/tmp/proj_work_dir_libtiff-8128_1564673835/project/contrib/addtiffo/tif_overview.c TIFF_DownSample LOWFAT_GLOBAL_MS__tif_overview_TIFF_DownSample_278
-/tmp/proj_work_dir_libtiff-8128_1564673835/project/contrib/iptcutil/iptcutil.c formatIPTC LOWFAT_GLOBAL_MS__iptcutil_formatIPTC_286
-/tmp/proj_work_dir_libtiff-8128_1564673835/project/contrib/iptcutil/iptcutil.c super_fgets LOWFAT_GLOBAL_MS__iptcutil_super_fgets_344
->>>>>>> 42287a92ff60c96437bb9eaa6b2a9c3353348391
+/tmp/proj_work_dir_libtiff-8128_1565513480/project/contrib/iptcutil/iptcutil.c formatIPTC LOWFAT_GLOBAL_MS__iptcutil_formatIPTC_286
+/tmp/proj_work_dir_libtiff-8128_1565513480/project/contrib/iptcutil/iptcutil.c super_fgets LOWFAT_GLOBAL_MS__iptcutil_super_fgets_344
+/tmp/proj_work_dir_libtiff-8128_1565513480/project/contrib/addtiffo/tif_overview.c TIFF_DownSample LOWFAT_GLOBAL_MS__tif_overview_TIFF_DownSample_278
+/tmp/proj_work_dir_libtiff-8128_1565513480/project/tools/tiffdump.c dump LOWFAT_GLOBAL_MS__tiffdump_dump_236
+/tmp/proj_work_dir_libtiff-8128_1565513480/project/libtiff/tif_unix.c _TIFFmalloc LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_263
+/tmp/proj_work_dir_libtiff-8128_1565513480/project/libtiff/tif_unix.c _TIFFrealloc LOWFAT_GLOBAL_MS__tif_unix__TIFFrealloc_275
