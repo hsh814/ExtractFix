@@ -29,11 +29,11 @@ IN >>>> _ZL6PrintfPKcz
 ======================= INFO =========================
 This binary is built for AFL-fuzz.
 To run the target function on individual input(s) execute this:
-  /tmp/proj_work_dir_ffmpeg-9995_1565499820/project/target_dec_dfa_fuzzer_with_func_tracer < INPUT_FILE
+  /tmp/proj_work_dir_ffmpeg-9995_1564985780/project/target_dec_dfa_fuzzer_with_func_tracer < INPUT_FILE
 or
-  /tmp/proj_work_dir_ffmpeg-9995_1565499820/project/target_dec_dfa_fuzzer_with_func_tracer INPUT_FILE1 [INPUT_FILE2 ... ]
+  /tmp/proj_work_dir_ffmpeg-9995_1564985780/project/target_dec_dfa_fuzzer_with_func_tracer INPUT_FILE1 [INPUT_FILE2 ... ]
 To fuzz with afl-fuzz execute this:
-  afl-fuzz [afl-flags] /tmp/proj_work_dir_ffmpeg-9995_1565499820/project/target_dec_dfa_fuzzer_with_func_tracer [-N]
+  afl-fuzz [afl-flags] /tmp/proj_work_dir_ffmpeg-9995_1564985780/project/target_dec_dfa_fuzzer_with_func_tracer [-N]
 afl-fuzz will run N iterations before re-spawning the process (default: 1000)
 ======================================================
 OUT >>>> _ZL6PrintfPKcz
