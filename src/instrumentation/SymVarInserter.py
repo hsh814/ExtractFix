@@ -57,12 +57,17 @@ class SymVarInserter:
 
         inserter = os.path.join(self.cur_dir, "SVInserter")
 
+        base_arg = ""
+        if self.crash_info.get_base_name() != "":
+            base_arg = " -base " + self.crash_info.get_base_name()
+
         include_options = get_import_head_folders(self.project_dir, system_header)
         tail = ' '.join(include_options)
         command = inserter + \
                   " -mission symbolize" + \
                   " -loc " + str(fix_line_no) + \
                   " -args \"" + args + "\"" + \
+                  base_arg + \
                   " " + fix_file +\
                   " -- " + tail + \
                   " 2> /dev/null"
@@ -81,10 +86,15 @@ class SymVarInserter:
 
         inserter = os.path.join(self.cur_dir, "SVInserter")
 
+        base_arg = ""
+        if self.crash_info.get_base_name() != "":
+            base_arg = " -base " + self.crash_info.get_base_name()
+
         tail = ' '.join(include_options)
         command = inserter + " -mission cfc" + \
                   " -loc " + str(crash_line_no) + \
                   " -args \"" + cfc + "\"" + \
+                  base_arg + \
                   " " + crash_file + \
                   " -- " + tail + \
                   " 2> /dev/null"

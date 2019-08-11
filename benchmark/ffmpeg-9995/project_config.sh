@@ -7,7 +7,7 @@ current_dir="$( cd "$(dirname "$0")" ; pwd -P )"
 
 cp Makefile project/
 cp configure project/
-cp /home/nightwish/workspace/bug_repair/crash-free-fix/benchmark/ffmpeg_deps/afl_driver.cpp project/
+cp ${CFC_PROJ_ROOT}/benchmark/ffmpeg_deps/afl_driver.cpp project/
 
 cd project
 #git checkout d9783e4
@@ -37,7 +37,7 @@ CFLAGS="$cflags"
 CXXFLAGS="$cflags"
 
 
-FFMPEG_DEPS_PATH=/home/nightwish/workspace/bug_repair/crash-free-fix/benchmark/ffmpeg_deps/libs
+FFMPEG_DEPS_PATH=${CFC_PROJ_ROOT}/benchmark/ffmpeg_deps/libs
 
 PKG_CONFIG_PATH="$FFMPEG_DEPS_PATH/lib/pkgconfig" CFLAGS="-I$FFMPEG_DEPS_PATH/include $CFLAGS" ../configure \
     --cc=$CC --cxx=$CXX --ld="$CXX $CXXFLAGS -std=c++11" \

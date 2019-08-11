@@ -57,6 +57,10 @@ static llvm::cl::opt<string> args("args",
                                  llvm::cl::desc("the variables to symbolize"),
                                  llvm::cl::Required, llvm::cl::cat(SVCategory));
 
+static llvm::cl::opt<string> base("base",
+                                  llvm::cl::desc("the base name of the pointer"),
+                                  llvm::cl::Optional, llvm::cl::cat(SVCategory));
+
 vector<string> getVars(vector<string> var_vector){
     string args_temp = args;
     size_t pos = 0;
@@ -98,13 +102,23 @@ public:
 
         if (loc == curLineNo){
             if (mission == "symbolize"){
+
+                if(base.length()) {
+                    varToInsert += "klee_track(" + base + ",\"" + base + "\""+ ");";
+                }
+
                 vector<string> var_vector;
                 var_vector = getVars(var_vector);
                 for (const string &var: var_vector){
                     varToInsert += "klee_make_symbolic(&" + var + ", sizeof(" + var + "), \"" + var + "\");";
                 }
             } else if (mission == "cfc"){
-                varToInsert = "klee_assume(" + args + ");\n";
+
+                if(base.length()) {
+                    varToInsert += "klee_track(" + base + ",\"" + base + "\""+ ");";
+                }
+
+                varToInsert += "klee_assume(" + args + ");\n";
                 auto LowfatIdx = args.find("LOWFAT_GLOBAL_MS__");
 
                 if (LowfatIdx != std::string::npos) {

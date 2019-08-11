@@ -35,6 +35,8 @@ sudo apt install nasm
 sudo apt-get install libfreetype6-dev libva-dev libass-dev libavutil-dev
 ```
 
+- export CFC_PROJ_ROOT=[YOUR-CFC-PROJ-ROOT] 
+
 ### Installation
 1. Clone Crash-free-fix and its submodules
 ```

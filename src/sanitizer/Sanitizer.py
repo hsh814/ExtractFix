@@ -83,6 +83,14 @@ class BufferOverflowSanitizer(Sanitizer):
         assert (start < end)
         cfc = cfc[start+1:end]
 
-        crash_info = Global.CrashInfo(path, file_name, function_name, line_no, cfc)
+        base_name = ""
+        line = f.readline()
+        if line:
+            base_info = line.split("#")
+            base_name = base_info[0]
+
+        crash_info = Global.CrashInfo(path, file_name, function_name, line_no, cfc, base_name)
+        f.close()
+
         return crash_info
 
