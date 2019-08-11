@@ -154,9 +154,12 @@ def trans(constraint_file, sketch_file):
         all_inp = f.readlines()
         #import pprint as pp
         #pp.pprint(all_inp)
+    is_negative = False
     with open(sketch_file) as f:
         sketch = f.readlines()
-        assert len(sketch) == 1
+        assert len(sketch) == 1 or len(sketch) == 2
+        if len(sketch) == 2 and "negative" in sketch[1]:
+            is_negative = True
         sketch = sketch[0]
     all_inp = list(map(lambda x: x.strip(), all_inp))
     all_inp = list(filter(lambda x: len(x) > 0, all_inp))
@@ -183,7 +186,9 @@ def trans(constraint_file, sketch_file):
         del variable_table[func.expr]
     else:
         func = ExprInfo("condition", "Bool")
-        constraint = ExprInfo(["=>", ExprInfo(["not", func], "Bool"), constraint], "Bool")
+        if is_negative:
+            func = ExprInfo(["not", func], "Bool")
+        constraint = ExprInfo(["=>", func, constraint], "Bool")
         #print(constraint)
     syn_declare = [_make_declare(func, variable_table, constant_table, operator_list)]
     arg_list = syn_declare[0][2]

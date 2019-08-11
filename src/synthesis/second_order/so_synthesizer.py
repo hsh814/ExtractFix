@@ -15,6 +15,7 @@ if __name__ == "__main__":
     sys.argv = [None,
                 "A.txt",
                 "B.txt"]
+    log_path = "."
     left_sketch, right_sketch = trans.trans(sys.argv[1], sys.argv[2])
     synthesis_task = task.SynthesisTask("mid.sl")
     function_tree_list = {}

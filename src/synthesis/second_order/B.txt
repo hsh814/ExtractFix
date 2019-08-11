@@ -1,1 +1,1 @@
-  for (i = 3; i < size / 2; i *= 2)
+  if (initial_read != -1 || start < initial_read)
