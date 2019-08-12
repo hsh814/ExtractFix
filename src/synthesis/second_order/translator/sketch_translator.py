@@ -135,6 +135,7 @@ def _parse_assign(expr):
     return res
 
 def _parse_self_add(expr):
+    print("self add", expr)
     assert len(expr) == 2
     if type(expr[1]) == ExprInfo:
         expr[0], expr[1] = expr[1], expr[0]
@@ -143,6 +144,7 @@ def _parse_self_add(expr):
         right = _parse_left_first([ExprInfo(1, "Int"), "+", expr[0]])
     else:
         right = _parse_left_first([expr[0], "-", ExprInfo(1, "Int")])
+    print(right.type)
     return _parse_assign([ExprInfo(expr[0].expr, expr[0].type), "=", right])
 
 def _pre_process(sketch_str):
@@ -235,7 +237,7 @@ def parse_sketch(sketch_str):
     comma = Regex(r",")
     LPAR, RPAR = "()"
     LSQR, RSQR = "[]"
-    token = Regex(r'(?!(true|false|NULL))[_a-zA-Z][_a-zA-Z0-9\->]*')
+    token = Regex(r'(?!(true|false|NULL))[_a-zA-Z][_a-zA-Z0-9]*')
     op_add = Regex(r"\+|-")
     op_mul = Regex(r"\*|/")
     op_cmp = Regex(r"(<=)|(<)|(>=)|(>)|(==)|(!=)")

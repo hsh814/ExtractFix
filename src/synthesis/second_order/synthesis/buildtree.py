@@ -120,7 +120,7 @@ class Node:
         for type, subtree_list in self.subtree_list.items():
             for subtree in self.subtree_list:
                 subtree.set_speical()
-                
+
     def print_tree(self):
         print("id:", self.id, "symbol:", self.info.name, "sketch:", self.sketch, "extra root:", self.is_extra_root)
         for symbol, subtrees in self.subtree_list.items():
