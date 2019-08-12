@@ -1,1 +1,2 @@
-../../tools/tiff2ps.c:PSDataColorContig:2472#(nc < LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316)
+../../tools/tiff2ps.c:PSDataColorContig:2473#(nc < LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316)
+tf_buf#unsigned char*
