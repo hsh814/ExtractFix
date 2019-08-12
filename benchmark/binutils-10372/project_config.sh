@@ -8,13 +8,17 @@ cd project
 #git checkout d9783e4
 
 
-if [[ `grep 'size_t LOWFAT_GLOBAL_MS__readelf_get_data_423;' ./binutils/readelf.c` != None ]]
+if ! grep -qF "size_t LOWFAT_GLOBAL_MS__readelf_get_data_423;" ./binutils/readelf.c;
 then
+	echo "PREPROCESS"
+	sed -i '423s/malloc ((size_t) amt + 1)/malloc (({LOWFAT_GLOBAL_MS__readelf_get_data_423 = (size_t) amt + 1; LOWFAT_GLOBAL_MS__readelf_get_data_423;}))/' ./binutils/readelf.c
 	sed -i '360isize_t LOWFAT_GLOBAL_MS__readelf_get_data_423;' ./binutils/readelf.c
 fi
 
-if [[ `grep 'extern size_t LOWFAT_GLOBAL_MS__readelf_get_data_423;;' ./binutils/dwarf.c` != None ]]
+
+if ! grep -qF "extern size_t LOWFAT_GLOBAL_MS__readelf_get_data_423" ./binutils/dwarf.c;
 then
+	echo "PREPROCESS"
 	sed -i '126iextern size_t LOWFAT_GLOBAL_MS__readelf_get_data_423;' ./binutils/dwarf.c
 fi
 
