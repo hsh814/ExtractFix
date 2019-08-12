@@ -61,7 +61,7 @@ def _parseInt(num):
     #print("parseInt", num)
     thresholds = [2 ** 32, 2 ** 64]
     for threshold in thresholds:
-        if num in range(threshold - _limit, threshold):
+        if num in range(threshold - threshold // 2, threshold):
             return num - threshold
     return num
 

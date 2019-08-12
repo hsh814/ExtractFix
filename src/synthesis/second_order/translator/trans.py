@@ -46,6 +46,8 @@ def _assign_type(expr):
         for (i, var_type) in enumerate(arg_type):
             arg_list[i].set_type(var_type)
         if operator == "=":
+            print(expr)
+            print(arg_list[0].type, arg_list[0], arg_list[1].type, arg_list[1])
             arg_list[0].set_type(arg_list[1].type)
             arg_list[1].set_type(arg_list[0].type)
         result = [operator]
@@ -75,6 +77,8 @@ def _collect_used_component(expr_info, variable_table, constant_table, operator_
         return
     if type(expr) == int:
         assert expr_type == "Int"
+        if abs(expr) > config.constant_limit:
+            return
         for i in range(expr - config.constant_expend_size, expr + config.constant_expend_size + 1):
             if str(i) not in constant_table[expr_type]:
                 constant_table[expr_type].append(str(i))
@@ -159,6 +163,7 @@ def trans(constraint_file, sketch_file):
         sketch = f.readlines()
         assert len(sketch) == 1 or len(sketch) == 2
         if len(sketch) == 2 and "negative" in sketch[1]:
+            #print("negative")
             is_negative = True
         sketch = sketch[0]
     all_inp = list(map(lambda x: x.strip(), all_inp))
@@ -170,7 +175,7 @@ def trans(constraint_file, sketch_file):
     #print(sketch, constraint)
     variable_table = {}
     constant_table = {"Int": [], "Bool": []}
-    operator_list = ["+", "-", "<", "<=", "and", "or", "not"]
+    operator_list = ["<", "<=", "and", "or", "not"]
     constraint.simplify()
     sketch.simplify()
     _collect_used_component(constraint, variable_table, constant_table, operator_list)
@@ -187,8 +192,10 @@ def trans(constraint_file, sketch_file):
     else:
         func = ExprInfo("condition", "Bool")
         if is_negative:
-            func = ExprInfo(["not", func], "Bool")
-        constraint = ExprInfo(["=>", func, constraint], "Bool")
+            constraint = ExprInfo(["=>", ExprInfo(["not", func], "Bool"), constraint], "Bool")
+        else:
+            constraint = ExprInfo(["=>", func, constraint], "Bool")
+        #print(constraint)
         #print(constraint)
     syn_declare = [_make_declare(func, variable_table, constant_table, operator_list)]
     arg_list = syn_declare[0][2]

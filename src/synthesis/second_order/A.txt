@@ -1,13 +1,11 @@
-(And (Or (Not (Eq false
-                   (Eq 18446744073709551615
-                        initial_read)))
-          (Ule 0
-               (Sub  initial_read
-                     start)))
-      (Or (Not (And (Eq 18446744073709551615
-                         initial_read)
-                    (Ult  start
-                         18446744073709551615)))
-          (Ule 0
-               (Sub  initial_read
-                     start))))
+(And (Or (Not (Eq 1
+                    tlen))
+          (Ult  tlen
+                LOWFAT_GLOBAL_MS__buf_xmlBufGrowInternal_486))
+      (Or (Not (And (Slt 0
+                          tlen)
+                    (Eq false
+                        (Eq 1
+                             tlen))))
+          (Ult  tlen
+                LOWFAT_GLOBAL_MS__buf_xmlBufGrowInternal_486)))

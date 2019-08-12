@@ -13,6 +13,7 @@ class SyntaxSolver(Solver):
     def solve(self, task, is_use_semantic_heuristic):
         hard_list = []
         soft_list = []
+        is_use_semantic_heuristic = False
         for function_name, function_tree in task.function_tree_list.items():
             function_tree.get_structure_constraint(hard_list, soft_list)
             if is_use_semantic_heuristic:
@@ -37,7 +38,7 @@ class SyntaxSolver(Solver):
                     function_result_list = {}
                     for function_name, function_tree in task.function_tree_list.items():
                         function_result_list[function_name] = function_tree.parse_output(model)
-                    print("find ", function_result_list)
+                    #print("find ", function_result_list)
                     solver.pop()
                     break
                 unsat_core = solver.unsat_core()
@@ -58,6 +59,10 @@ class SyntaxSolver(Solver):
             constraint_list = []
             for constraint in task.constraint:
                 constraint_list.append(synthesis.parse_constraint_with_function(constraint, function_result_list, task))
+            for name, var in task.variable_list.items():
+                if var.type == "Int":
+                    solver.add(var.z3_var >= config.int_min)
+                    solver.add(var.z3_var <= config.int_max)
             solver.add(z3.Not(z3.And(constraint_list)))
             #print(solver)
             result = solver.check()
@@ -74,9 +79,19 @@ class SyntaxSolver(Solver):
                     function_tree = task.function_tree_list[function_name]
                     current_expression = function_result_list[function_name]
                     inp = common.get_new_symbolic_input(function_info.arg_list)
-                    function_constraint_list.append(function_tree.get_o(inp, hard_list) !=
-                                                    synthesis.parse_function_with_input(current_expression, inp))
+                    if not config.is_overflow:
+                        function_constraint_list.append(function_tree.get_o(inp, hard_list) !=
+                                                        synthesis.parse_function_with_input(current_expression, inp))
+                    else:
+                        all_cons = [function_tree.get_o(inp, hard_list) !=
+                                                        synthesis.parse_function_with_input(current_expression, inp)]
+                        for name, var in inp.items():
+                            if task.variable_list[name].type == "Int":
+                                all_cons.append(var >= config.int_min)
+                                all_cons.append(var <= config.int_max)
+                        function_constraint_list.append(z3.And(all_cons))
                 hard_list.append(z3.Or(function_constraint_list))
+                print("find ", function_result_list)
                 continue
 
             model = solver.model()

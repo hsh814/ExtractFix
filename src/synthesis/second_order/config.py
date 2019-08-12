@@ -1,5 +1,9 @@
 depth = 1
-result_num = 10
+result_num = 50
 filter_example = 20
 constant_expend_size = 1
+constant_limit = 1000
 cost_limit = 5
+int_min = - 2 ** 31
+int_max = 2 ** 31 - 1
+is_overflow = False
