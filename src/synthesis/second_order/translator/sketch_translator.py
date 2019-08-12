@@ -34,7 +34,9 @@ class ExprInfo:
         if self.type is None:
             self.type = expr_type
         elif self.type != expr_type:
-            assert False
+            assert type(self.expr) == str and self.type == "Int"
+            self.expr = ["not", ExprInfo(["=", ExprInfo(0, "Int"), ExprInfo(self.expr, "Int")], "Bool")]
+            self.type = "Bool"
 
     def __str__(self):
         if self.is_special:
@@ -225,7 +227,7 @@ def _parse_var(expr):
             name += _trans_expr_info_to_cpp(sub_expr)
         else:
             name += str(sub_expr)
-    return ExprInfo(name)
+    return ExprInfo(name, "Int")
 
 def parse_sketch(sketch_str):
     left, sketch_str, right = _pre_process(sketch_str)

@@ -1,5 +1,5 @@
 depth = 1
-result_num = 50
+result_num = 100
 filter_example = 20
 constant_expend_size = 1
 constant_limit = 1000

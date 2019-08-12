@@ -69,6 +69,7 @@ def _parse_constraint(constraint):
 
 def _collect_used_component(expr_info, variable_table, constant_table, operator_list):
     expr = expr_info.expr
+    print(expr, type(expr))
     expr_type = expr_info.type
     if type(expr) == list:
         if expr[0] not in operator_list: operator_list.append(expr[0])
