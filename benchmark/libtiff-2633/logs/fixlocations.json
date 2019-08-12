@@ -18,14 +18,14 @@
       "../../tools/tiff2ps.c",
       "PSDataColorContig",
       2452,
-      [ "row", "nc", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
+      [ "nc", "row", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",
       "../../tools/tiff2ps.c",
       "PSDataColorContig",
       2451,
-      [ "row", "h", "nc", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
+      [ "h", "nc", "row", "LOWFAT_GLOBAL_MS__tif_unix__TIFFmalloc_316" ]
    ],
    [
       "control flow",

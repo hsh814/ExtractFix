@@ -22,7 +22,8 @@ fi
 if [ $compile_type == 'to_bc' ];
 then
 	# get .o
-	wllvm -g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__ -lkleeRuntest -lkleeBasic -I${current_dir}/project_specific_lib/ -lhook -L${current_dir}/project_specific_lib/ -Wno-everything -I../include/ -I./include -c ../../poc.c
+        sed -i "s/size = xmlStrlen(cur)/\/\/size=xmlStrlen(cur)/" ../xmlstring.c
+	wllvm -g -D__NO_STRING_INLINES  -D_FORTIFY_SOURCE=0 -U__OPTIMIZE__ -lkleeRuntest -lkleeBasic -I${current_dir}/project_specific_lib/ -lhook -L${current_dir}/project_specific_lib/ -Wno-everything -I../include/ -I./include -c ../../poc2.c -o poc.o
 	# get exe
 	wllvm -ggdb3 -Wall -W -o poc poc.o ./.libs/libxml2.a -I./include -L./.libs/ -lxml2 -lz -llzma -lm -ldl -lkleeRuntest -lkleeBasic -lhook -L${current_dir}/project_specific_lib/ -Wl,-rpath
 	# get .bc

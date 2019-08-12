@@ -69,7 +69,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     subprocess.check_output(['cp', '-r', str(source_path), work_dir])
     project_path = os.path.join(work_dir, "project")
 
-    if bug_type == 'buffer_overflow' or bug_type == 'integer_overflow':
+    if bug_type == 'buffer_overflow' or bug_type == 'integer_overflow' or bug_type == "divide_by_0":
         runtime.project_config(work_dir, logger, "to_bc")
         ProjPreprocessor.__preprocess(project_path, lib=True, logger=logger)
 

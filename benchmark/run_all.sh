@@ -6,9 +6,20 @@
 ./main.py -s ../benchmark/libtiff-3186 -t test_case -c driver -b api_specific -n gif2tiff -v
 ./main.py -s ../benchmark/libtiff-5314 -t test_case -c driver -b buffer_overflow -n rgb2ycbcr -v
 ./main.py -s ../benchmark/libtiff-9273 -t test_case -c driver -b buffer_overflow -n tiffsplit -v
+./main.py -s ../benchmark/libtiff-10269 -t test_case -c driver -b buffer_overflow -n tiffcp -v
 ./main.py -s ../benchmark/libtiff-2633 -t test_case -c driver -b buffer_overflow -n tiff2ps -v
 ./main.py -s ../benchmark/libtiff-10094 -t test_case -c driver -b buffer_overflow -n tiff2pdf -v
+
 ./main.py -s ../benchmark/libtiff-2611 -t test_case -c driver -b divide_by_0 -n tiffmedian -v
+
+# Binutils
+./main.py -s ../benchmark/binutils-10372/ -t test_case -c driver -b buffer_overflow -n readelf -v
+
+# libxml2
+./main.py -s ../benchmark/libxml2-1834/ -t test_case -c driver -b buffer_overflow -n poc -v
+./main.py -s ../benchmark/libxml2-1839/ -t test_case -c driver -b buffer_overflow -n xmllint -v
+./main.py -s ../benchmark/libxml2-1838/ -t test_case -c driver -b buffer_overflow -n xmllint -v
+./main.py -s ../benchmark/libxml2-5134/ -t test_case -c driver -b buffer_overflow -n xmllint -v
 
 # Coreutil
 ./main.py -s ../benchmark/coreutils-26545 -t test_case -c driver -b buffer_overflow -n shred -v
