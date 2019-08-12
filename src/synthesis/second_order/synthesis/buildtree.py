@@ -24,6 +24,7 @@ class Node:
         self.used_var = None
         self.is_extra_root = is_extra_root
         self.fixed_child = None
+        self.result_var = None
         for rule in rules:
             if type(rule) == str or type(rule) == tuple:
                 self.terminals.append(rule)
@@ -56,7 +57,6 @@ class Node:
             depth = 0
         elif sketch and type(sketch) == list:
             operator = sketch[0]
-            #print(sketch, operator)
             for rule in rules:
                 if type(rule) == list and rule[0] == operator:
                     #print("satisfy", rule)
@@ -75,6 +75,7 @@ class Node:
                     self.subtree_list[name][i] = Node(name, None, depth+1, function)
         for name in self.subtree_list.keys():
             self.subtree_list[name] = list(filter(lambda x: not x.is_death, self.subtree_list[name]))
+        #print(self.subtree_list)
         for (i, operator) in enumerate(self.operators):
             subexpr_count = {}
             is_valid = True
@@ -126,6 +127,7 @@ class Node:
                     if terminal == self.sketch:
                         soft_list.append(self.terminal_indicators[i])
         for (i, operator) in enumerate(self.operators):
+            #print(operator)
             used_list = []
             subexpr_count = {}
             for subexpr in operator[1:]:
@@ -180,6 +182,7 @@ class Node:
         if self.is_extra_root:
             hard_list.append(z3.Implies(z3.Not(self.used_var),
                                         return_value == subtree_result[self.symbol][0]))
+        self.result_var = return_value
         return return_value
 
     def node_parse_output(self, model):
@@ -200,6 +203,16 @@ class Node:
                         subexpr_count[subexpr] = 0
                     result.append(self.subtree_list[subexpr][subexpr_count[subexpr]].node_parse_output(model))
                     subexpr_count[subexpr] += 1
+                '''if self.result_var is not None:
+                    result_var = [operator[0], model[self.result_var]]
+                    subexpr_count = {}
+                    for subexpr in operator[1:]:
+                        if subexpr not in subexpr_count:
+                            subexpr_count[subexpr] = 0
+                        result_var.append(model[self.subtree_list[subexpr][subexpr_count[subexpr]].result_var])
+                        subexpr_count[subexpr] += 1
+                    print(result_var)'''
+
                 return result
         assert False
 

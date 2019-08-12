@@ -8,7 +8,7 @@ from translator.operators import cpp2z3
 <bool-D> :: (<bool-A>) | true | false | <cmp> | <var>
 <cmp> :: <int-A> < <int-A> | <int-A> <= <int-A> | <int-A> > <int-B> | <int-A> >= <int-B> | <int-A> == <int-B> | <int-A> != <int-B>
 <int-A> :: <int-B> | <int-A> + <int-B> | <int-A> - <int-B>
-<int-B> :: <int-C> | <int-B> * <int-C>
+<int-B> :: <int-C> | <int-B> * <int-C> | <int-B> / <int-C>
 <int-C> :: (<int-A>) | <number> | <var>
 """
 
@@ -51,7 +51,7 @@ class ExprInfo:
             self.expr = ["<=", self.expr[2], self.expr[1]]
 
 def _get_operator_info(operator):
-    if operator in "+-*":
+    if operator in "+-*/":
         return [["Int", "Int"], "Int"]
     elif operator in [">", "<", ">=", "<=", "==", "!="]:
         return [["Int", "Int"], "Bool"]
@@ -98,7 +98,7 @@ def _rename_left_variable(expr, variable_name):
         expr.expr = "prevalue__" + expr.expr
 
 def _parse_assign(expr):
-    print(expr)
+    #print(expr)
     assert len(expr) == 3 or len(expr) == 4
     operator = expr[1]
     if len(operator) == 2:
@@ -170,7 +170,7 @@ def parse_sketch(sketch_str):
     var = Regex(r'(?!(true|false))[_a-zA-Z][_a-zA-Z0-9]*').setParseAction(lambda x: ExprInfo(x[0]))
     LPAR, RPAR = "()"
     op_add = Regex(r"\+|-")
-    op_mul = Regex(r"\*")
+    op_mul = Regex(r"\*|/")
     op_cmp = Regex(r"(<=)|(<)|(>=)|(>)|(==)|(!=)")
     op_and = Regex(r"&&")
     op_or = Regex(r"\|\|")

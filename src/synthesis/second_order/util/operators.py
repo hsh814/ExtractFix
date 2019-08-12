@@ -13,7 +13,8 @@ string2python = {
     ">": lambda x: x[0] > x[1],
     ">=": lambda x: x[0] >= x[1],
     "=>": lambda x: x[1] or (not x[0]),
-    "=": lambda x: x[0] == x[1]
+    "=": lambda x: x[0] == x[1],
+    "div": lambda x: x[0] // x[1]
 }
 
 string2z3 = {
@@ -29,5 +30,6 @@ string2z3 = {
     ">": lambda x: x[0] > x[1],
     ">=": lambda x: x[0] >= x[1],
     "=>": lambda x: z3.Implies(x[0], x[1]),
-    "=": lambda x: x[0] == x[1]
+    "=": lambda x: x[0] == x[1],
+    "div": lambda x: x[0] / x[1]
 }

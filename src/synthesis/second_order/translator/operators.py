@@ -9,7 +9,8 @@ z32cpp = {
     "=": "==",
     "not": "!",
     "or": "||",
-    "and": "&&"
+    "and": "&&",
+    "div": "/"
 }
 
 klee2z3str = {
@@ -17,8 +18,8 @@ klee2z3str = {
     "Add": "+",
     "Sub": "-",
     "Mul": "*",
-    #"Udiv":
-    #"SDiv":
+    "UDiv": "div",
+    "SDiv": "div",
     #"URem":
     #"SRem":
     "And": "and",
@@ -51,7 +52,8 @@ cpp2z3 = {
     "!": "not",
     "||": "or",
     "&&": "and",
-    "=": "assign"
+    "=": "assign",
+    "/": "div"
 }
 
 def get_z3_str(operator):

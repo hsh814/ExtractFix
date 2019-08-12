@@ -37,6 +37,7 @@ class SyntaxSolver(Solver):
                     function_result_list = {}
                     for function_name, function_tree in task.function_tree_list.items():
                         function_result_list[function_name] = function_tree.parse_output(model)
+                    print("find ", function_result_list)
                     solver.pop()
                     break
                 unsat_core = solver.unsat_core()
@@ -48,6 +49,7 @@ class SyntaxSolver(Solver):
                         relax_list.append(relax_var)
                         soft_list[i] = z3.Or(soft_list[i], relax_var)
                 total_cost += 1
+                print("add_cost")
                 if len(relax_list) == 0 or total_cost >= config.cost_limit:
                     return all_result
                 common.build_only_one(relax_list, hard_list)
@@ -57,6 +59,7 @@ class SyntaxSolver(Solver):
             for constraint in task.constraint:
                 constraint_list.append(synthesis.parse_constraint_with_function(constraint, function_result_list, task))
             solver.add(z3.Not(z3.And(constraint_list)))
+            #print(solver)
             result = solver.check()
             if result == z3.unsat:
                 solver.pop()
@@ -88,6 +91,7 @@ class SyntaxSolver(Solver):
                     point[name] = z3.is_true(result)
             synthesis.parse_constraint_with_input(task, point, hard_list)
             #print(function_result_list)
+            #print("new point")
             #print(point)
             solver.pop()
 
