@@ -59,6 +59,7 @@ class Node:
             operator = sketch[0]
             for rule in rules:
                 if type(rule) == list and rule[0] == operator:
+                    if rule[0] == "=" and rule[1] == "StartBool": continue
                     #print("satisfy", rule)
                     subexpr_count = {}
                     for (pos, name) in enumerate(rule[1:]):
@@ -121,6 +122,7 @@ class Node:
                 sketch_operator = self.sketch[0]
                 for (i, operator) in enumerate(self.operators):
                     if operator[0] == sketch_operator:
+                        if operator[0] == "=" and operator[1] == "StartBool": continue
                         soft_list.append(self.operator_indicators[i])
             else:
                 for (i, terminal) in enumerate(self.terminals):
@@ -223,7 +225,9 @@ class FunctionTree:
         for name, info in function.none_term.items():
             if info.type == function.return_type:
                 start_symbol = name
+        #print(function.sketch)
         self.root = Node(start_symbol, function.sketch, -config.depth, function, True)
+        #self.root.print_tree()
         self.possible_root = []
         self.function = function
         now = self.root
@@ -265,6 +269,7 @@ class FunctionTree:
         symbolic_input2 = get_new_symbolic_input(arg_list)
         hard_list.append(self.get_o(symbolic_input1, hard_list) !=
                          self.get_o(symbolic_input2, hard_list))
+
         for arg_info in arg_list:
             symbolic_input1 = get_new_symbolic_input(arg_list)
             symbolic_input2 = {}

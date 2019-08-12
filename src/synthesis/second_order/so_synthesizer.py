@@ -8,7 +8,8 @@ from synthesis.buildtree import FunctionTree
 from synthesis import solver
 from filter import trivial, correctside, condition
 from translator import trans
-from util import common
+from util import operators
+import config
 import os
 
 if __name__ == "__main__":
@@ -16,8 +17,13 @@ if __name__ == "__main__":
                 "A.txt",
                 "B.txt"]
     log_path = "."
+    config.is_overflow = False
+    #if config.is_overflow:
+    #    operators.use_signed_operator()
     left_sketch, right_sketch = trans.trans(sys.argv[1], sys.argv[2])
     synthesis_task = task.SynthesisTask("mid.sl")
+    #import pprint as pp
+    #pp.pprint(synthesis_task.constraint)
     function_tree_list = {}
     for function_name, function_info in synthesis_task.function_list.items():
         function_tree = FunctionTree(function_info)

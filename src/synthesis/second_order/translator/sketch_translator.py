@@ -101,7 +101,7 @@ def _parse_assign(expr):
     #print(expr)
     assert len(expr) == 3 or len(expr) == 4
     operator = expr[1]
-    if len(operator) == 2:
+    if type(operator) == list and len(operator) == 2:
         first_operator = operator[0]
         left_expr = expr[0] if len(expr) == 3 else expr[1]
         right_expr = expr[-1]
@@ -121,6 +121,17 @@ def _parse_assign(expr):
     res = ExprInfo(["=", expr[0], expr[2]], "Assign")
     res.extra_left = extra_left
     return res
+
+def _parse_self_add(expr):
+    assert len(expr) == 2
+    if type(expr[1]) == ExprInfo:
+        expr[0], expr[1] = expr[1], expr[0]
+    right = None
+    if expr[1] == "++":
+        right = _parse_left_first([ExprInfo(1, "Int"), "+", expr[0]])
+    else:
+        right = _parse_left_first([expr[0], "-", ExprInfo(1, "Int")])
+    return _parse_assign([ExprInfo(expr[0].expr, expr[0].type), "=", right])
 
 def _pre_process(sketch_str):
     sketch = sketch_str.strip()
@@ -166,8 +177,9 @@ def _pre_process(sketch_str):
 
 def parse_sketch(sketch_str):
     left, sketch_str, right = _pre_process(sketch_str)
-    decimal = Regex(r'-?0|-?[0-9]\d*').setParseAction(lambda x: ExprInfo(int(x[0]), "Int"))
-    var = Regex(r'(?!(true|false))[_a-zA-Z][_a-zA-Z0-9]*').setParseAction(lambda x: ExprInfo(x[0]))
+    decimal = Regex(r'(?!(x)-?0|-?[0-9]\d*)|NULL|(0x([0-9a-f]+))').setParseAction(
+        lambda x: ExprInfo(0, "Int") if x[0] == "NULL" else ExprInfo(int(x[0], 0), "Int"))
+    var = Regex(r'(?!(true|false|NULL))[_a-zA-Z][_a-zA-Z0-9]*').setParseAction(lambda x: ExprInfo(x[0]))
     LPAR, RPAR = "()"
     op_add = Regex(r"\+|-")
     op_mul = Regex(r"\*|/")
@@ -175,6 +187,7 @@ def parse_sketch(sketch_str):
     op_and = Regex(r"&&")
     op_or = Regex(r"\|\|")
     op_not = Regex(r"\!")
+    op_self_add = Regex(r"(\+\+)|(--)")
     op_operator = (op_add ^ op_mul)
     op_assign = Group((op_operator + "=") ^ "=")
     int_type = Regex(r"int")
@@ -195,16 +208,20 @@ def parse_sketch(sketch_str):
     bool_A << (bool_B + ZeroOrMore(op_or + bool_B)).setParseAction(_parse_left_first)
     assign = ((Optional(int_type) + var + op_assign + int_A).setParseAction(_parse_assign) ^
               (Optional(bool_type) + var + op_assign + bool_A).setParseAction(_parse_assign))
-    expr = bool_A ^ assign
+    self_add = ((op_self_add + var) ^ (var + op_self_add)).setParseAction(_parse_self_add)
+    expr = bool_A ^ assign ^ self_add
     result = expr.parseString(sketch_str, parseAll=True)[0]
+    print(result)
     left += result.extra_left
     if result.type is None:
         result.set_type("Bool")
-    #print(result)
+    print(result)
     return left, result, right
 
 if __name__ == "__main__":
-    tests = ["while (((x > y) && (y < z)) || !w) {",
+    tests = ["++x",
+             "int x = 0x20",
+             "while (((x > y) && (y < z)) || !w) {",
              "for (;;) {",
              "for (int i = 1; i <= 10 && y > z; i += 5)",
              "if (x > 10) then x = 1;",
@@ -217,6 +234,6 @@ if __name__ == "__main__":
              "(x+y)*asd <= (x+y) || !x==0 && !!z || w*x < 0",
              "result = x*y+z-w*10+k",
              "x=y"]
-    for test in tests:
+    for test in tests[:1]:
         left, result, right = parse_sketch(test)
         print(str(result.type) + ":", result, left, right)
