@@ -10,7 +10,7 @@ cd project
 # TODO: coreutils must run ./bootstrap once after checkout
 #./bootstrap
 
-sed -i '214s/sieve\[++i\] == 0/\n({++i;\nsieve[i] == 0;})/' src/make-prime-list.c
+#sed -i '214s/sieve\[++i\] == 0/\n({++i;\nsieve[i] == 0;})/' src/make-prime-list.c
 
 
 # create build diretory and config

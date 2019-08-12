@@ -19,7 +19,7 @@ def _translate_operator(constraint, translate_table):
     assert False
 
 def _get_z3_operator_info(operator):
-    if operator in ["+", "-", "*"]:
+    if operator in ["+", "-", "*", "div"]:
         return [["Int", "Int"], "Int"]
     if operator in [">", ">=", "<", "<="]:
         return [["Int", "Int"], "Bool"]
@@ -32,6 +32,7 @@ def _get_z3_operator_info(operator):
     assert False
 
 def _assign_type(expr):
+    #print(expr)
     if type(expr) == str:
         return ExprInfo(expr)
     if type(expr) == tuple:
@@ -89,6 +90,8 @@ def _get_symbol(expr_type):
         return "Start"
     if expr_type == "Bool":
         return "StartBool"
+    if expr_type == "Cons":
+        return "Constant"
     assert False
 
 def _make_declare(function_info, variable_table, constant_table, operator_list):
@@ -101,6 +104,7 @@ def _make_declare(function_info, variable_table, constant_table, operator_list):
         symbol = _get_symbol(constant_type)
         for value in value_list:
             rule_table[symbol].append(str(value))
+    is_use_constant = False
     for operator in operator_list:
         operator_arg_list, return_type = _get_z3_operator_info(operator)
         symbol = _get_symbol(return_type)
@@ -108,10 +112,21 @@ def _make_declare(function_info, variable_table, constant_table, operator_list):
             rule_table["StartBool"].append(["=", "Start", "Start"])
             rule_table["StartBool"].append(["=", "StartBool", "StartBool"])
             continue
+        elif operator == "div":
+            rule_table["Start"].append(["div", "Start", "Constant"])
+            is_use_constant = True
+            continue
         operator_arg_list = list(map(lambda x: _get_symbol(x), operator_arg_list))
         result = [operator]
         result.extend(operator_arg_list)
         rule_table[symbol].append(result)
+    if is_use_constant:
+        rule_table["Constant"] = ["Int"]
+        for constant_type, value_list in constant_table.items():
+            if constant_type == "Int":
+                for value in value_list:
+                    if value != "0":
+                        rule_table["Constant"].append(str(value))
     for name, var_type in arg_list:
         symbol =  _get_symbol(var_type)
         rule_table[symbol].append(name)
@@ -139,9 +154,12 @@ def trans(constraint_file, sketch_file):
         all_inp = f.readlines()
         #import pprint as pp
         #pp.pprint(all_inp)
+    is_negative = False
     with open(sketch_file) as f:
         sketch = f.readlines()
-        assert len(sketch) == 1
+        assert len(sketch) == 1 or len(sketch) == 2
+        if len(sketch) == 2 and "negative" in sketch[1]:
+            is_negative = True
         sketch = sketch[0]
     all_inp = list(map(lambda x: x.strip(), all_inp))
     all_inp = list(filter(lambda x: len(x) > 0, all_inp))
@@ -168,7 +186,10 @@ def trans(constraint_file, sketch_file):
         del variable_table[func.expr]
     else:
         func = ExprInfo("condition", "Bool")
+        if is_negative:
+            func = ExprInfo(["not", func], "Bool")
         constraint = ExprInfo(["=>", func, constraint], "Bool")
+        #print(constraint)
     syn_declare = [_make_declare(func, variable_table, constant_table, operator_list)]
     arg_list = syn_declare[0][2]
     #print(arg_list)

@@ -1,6 +1,6 @@
 #!/bin/bash
 compile_type=$1
-																																																																											
+
 current_dir="$( cd "$(dirname "$0")" ; pwd -P )"
 
 subject=readelf

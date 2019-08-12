@@ -85,8 +85,8 @@ qString = Group(Optional(decimal, default=None)("len") +
 # extended definitions
 
 real = Regex(r"[+-]?\d+\.\d*([eE][+-]?\d+)?").setParseAction(lambda tokens: float(tokens[0]))
-token = Word(alphanums + "-./_:*+=!<>").setParseAction(lambda t: ('Bool', True) if t[0] == 'true' else \
-    ('Bool', False) if t[0] == 'false' else t)
+token = Word(alphanums + "-./_:*+=!<>").setParseAction(lambda t: ('Bool', True) if t[0] == 'true' or t[0] == "True" else \
+    ('Bool', False) if t[0] == 'false' or t[0] == "False" else t)
 
 simpleString = real | base64_ | raw | decimal | token | hexadecimal | qString
 

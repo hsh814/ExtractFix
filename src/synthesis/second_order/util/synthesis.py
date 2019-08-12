@@ -34,6 +34,9 @@ def parse_constraint(constraint, parsed_list, task, inp, hard_list):
         elif operator in operators.string2z3:
             arg = list(map(lambda x: parse_constraint(x, parsed_list, task, inp, hard_list),
                            constraint[1:]))
+            #print(constraint, arg)
+            if operator == "div" and type(arg[0]) == int:
+                return arg[0] // arg[1]
             return operators.string2z3[operator](arg)
         else:
             assert False
@@ -70,6 +73,7 @@ def parse_constraint_with_function_and_input(constraint, function_list, task, sy
             assert False
     if type(constraint) == str:
         #(task.variable_list)
+        # print(task.variable_list, constraint)
         assert constraint in task.variable_list
         return symbolic_inp[constraint]
     if type(constraint) == list:
@@ -99,4 +103,5 @@ def parse_constraint_with_input(task, inp, hard_list):
     constraint_list = []
     for constraint in constraints:
         constraint_list.append(parse_constraint(constraint, parsed_list, task, inp, hard_list))
+    #print(constraint_list)
     hard_list.append(z3.And(constraint_list))

@@ -14,6 +14,9 @@ def filter(candidate, task):
     constraint = constraint[1]
     for i in range(len(candidate)):
         candidate[i] = candidate[i]
+    for candi in candidate:
+        print(candi)
+    print(constraint)
     solver = z3.Solver()
     for i in range(len(candidate)):
         for j in range(i):

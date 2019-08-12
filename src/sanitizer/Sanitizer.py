@@ -87,7 +87,7 @@ class BufferOverflowSanitizer(Sanitizer):
         line = f.readline()
         if line:
             base_info = line.split("#")
-            base_name = base_info[0]
+            base_name = "\""+base_info[0]+"\""
 
         crash_info = Global.CrashInfo(path, file_name, function_name, line_no, cfc, base_name)
         f.close()
