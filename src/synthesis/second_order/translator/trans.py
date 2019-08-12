@@ -1,6 +1,7 @@
 from parser import sexp
 from translator import operators, sketch_translator
 from translator.sketch_translator import ExprInfo
+from util import common
 import config
 
 def _translate_operator(constraint, translate_table):
@@ -230,6 +231,8 @@ def trans_to_cpp(patch):
         else:
             assert False
     elif type(patch) == str:
+        if patch in common.special_var_table:
+            return common.special_var_table[patch]
         return patch
     elif type(patch) == tuple:
         if patch[0] == "Int":
