@@ -88,7 +88,7 @@ def _parse_left_first(expr):
     return result
 
 def _rename_left_variable(expr, variable_name):
-    print("rename ", expr)
+    #print("rename ", expr)
     if not isinstance(expr, ExprInfo):
         return
     if type(expr.expr) == list:
@@ -177,7 +177,8 @@ def _pre_process(sketch_str):
 
 def parse_sketch(sketch_str):
     left, sketch_str, right = _pre_process(sketch_str)
-    decimal = Regex(r'(?!(x)-?0|-?[0-9]\d*)|NULL|(0x([0-9a-f]+))').setParseAction(
+    hex = Regex(r'0x([0-9a-f]+)').setParseAction(lambda x: ExprInfo(int(x[0], 0), "Int"))
+    decimal = Regex(r'(-?0|-?[0-9]\d*)|(NULL)').setParseAction(
         lambda x: ExprInfo(0, "Int") if x[0] == "NULL" else ExprInfo(int(x[0], 0), "Int"))
     var = Regex(r'(?!(true|false|NULL))[_a-zA-Z][_a-zA-Z0-9]*').setParseAction(lambda x: ExprInfo(x[0]))
     LPAR, RPAR = "()"
@@ -195,7 +196,7 @@ def parse_sketch(sketch_str):
     boolean = Regex(r'true|false').setParseAction(lambda x: ExprInfo(True if x[0] == "true" else False, "Bool"))
     int_A = Forward()
     int_B = Forward()
-    int_C = (LPAR + int_A + RPAR).setParseAction(lambda x: x[1]) ^ var ^ decimal
+    int_C = (LPAR + int_A + RPAR).setParseAction(lambda x: x[1]) ^ var ^ decimal ^ hex
     int_B << (int_C + ZeroOrMore(op_mul + int_C)).setParseAction(_parse_left_first)
     int_A << (int_B + ZeroOrMore(op_add + int_B)).setParseAction(_parse_left_first)
     bool_A = Forward()
@@ -211,15 +212,16 @@ def parse_sketch(sketch_str):
     self_add = ((op_self_add + var) ^ (var + op_self_add)).setParseAction(_parse_self_add)
     expr = bool_A ^ assign ^ self_add
     result = expr.parseString(sketch_str, parseAll=True)[0]
-    print(result)
+    #print(result)
     left += result.extra_left
     if result.type is None:
         result.set_type("Bool")
-    print(result)
+    #print(result)
     return left, result, right
 
 if __name__ == "__main__":
-    tests = ["++x",
+    tests = ["i <= 10",
+             "++x",
              "int x = 0x20",
              "while (((x > y) && (y < z)) || !w) {",
              "for (;;) {",
@@ -234,6 +236,6 @@ if __name__ == "__main__":
              "(x+y)*asd <= (x+y) || !x==0 && !!z || w*x < 0",
              "result = x*y+z-w*10+k",
              "x=y"]
-    for test in tests[:1]:
+    for test in tests:
         left, result, right = parse_sketch(test)
         print(str(result.type) + ":", result, left, right)
