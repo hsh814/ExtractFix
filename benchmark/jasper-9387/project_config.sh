@@ -5,6 +5,8 @@ current_dir=`pwd`
 
 cd project
 
+
+sed -i 
 #####
 #autoreconf -i
 

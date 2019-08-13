@@ -4,12 +4,13 @@ compile_type=$1
 subject=xmllint
 current_dir="$( cd "$(dirname "$0")" ; pwd -P )"
 
-cd project/klee
+cd project/
 export LLVM_COMPILER=clang
-make -j32 # &> /dev/null
+make clean
+make -j32 &> /dev/null
 
 # copy target to root dir
-cp ${subject} ../
+#cp ${subject} ../
 
 if [ $compile_type == 'to_bc' ];
 then
@@ -18,9 +19,9 @@ then
     wllvm -ggdb3 -Wall -W -o ${subject} ${subject}.o ${PROJECT_CFALGS} ${KLEE_CFLAGS} -Wl,-rpath
     extract-bc -l /usr/local/bin/llvm-link ${subject}
 
-    cd ..
+    #cd ..
     # copy target bc to root dir
-    cp klee/${subject}.bc .
+    #cp klee/${subject}.bc .
 fi
 
 cd ..
