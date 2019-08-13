@@ -1,6 +1,7 @@
 from parser import sexp
 from translator import operators, sketch_translator
 from translator.sketch_translator import ExprInfo
+from util import common
 import config
 
 def _translate_operator(constraint, translate_table):
@@ -46,8 +47,12 @@ def _assign_type(expr):
         for (i, var_type) in enumerate(arg_type):
             arg_list[i].set_type(var_type)
         if operator == "=":
-            print(expr)
-            print(arg_list[0].type, arg_list[0], arg_list[1].type, arg_list[1])
+            if arg_list[0].type == "Int" and arg_list[1].type == "Bool":
+                assert type(arg_list[0].expr) == int
+                arg_list[0] = ExprInfo(arg_list[0].expr != 0, "Bool")
+            if arg_list[1].type == "Int" and arg_list[0].type == "Bool":
+                assert type(arg_list[1].expr) == int
+                arg_list[1] = ExprInfo(arg_list[1].expr != 0, "Bool")
             arg_list[0].set_type(arg_list[1].type)
             arg_list[1].set_type(arg_list[0].type)
         result = [operator]
@@ -64,6 +69,7 @@ def _parse_constraint(constraint):
 
 def _collect_used_component(expr_info, variable_table, constant_table, operator_list):
     expr = expr_info.expr
+    print(expr, type(expr))
     expr_type = expr_info.type
     if type(expr) == list:
         if expr[0] not in operator_list: operator_list.append(expr[0])
@@ -71,6 +77,7 @@ def _collect_used_component(expr_info, variable_table, constant_table, operator_
             _collect_used_component(sub_expr, variable_table, constant_table, operator_list)
         return
     if type(expr) == str:
+        #print(expr_info.expr, expr_info.type)
         if expr not in variable_table:
             variable_table[expr] = expr_info
         variable_table[expr].set_type(expr_type)
@@ -178,7 +185,9 @@ def trans(constraint_file, sketch_file):
     operator_list = ["<", "<=", "and", "or", "not"]
     constraint.simplify()
     sketch.simplify()
+    print("constraint")
     _collect_used_component(constraint, variable_table, constant_table, operator_list)
+    print("sketch")
     _collect_used_component(sketch, variable_table, constant_table, operator_list)
     for variable, variable_info in variable_table.items():
         assert variable_info.type is not None
@@ -224,16 +233,18 @@ def trans_to_cpp(patch):
         operator = operators.z32cpp[patch[0]]
         arg = list(map(lambda x: trans_to_cpp(x), patch[1:]))
         if len(arg) == 1:
-            return operator + "(" + arg[0] + ")"
+            return "(" + operator + arg[0] + ")"
         elif len(arg) == 2:
-            return "(" + arg[0] + operator + arg[1] + ")"
+            return "(" + arg[0] + operator +  arg[1] + ")"
         else:
             assert False
     elif type(patch) == str:
-        return patch
+        if patch in common.special_var_table:
+            return "(" + common.special_var_table[patch] + ")"
+        return "(" + patch + ")"
     elif type(patch) == tuple:
         if patch[0] == "Int":
-            return str(patch[1])
+            return "(" + str(patch[1]) + ")"
         elif patch[0] == "Bool":
             return "true" if patch[1] else "false"
         else:

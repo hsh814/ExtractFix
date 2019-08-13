@@ -360,7 +360,7 @@ set<FixEntry> determineVarsToSymbolize(std::set<SeenEntry> seen, map<Value*, str
     set<FixEntry> newPFixLocs;
     for (FixEntry fixEntry: pFixLocs){
         for(map<Value*, struct variable>::iterator it=value2Meta.begin(); it!=value2Meta.end(); ++it){
-            if (it->second.declareLineNo <= fixEntry.lineNo){
+            if (it->second.declareLineNo < fixEntry.lineNo){
 
                 // skip unsupported type
                 Type* T = it->first->getType();

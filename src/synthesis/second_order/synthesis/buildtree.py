@@ -1,11 +1,12 @@
 import z3
 import config
 from util import operators
-from util.common import new_variable, build_only_one, get_new_symbolic_input
+from util.common import new_variable, build_only_one, get_new_symbolic_input, special_var_table
 
 _node_count = 0
 
 class Node:
+
     def __init__(self, none_term_name, sketch, depth, function, is_extra_root=False):
         none_term_info = function.none_term[none_term_name]
         rules = none_term_info.rules
@@ -25,8 +26,14 @@ class Node:
         self.is_extra_root = is_extra_root
         self.fixed_child = None
         self.result_var = None
+        self.has_special = False
         for rule in rules:
             if type(rule) == str or type(rule) == tuple:
+                if rule in special_var_table:
+                    if sketch == rule:
+                        self.has_special = True
+                    else:
+                        continue
                 self.terminals.append(rule)
             else:
                 self.operators.append(rule)
@@ -98,6 +105,21 @@ class Node:
             self.is_death = True
         else:
             self.used_var = new_variable("Bool")
+        if self.sketch is not None and "Start" in self.subtree_list:
+            for subtree in self.subtree_list["Start"]:
+                if subtree.has_special:
+                    self.has_special = True
+            if self.has_special:
+                for name, subtree_list in self.subtree_list.items():
+                    for subtree in subtree_list:
+                        subtree.set_special()
+
+    def set_special(self):
+        if self.has_special or self.sketch is None:
+            return
+        for type, subtree_list in self.subtree_list.items():
+            for subtree in self.subtree_list:
+                subtree.set_speical()
 
     def print_tree(self):
         print("id:", self.id, "symbol:", self.info.name, "sketch:", self.sketch, "extra root:", self.is_extra_root)
@@ -110,7 +132,10 @@ class Node:
     def node_get_structure_constraint(self, soft_list, hard_list):
         assert not self.is_death
         if self.sketch:
-            soft_list.append(self.used_var)
+            if self.has_special:
+                soft_list.append(self.used_var)
+            else:
+                hard_list.append(self.used_var)
         else:
             soft_list.append(z3.Not(self.used_var))
         indicators = []
@@ -123,11 +148,18 @@ class Node:
                 for (i, operator) in enumerate(self.operators):
                     if operator[0] == sketch_operator:
                         if operator[0] == "=" and operator[1] == "StartBool": continue
-                        soft_list.append(self.operator_indicators[i])
+                        if self.has_special:
+                            hard_list.append(self.operator_indicators[i])
+                        else:
+                            soft_list.append(self.operator_indicators[i])
+
             else:
                 for (i, terminal) in enumerate(self.terminals):
                     if terminal == self.sketch:
-                        soft_list.append(self.terminal_indicators[i])
+                        if self.has_special:
+                            hard_list.append(self.terminal_indicators[i])
+                        else:
+                            soft_list.append(self.terminal_indicators[i])
         for (i, operator) in enumerate(self.operators):
             #print(operator)
             used_list = []

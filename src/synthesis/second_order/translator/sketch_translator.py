@@ -1,5 +1,8 @@
 from pyparsing import *
 from translator.operators import cpp2z3
+from translator import operators
+from util import common
+
 
 """
 <bool-A> :: <bool-B> | <bool-B>||<bool-A>
@@ -14,6 +17,13 @@ from translator.operators import cpp2z3
 
 class ExprInfo:
     def __init__(self, expr, expr_type=None):
+        self.is_special = False
+        self.true_name = expr
+        if type(expr) == str:
+            expr = "".join(list(filter(lambda x: x.isalnum() or x == '_', expr)))
+        if expr != self.true_name:
+            self.is_special = True
+            common.special_var_table[expr] = self.true_name
         self.type = expr_type
         self.expr = expr
         self.extra_left = ""
@@ -24,9 +34,13 @@ class ExprInfo:
         if self.type is None:
             self.type = expr_type
         elif self.type != expr_type:
-            assert False
+            assert type(self.expr) == str and self.type == "Int"
+            self.expr = ["not", ExprInfo(["=", ExprInfo(0, "Int"), ExprInfo(self.expr, "Int")], "Bool")]
+            self.type = "Bool"
 
     def __str__(self):
+        if self.is_special:
+            return self.true_name
         if type(self.expr) == list:
             return "(" + " ".join(list(map(str, self.expr))) + ")"
         else:
@@ -123,6 +137,7 @@ def _parse_assign(expr):
     return res
 
 def _parse_self_add(expr):
+    print("self add", expr)
     assert len(expr) == 2
     if type(expr[1]) == ExprInfo:
         expr[0], expr[1] = expr[1], expr[0]
@@ -131,6 +146,7 @@ def _parse_self_add(expr):
         right = _parse_left_first([ExprInfo(1, "Int"), "+", expr[0]])
     else:
         right = _parse_left_first([expr[0], "-", ExprInfo(1, "Int")])
+    print(right.type)
     return _parse_assign([ExprInfo(expr[0].expr, expr[0].type), "=", right])
 
 def _pre_process(sketch_str):
@@ -175,13 +191,55 @@ def _pre_process(sketch_str):
         return "", sketch[:-1], ';'
     return "", sketch, ""
 
+def _trans_expr_info_to_cpp(exprInfo):
+    expr = exprInfo.expr
+    if type(expr) == list:
+        operator = operators.z32cpp[expr[0]]
+        arg = list(map(lambda x: _trans_expr_info_to_cpp(x), expr[1:]))
+        if len(arg) == 1:
+            return operator + "(" + arg[0] + ")"
+        elif len(arg) == 2:
+            return "(" + arg[0] + operator + arg[1] + ")"
+        else:
+            assert False
+    elif type(expr) == str:
+        return expr
+    elif type(expr) == tuple:
+        if expr[0] == "Int":
+            return str(expr[1])
+        elif expr[0] == "Bool":
+            return "true" if expr[1] else "false"
+        else:
+            assert False
+    elif exprInfo.type == "Int":
+        assert type(expr) == int
+        return str(expr)
+    elif exprInfo.type == "Bool":
+        assert type(expr) == bool
+        return "true" if expr else "false"
+    else:
+        assert False
+
+def _parse_var(expr):
+    name = ""
+    for sub_expr in expr:
+        if type(sub_expr) == ExprInfo:
+            name += _trans_expr_info_to_cpp(sub_expr)
+        else:
+            name += str(sub_expr)
+    return ExprInfo(name, "Int")
+
 def parse_sketch(sketch_str):
     left, sketch_str, right = _pre_process(sketch_str)
     hex = Regex(r'0x([0-9a-f]+)').setParseAction(lambda x: ExprInfo(int(x[0], 0), "Int"))
     decimal = Regex(r'(-?0|-?[0-9]\d*)|(NULL)').setParseAction(
         lambda x: ExprInfo(0, "Int") if x[0] == "NULL" else ExprInfo(int(x[0], 0), "Int"))
-    var = Regex(r'(?!(true|false|NULL))[_a-zA-Z][_a-zA-Z0-9]*').setParseAction(lambda x: ExprInfo(x[0]))
+    var = Forward()
+    op_pointer = Regex(r"->")
+    comma = Regex(r",")
     LPAR, RPAR = "()"
+    LSQR, RSQR = "[]"
+    token = Regex(r'(?!(true|false|NULL))[_a-zA-Z][_a-zA-Z0-9]*')
     op_add = Regex(r"\+|-")
     op_mul = Regex(r"\*|/")
     op_cmp = Regex(r"(<=)|(<)|(>=)|(>)|(==)|(!=)")
@@ -207,6 +265,10 @@ def parse_sketch(sketch_str):
                (op_not + bool_C).setParseAction(lambda x: _build_expr(x[0], [x[1]])))
     bool_B << (bool_C + ZeroOrMore(op_and + bool_C)).setParseAction(_parse_left_first)
     bool_A << (bool_B + ZeroOrMore(op_or + bool_B)).setParseAction(_parse_left_first)
+    arith_expr = (bool_A ^ int_A)
+    pointer_token = (token + ZeroOrMore(op_pointer + token))
+    array_token = (pointer_token + ZeroOrMore(LSQR + arith_expr + RSQR)).setParseAction(_parse_var)
+    var << (array_token ^ (pointer_token + LPAR + arith_expr + ZeroOrMore(comma + arith_expr) + RPAR)).setParseAction(_parse_var)
     assign = ((Optional(int_type) + var + op_assign + int_A).setParseAction(_parse_assign) ^
               (Optional(bool_type) + var + op_assign + bool_A).setParseAction(_parse_assign))
     self_add = ((op_self_add + var) ^ (var + op_self_add)).setParseAction(_parse_self_add)
@@ -220,7 +282,12 @@ def parse_sketch(sketch_str):
     return left, result, right
 
 if __name__ == "__main__":
-    tests = ["i <= 10",
+    tests = ["a[b]",
+             "a->b[34][198][c(d[123][456])]",
+             "x(y->z,w+1,an)",
+             "if ((tlen > 0) && (xmlStrncmp(ctxt->input->cur, ctxt->name, tlen) == 0)) {",
+             "x->y->z",
+             "i <= 10",
              "++x",
              "int x = 0x20",
              "while (((x > y) && (y < z)) || !w) {",

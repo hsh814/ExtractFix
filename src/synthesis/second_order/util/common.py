@@ -1,6 +1,8 @@
 import z3
 import random
 
+special_var_table = {}
+
 _var_count = 0
 def new_variable(var_type):
     global _var_count
