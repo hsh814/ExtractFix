@@ -1,0 +1,1 @@
+      for (col = cinfo->image_width; col > 0; col--) {

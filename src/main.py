@@ -33,9 +33,6 @@ from fault_localization import FaultLocalization
 import runtime
 import Global
 
-index = 0
-
-
 def clear_log():
     command = "rm -rf /tmp/run_info /tmp/callee.txt /tmp/fixlocations.json /tmp/callee.txt /tmp/cfc.out"
     subprocess.call(command, cwd="/tmp", shell=True)
@@ -61,6 +58,7 @@ def path_leaf(path):
 
 def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     start_time = time.time()
+    index = 0
 
     clear_log()  # clear the log of last run
     proj_name = path_leaf(source_path)
@@ -69,7 +67,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     subprocess.check_output(['cp', '-r', str(source_path), work_dir])
     project_path = os.path.join(work_dir, "project")
 
-    if bug_type == 'buffer_overflow' or bug_type == 'integer_overflow' or bug_type == "divide_by_0":
+    if bug_type == 'buffer_overflow' or bug_type == 'integer_overflow' or bug_type == 'divide_by_0':
         runtime.project_config(work_dir, logger, "to_bc")
         ProjPreprocessor.__preprocess(project_path, lib=True, logger=logger)
 
@@ -93,16 +91,6 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
             exit(1)
         logger.info("crash info: "+str(crash_info))
 
-
-    if bug_type == 'divide_by_0':
-        sanitizer = Sanitizer.BufferOverflowSanitizer(work_dir, project_path, binary_name, driver, test_list, logger)
-        crash_info = sanitizer.generate_crash_info()
-        logger.info("crash info: "+str(crash_info))
-        logger.debug("output divide-by-zero constraints")
-        save_log('/tmp/cfc.out', work_dir + "/constraints.txt", "result"+str(index))
-        return
-
-
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
     runtime.project_build(work_dir, logger, "to_bc")
@@ -122,7 +110,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
 
     # fault localization
     fl = FaultLocalization.FaultLocalization(project_path, binary_name, func_list, crash_info, logger)
-    potential_funcs = fl.get_potential_fault_locs()
+    potential_fixes = fl.get_potential_fault_locs()
     logger.info("successfully generate potential fix location: " + "/tmp/fixlocations.json")
 
     save_log(source_path, "/tmp/run_info", "logs")
@@ -130,9 +118,23 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     save_log(source_path, "/tmp/fixlocations.json", "logs")
     save_log(source_path, "/tmp/cfc.out", "logs")
 
+    if len(potential_fixes) == 0:
+        logger.info("directly apply patch")
+        log_path = os.path.join(source_path, "result"+str(index))
+        if not os.path.isdir(log_path):
+            command = "mkdir " + log_path
+            subprocess.call(command, shell=True)
+        patch_path = os.path.join(log_path, "patch")
+        with open(patch_path, 'w') as f:
+            # TODO: negate constraint and add return statement
+            f.write(crash_info.get_cfc())
+        logger.info("execution time (in minutes) is: " + str(time.time()-start_time))
+        exit(0)
+
     # adjust line number because of include<klee/klee.h> injection in the following instrumentation
+
     crash_info.line_no += 2
-    for fix_loc in potential_funcs:
+    for fix_loc in potential_fixes:
         sym_var_inserter = SymVarInserter.SymVarInserter(project_path, logger, crash_info)
         # insert symbolic variables at source code level
         sym_var_inserter.insert_sym_vars(fix_loc)
@@ -144,7 +146,6 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         # restore original source code
         sym_var_inserter.mv_original_file_back()
 
-        global index
         log_path = os.path.join(source_path, "result"+str(index))
         fix_stm = os.path.join(log_path, "fix_stm.txt")
         constraint_path = os.path.join(log_path, "constraints.txt")
@@ -160,12 +161,20 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         save_log(source_path, work_dir + "/constraints.txt", "result"+str(index))
         logger.info("backward propagated constraint is save in " + constraint_path)
 
-        synthesizer = os.path.join(full_path, "synthesis", "second_order", "so_synthesizer.py")
-        # constraint_path = "../benchmark/libtiff-5321/result0/constraints.txt"
-        # fix_stm = "../benchmark/libtiff-5321/result0/fix_stm.txt"
-        command = "python3 " + " " + synthesizer + " " + log_path + " " + constraint_path + " " + fix_stm
-        subprocess.call(command, shell=True)
-        logger.info("generated patches are saved in " + log_path)
+        with open(constraint_path, 'w') as f:
+            constraint = f.readlines()
+
+        if constraint == 'false' or constraint == 'true':
+            patch_path = os.path.join(log_path, "patch")
+            with open(patch_path, 'w') as f:
+                # TODO: negate constraint and add return statement
+                f.write(crash_info.get_cfc())
+                logger.info("generated patches are saved in " + log_path)
+        else:
+            synthesizer = os.path.join(full_path, "synthesis", "second_order", "so_synthesizer.py")
+            command = "python3 " + " " + synthesizer + " " + log_path + " " + constraint_path + " " + fix_stm
+            subprocess.call(command, shell=True)
+            logger.info("generated patches are saved in " + log_path)
 
         index += 1
         break

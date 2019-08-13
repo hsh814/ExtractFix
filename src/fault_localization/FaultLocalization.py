@@ -85,6 +85,8 @@ class FaultLocalization:
         fix_locs = []
         with open('/tmp/fixlocations.json') as json_file:
             data = json.load(json_file)
+            if data is None:
+                return fix_locs
             for p in data:
                 message = p[0]
                 file_name = p[1]
