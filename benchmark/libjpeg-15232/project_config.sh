@@ -3,11 +3,15 @@ compile_type=$1
 
 current_dir=`pwd`
 
-# get project and set to corresponding version
-# git clone https://gitlab.gnome.org/GNOME/libxml2/ project
-cd project
-#git checkout d9783e4
 
+cd project
+
+#TODO: IMPORTANT FOR GETTING configure
+#autoreconf -fiv
+
+rm -rf klee
+mkdir klee
+cd klee
 
 cflags="-g -lkleeRuntest -lkleeBasic -Wno-everything"
 
@@ -20,9 +24,13 @@ elif [ $compile_type == 'lowfat' ];
 then
     compiler=${LOWFAT_CLANG}
     cflags="$cflags -fsanitize=lowfat -mllvm -lowfat-debug -mllvm -lowfat-null-deref -mllvm -lowfat-no-check-reads -mllvm -lowfat-no-check-writes -mllvm -lowfat-no-check-memset -mllvm -lowfat-no-check-memcpy -mllvm -lowfat-no-check-escapes -mllvm -lowfat-no-check-fields -mllvm -lowfat-check-whole-access -mllvm -lowfat-no-replace-globals -mllvm -lowfat-no-replace-alloca -mllvm -lowfat-no-replace-malloc -mllvm -lowfat-symbolize -lstlimpl"
+    #cflags="$cflags -fsanitize=address"
 fi
 
-CC=$compiler CFLAGS="$cflags" ./autogen.sh --enable-static # &> /dev/null
+#CC=$compiler cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_C_FLAGS_RELEASE="$cflags" ..
 
-cd ..
+CC=$compiler ../configure CFLAGS="$cflags"
+
+cd ../..
+
 
