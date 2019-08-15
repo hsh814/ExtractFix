@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define SMALL_LENGTH 20
-#define LARGE_LENGTH 2147483647
+#define LARGE_LENGTH 4294963200
 
 char* getNormalStr(){
     char *str = (char *)malloc(SMALL_LENGTH);
@@ -19,12 +19,15 @@ char* getNormalStr(){
 
 char* getLongStr(){
     char *str = (char *)malloc(LARGE_LENGTH);
+    
     if(str == NULL){
         printf("Large string allocation error\n");
         exit(1);
     }
+    
     memset(str, 'A', LARGE_LENGTH-1);
     str[LARGE_LENGTH-1] = 0;
+    
     return str;
 }
 
