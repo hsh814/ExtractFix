@@ -91,6 +91,8 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
             exit(1)
         logger.info("crash info: "+str(crash_info))
 
+    save_log(source_path, "/tmp/cfc.out", "logs")
+
     runtime.project_config(work_dir, logger, "to_bc")
     # compile the program to bc file and optimize it using mem2reg
     runtime.project_build(work_dir, logger, "to_bc")
@@ -108,15 +110,15 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
     func_list = process_func_trace(func_trace, crash_info)
     logger.debug("the length of function trace" + str(len(func_list)))
 
+    save_log(source_path, "/tmp/callee.txt", "logs")
+    save_log(source_path, "/tmp/run_info", "logs")
+
     # fault localization
     fl = FaultLocalization.FaultLocalization(project_path, binary_name, func_list, crash_info, logger)
     potential_fixes = fl.get_potential_fault_locs()
     logger.info("successfully generate potential fix location: " + "/tmp/fixlocations.json")
 
-    save_log(source_path, "/tmp/run_info", "logs")
-    save_log(source_path, "/tmp/callee.txt", "logs")
     save_log(source_path, "/tmp/fixlocations.json", "logs")
-    save_log(source_path, "/tmp/cfc.out", "logs")
 
     if len(potential_fixes) == 0:
         logger.info("directly apply patch")
