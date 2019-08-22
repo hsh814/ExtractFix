@@ -1,4 +1,7 @@
-(Or (Not (Eq 0
-               do_display))
-     (Ult 8
-           LOWFAT_GLOBAL_MS__readelf_get_data_423))
+i ci len
+(And (And (Or (Not (p1 i ci len)) (Slt i 4))
+ (And (Or (Not (And (p1 i ci len) (p1 (Add i 1) ci len))) (Slt (Add i 1) 4))
+  (Or (Not (And (And (p1 i ci len) (p1 (Add i 1) ci len)) (p1 (Add i 2) ci len))) (Slt (Add i 2) 4))))
+(And (Or (Not (And (Not (p1 i ci len)) (p2 i ci len))) (Slt ci 4))
+  (And (Or (Not (And (Not (p1 i ci len)) (And (p2 i ci len) (p2 i (Add ci 1) len)))) (Slt (Add ci 1) 4))
+   (Or (Not (And (Not (p1 i ci len)) (And (p2 i ci len) (And (p2 i (Add ci 1) len) (p2 i (Add ci 2) len))))) (Slt (Add ci 2) 4)))))

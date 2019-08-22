@@ -41,6 +41,12 @@ def _assign_type(expr):
         return ExprInfo(expr[1], expr[0])
     if type(expr) == list:
         operator = expr[0]
+        if operator[0] == "p":
+            arg_list = list(map(lambda x: _assign_type(x), expr[1:]))
+            result = [operator]
+            result.extend(arg_list)
+            return ExprInfo(result, None)
+        #print(operator)
         arg_type, return_type = _get_z3_operator_info(operator)
         assert len(expr) == len(arg_type) + 1
         arg_list = list(map(lambda x: _assign_type(x), expr[1:]))
@@ -67,19 +73,22 @@ def _parse_constraint(constraint):
     if result.type is None: result.set_type("Bool")
     return result
 
-def _collect_used_component(expr_info, variable_table, constant_table, operator_list):
+def _collect_used_component(expr_info, variable_table, constant_table, operator_list, private_variblae_table=None):
     expr = expr_info.expr
-    print(expr, type(expr))
+    #print(expr, type(expr))
     expr_type = expr_info.type
     if type(expr) == list:
-        if expr[0] not in operator_list: operator_list.append(expr[0])
+        if expr[0] not in operator_list and expr[0][0] != "p":
+            operator_list.append(expr[0])
         for sub_expr in expr[1:]:
-            _collect_used_component(sub_expr, variable_table, constant_table, operator_list)
+            _collect_used_component(sub_expr, variable_table, constant_table, operator_list, private_variblae_table)
         return
     if type(expr) == str:
         #print(expr_info.expr, expr_info.type)
         if expr not in variable_table:
             variable_table[expr] = expr_info
+        if private_variblae_table is not None:
+            private_variblae_table[expr] = True
         variable_table[expr].set_type(expr_type)
         return
     if type(expr) == int:
@@ -160,63 +169,87 @@ def _substitute_function_call(expr, function_name, function_call):
         return list(map(lambda x: _substitute_function_call(x, function_name, function_call), expr))
     return expr
 
-def trans(constraint_file, sketch_file):
+def trans_normal_klee(constraint_file, sketch_file):
     with open(constraint_file, "r") as f:
         all_inp = f.readlines()
-        #import pprint as pp
-        #pp.pprint(all_inp)
-    is_negative = False
     with open(sketch_file) as f:
-        sketch = f.readlines()
-        assert len(sketch) == 1 or len(sketch) == 2
-        if len(sketch) == 2 and "negative" in sketch[1]:
-            #print("negative")
-            is_negative = True
-        sketch = sketch[0]
+        sketch_lines = f.readlines()
+        assert len(sketch_lines) % 2 == 0
     all_inp = list(map(lambda x: x.strip(), all_inp))
     all_inp = list(filter(lambda x: len(x) > 0, all_inp))
-    #TODO support multiline fix
-    #print(all_inp[-1])
-    left_sketch, sketch, right_sketch = sketch_translator.parse_sketch(sketch)
+    sketches = []
+    for i in range(0, len(sketch_lines), 2):
+        left_sketch, sketch, right_sketch = sketch_translator.parse_sketch(sketch_lines[i])
+        sketches.append({"left_sketch": left_sketch,
+                         "sketch": sketch,
+                         "right_sketch": right_sketch,
+                         "is_negative": "negative" in sketch_lines[i + 1]})
     constraint = _parse_constraint(" ".join(all_inp))
     #print(sketch, constraint)
     variable_table = {}
+    private_variable_table = {}
     constant_table = {"Int": [], "Bool": []}
     operator_list = ["<", "<=", "and", "or", "not"]
     constraint.simplify()
-    sketch.simplify()
-    print("constraint")
+    for sketch in sketches:
+        sketch["sketch"].simplify()
+
+    #print("constraint")
     _collect_used_component(constraint, variable_table, constant_table, operator_list)
-    print("sketch")
-    _collect_used_component(sketch, variable_table, constant_table, operator_list)
+    #print("sketch")
+    for sketch in sketches:
+        sketch["private_variable"] = {}
+        _collect_used_component(sketch["sketch"], variable_table, constant_table, operator_list, sketch["private_variable"])
+        for private_name in sketch["private_variable"]:
+            private_variable_table[private_name] = True
+
     for variable, variable_info in variable_table.items():
         assert variable_info.type is not None
-    if sketch.type == "Assign":
-        func = sketch.expr[1]
-        sketch = sketch.expr[2]
-        assert func.type is not None
-        assert func.expr in variable_table
-        left_sketch += func.expr + " = "
-        del variable_table[func.expr]
-    else:
-        func = ExprInfo("condition", "Bool")
-        if is_negative:
-            constraint = ExprInfo(["=>", ExprInfo(["not", func], "Bool"), constraint], "Bool")
+
+    pre_condition = None
+    condition_count = 0
+    for sketch in sketches:
+        if sketch["sketch"].type == "Assign":
+            sketch["func"] = sketch["sketch"].expr[1]
+            sketch["sketch"] = sketch["sketch"].expr[2]
+            assert sketch["func"].type is not None
+            assert sketch["func"].expr in variable_table
+            sketch["left_sketch"] += sketch["func"].expr + " = "
+            del variable_table[sketch["func"].expr]
         else:
-            constraint = ExprInfo(["=>", func, constraint], "Bool")
-        #print(constraint)
-        #print(constraint)
-    syn_declare = [_make_declare(func, variable_table, constant_table, operator_list)]
-    arg_list = syn_declare[0][2]
-    #print(arg_list)
-    func_call = [func.expr]
-    func_call.extend(list(map(lambda x: x[0], arg_list)))
+            condition_count += 1
+            sketch["func"] = ExprInfo("condition" + str(condition_count), "Bool")
+            if sketch["is_negative"]:
+                current_condition = ExprInfo(["not", sketch["func"]], "Bool")
+            else:
+                current_condition = sketch["func"]
+            if pre_condition is None:
+                pre_condition = current_condition
+            else:
+                pre_condition = ExprInfo(["and", pre_condition, current_condition], "Bool")
+
+    if pre_condition is not None:
+        constraint = ExprInfo(["=>", pre_condition, constraint])
+    syn_declare = []
+    for sketch in sketches:
+        sub_variable_table = {}
+        for name, var in variable_table.items():
+            if name not in sketch["private_variable"] and name in private_variable_table:
+                continue
+            sub_variable_table[name] = var
+        current_function_declare = _make_declare(sketch["func"], sub_variable_table, constant_table, operator_list)
+        syn_declare.append(current_function_declare)
+        arg_list = current_function_declare[2]
+        sketch["func_call"] = [sketch["func"]]
+        sketch["func_call"].extend(list(map(lambda x: x[0], arg_list)))
     var_declare = []
     for name, variable_info in variable_table.items():
         var_declare.append(["declare-var", variable_info.expr, variable_info.type])
     constraint_declare = [["constraint", constraint.as_list()]]
-    constraint_declare = _substitute_function_call(constraint_declare, func.expr, func_call)
-    sketch_declare = [["sketch", func.expr, sketch.as_list()]]
+    sketch_declare = []
+    for sketch in sketches:
+        constraint_declare = _substitute_function_call(constraint_declare, sketch["func"].expr, sketch["func_call"])
+        sketch_declare.append(["sketch", sketch["func"].expr, sketch["sketch"].as_list()])
     sl_result = []
     sl_result.extend(syn_declare)
     sl_result.extend(var_declare)
@@ -226,7 +259,112 @@ def trans(constraint_file, sketch_file):
     #pp.pprint(sl_result)
     with open("mid.sl", "w") as oup:
         oup.write("\n".join(list(map(lambda x: _list_to_str(x), sl_result))))
-    return left_sketch, right_sketch
+    return sketches
+
+def _substitute_function_call_semfix(constraint, function_name, symbolic_list, used_variable):
+    #("constraint ", constraint)
+    if type(constraint) != list:
+        return constraint
+    constraint = list(map(lambda x: _substitute_function_call_semfix(x, function_name,
+                                                                     symbolic_list, used_variable),
+                          constraint))
+    #print(constraint)
+    if constraint[0] == function_name:
+        result = [constraint[0]]
+        for name, _ in used_variable.items():
+            try:
+                pos = symbolic_list.index(name)
+                result.append(constraint[pos + 1])
+            except ValueError:
+                result.append(name)
+        return result
+    else:
+        return constraint
+
+
+def trans_semfix(constraint_file, sketch_file):
+    with open(constraint_file, "r") as f:
+        all_inp = f.readlines()
+    with open(sketch_file) as f:
+        sketch_lines = f.readlines()
+    assert len(all_inp) > 1
+    symbolic_variable_list = all_inp[0].split(' ')
+    all_inp = all_inp[1:]
+    all_inp = list(map(lambda x: x.strip(), all_inp))
+    all_inp = list(filter(lambda x: len(x) > 0, all_inp))
+    sketches = []
+    for i in range(0, len(sketch_lines)):
+        left_sketch, sketch, right_sketch = sketch_translator.parse_sketch(sketch_lines[i])
+        sketches.append({"left_sketch": left_sketch,
+                         "sketch": sketch,
+                         "right_sketch": right_sketch})
+    constraint = _parse_constraint(" ".join(all_inp))
+    private_variable_table = {}
+    constant_table = {"Int": [], "Bool": []}
+    operator_list = ["<", "<=", "and", "or", "not"]
+    variable_table = {}
+    constraint.simplify()
+    for sketch in sketches:
+        sketch["sketch"].simplify()
+
+    _collect_used_component(constraint, variable_table, constant_table, operator_list)
+    for sketch in sketches:
+        sketch["private_variable"] = {}
+        _collect_used_component(sketch["sketch"], variable_table, constant_table, operator_list, sketch["private_variable"])
+        for private_name in sketch["private_variable"]:
+            private_variable_table[private_name] = True
+
+    for variable, variable_info in variable_table.items():
+        if variable_info.type is None:
+            variable_info.type = "Int"
+
+    count = 0
+    for sketch in sketches:
+        count += 1
+        sketch_name = "p" + str(count)
+        if sketch["sketch"].type == "Assign":
+            sketch["func"] = ExprInfo(sketch_name, sketch["sketch"].expr[1].type)
+            sketch["sketch"] = sketch["sketch"].expr[2]
+            sketch["left_sketch"] += sketch["func"].expr + " = "
+        else:
+            sketch["func"] = ExprInfo(sketch_name, "Bool")
+    constraint = constraint.as_list()
+    syn_declare = []
+    for sketch in sketches:
+        sub_variable_table = {}
+        for name, var in variable_table.items():
+            if name not in sketch["private_variable"] and name in private_variable_table:
+                continue
+            sub_variable_table[name] = var
+        current_function_declare = _make_declare(sketch["func"], sub_variable_table, constant_table, operator_list)
+        constraint = _substitute_function_call_semfix(constraint, sketch["func"].expr, symbolic_variable_list, sub_variable_table)
+        syn_declare.append(current_function_declare)
+        arg_list = current_function_declare[2]
+        sketch["func_call"] = [sketch["func"]]
+        sketch["func_call"].extend(list(map(lambda x: x[0], arg_list)))
+    var_declare = []
+    for name, variable_info in variable_table.items():
+        var_declare.append(["declare-var", variable_info.expr, variable_info.type])
+    constraint_declare = [["constraint", constraint]]
+    sketch_declare = []
+    for sketch in sketches:
+        sketch_declare.append(["sketch", sketch["func"].expr, sketch["sketch"].as_list()])
+    sl_result = []
+    sl_result.extend(syn_declare)
+    sl_result.extend(var_declare)
+    sl_result.extend(constraint_declare)
+    sl_result.extend(sketch_declare)
+    #import pprint as pp
+    #pp.pprint(sl_result)
+    with open("mid.sl", "w") as oup:
+        oup.write("\n".join(list(map(lambda x: _list_to_str(x), sl_result))))
+    return sketches
+
+def trans(constraint_file, sketch_file):
+    if config.is_semfix:
+        return trans_semfix(constraint_file, sketch_file)
+    else:
+        return trans_normal_klee(constraint_file, sketch_file)
 
 def trans_to_cpp(patch):
     if type(patch) == list:
