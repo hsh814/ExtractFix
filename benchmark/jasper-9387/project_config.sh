@@ -6,7 +6,7 @@ current_dir=`pwd`
 cd project
 
 #####
-#autoreconf -i
+autoreconf -i
 
 # create build diretory and config
 rm -rf klee

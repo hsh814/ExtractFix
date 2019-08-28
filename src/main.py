@@ -161,8 +161,9 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         save_log(source_path, work_dir + "/constraints.txt", "result"+str(index))
         logger.info("backward propagated constraint is save in " + constraint_path)
 
-        with open(constraint_path, 'w') as f:
-            constraint = f.readlines()
+        with open(constraint_path, 'r') as f:
+            constraint = f.readline()[:-1]
+            print constraint
 
         if constraint == 'false' or constraint == 'true':
             patch_path = os.path.join(log_path, "patch")
