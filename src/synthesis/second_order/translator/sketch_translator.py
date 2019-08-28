@@ -137,7 +137,7 @@ def _parse_assign(expr):
     return res
 
 def _parse_self_add(expr):
-    print("self add", expr)
+    #print("self add", expr)
     assert len(expr) == 2
     if type(expr[1]) == ExprInfo:
         expr[0], expr[1] = expr[1], expr[0]
@@ -146,7 +146,7 @@ def _parse_self_add(expr):
         right = _parse_left_first([ExprInfo(1, "Int"), "+", expr[0]])
     else:
         right = _parse_left_first([expr[0], "-", ExprInfo(1, "Int")])
-    print(right.type)
+   #print(right.type)
     return _parse_assign([ExprInfo(expr[0].expr, expr[0].type), "=", right])
 
 def _pre_process(sketch_str):

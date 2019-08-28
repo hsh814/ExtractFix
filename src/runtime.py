@@ -97,7 +97,7 @@ def run(work_dir, driver, binary_full_path, test_list, logger):
 def run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger, fix_loc=None):
     crash_loc = crash_info.file_name + ":" + str(crash_info.line_no)
     fix_loc_str = fix_loc.get_file_name() + ":" + str(fix_loc.get_line_no() + 1)
-    command = "timeout -s SIGINT 30m ./klee-" + driver + " " + binary_full_path + " ./" + test_list[0] + " " + crash_loc + " " + fix_loc_str+ " 2> /dev/null"
+    command = "./klee-" + driver + " " + binary_full_path + " ./" + test_list[0] + " " + crash_loc + " " + fix_loc_str+ " 2> /dev/null"
     logger.debug("run command: " + command)
     try:
         result = subprocess.check_output(command, cwd=work_dir, shell=True)

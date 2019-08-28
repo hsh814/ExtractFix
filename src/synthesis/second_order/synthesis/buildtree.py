@@ -117,9 +117,10 @@ class Node:
     def set_special(self):
         if self.has_special or self.sketch is None:
             return
+        self.has_special = True
         for type, subtree_list in self.subtree_list.items():
-            for subtree in self.subtree_list:
-                subtree.set_speical()
+            for subtree in subtree_list:
+                subtree.set_special()
 
     def print_tree(self):
         print("id:", self.id, "symbol:", self.info.name, "sketch:", self.sketch, "extra root:", self.is_extra_root)
@@ -132,6 +133,7 @@ class Node:
     def node_get_structure_constraint(self, soft_list, hard_list):
         assert not self.is_death
         if self.sketch:
+            #print(self.sketch, self.has_special)
             if self.has_special:
                 soft_list.append(self.used_var)
             else:
@@ -295,26 +297,27 @@ class FunctionTree:
             return False
         assert False
 
-    def get_heuristic_constraint(self, hard_list, soft_list):
+    def get_heuristic_constraint(self, hard_list, soft_list, level=False):
         arg_list = self.function.arg_list
         symbolic_input1 = get_new_symbolic_input(arg_list)
         symbolic_input2 = get_new_symbolic_input(arg_list)
         hard_list.append(self.get_o(symbolic_input1, hard_list) !=
                          self.get_o(symbolic_input2, hard_list))
 
-        for arg_info in arg_list:
-            symbolic_input1 = get_new_symbolic_input(arg_list)
-            symbolic_input2 = {}
-            for name, var in symbolic_input1.items():
-                symbolic_input2[name] = var
-                if name == arg_info.name:
-                    symbolic_input2[name] = new_variable(arg_info.type)
-            #print("addsymbolic")
-            #print(symbolic_input1)
-            #print(symbolic_input2)
-            if self._check_inp_variable_used(self.function.sketch, arg_info.name):
-                soft_list.append(self.get_o(symbolic_input1, hard_list) !=
-                                 self.get_o(symbolic_input2, hard_list))
+        if level:
+            for arg_info in arg_list:
+                symbolic_input1 = get_new_symbolic_input(arg_list)
+                symbolic_input2 = {}
+                for name, var in symbolic_input1.items():
+                    symbolic_input2[name] = var
+                    if name == arg_info.name:
+                        symbolic_input2[name] = new_variable(arg_info.type)
+                #print("addsymbolic")
+                #print(symbolic_input1)
+                #print(symbolic_input2)
+                if self._check_inp_variable_used(self.function.sketch, arg_info.name):
+                    soft_list.append(self.get_o(symbolic_input1, hard_list) !=
+                                     self.get_o(symbolic_input2, hard_list))
 
     def parse_output(self, model):
         return self.root.node_parse_output(model)

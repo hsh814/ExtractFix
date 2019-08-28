@@ -13,12 +13,12 @@ class SyntaxSolver(Solver):
     def solve(self, task, is_use_semantic_heuristic):
         hard_list = []
         soft_list = []
-        is_use_semantic_heuristic = False
+        config.cost_limit *= len(task.function_list)
         for function_name, function_tree in task.function_tree_list.items():
             function_tree.get_structure_constraint(hard_list, soft_list)
             if is_use_semantic_heuristic:
-                #print("add heuristic")
                 function_tree.get_heuristic_constraint(hard_list, soft_list)
+            #print(len(hard_list))
         solver = z3.Solver()
         solver.set(unsat_core=True)
         step = 0
@@ -42,6 +42,7 @@ class SyntaxSolver(Solver):
                     solver.pop()
                     break
                 unsat_core = solver.unsat_core()
+                #print(unsat_core)
                 solver.pop()
                 relax_list = []
                 for i in range(len(soft_list)):
@@ -50,7 +51,8 @@ class SyntaxSolver(Solver):
                         relax_list.append(relax_var)
                         soft_list[i] = z3.Or(soft_list[i], relax_var)
                 total_cost += 1
-                print("add_cost")
+                #print("add_cost")
+                #print(relax_list)
                 if len(relax_list) == 0 or total_cost >= config.cost_limit:
                     return all_result
                 common.build_only_one(relax_list, hard_list)
@@ -91,7 +93,6 @@ class SyntaxSolver(Solver):
                                 all_cons.append(var <= config.int_max)
                         function_constraint_list.append(z3.And(all_cons))
                 hard_list.append(z3.Or(function_constraint_list))
-                print("find ", function_result_list)
                 continue
 
             model = solver.model()

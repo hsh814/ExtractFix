@@ -1,0 +1,8 @@
+binary=$1
+test=$2
+
+#./xmllint --recover ./test_case
+
+${binary} --recover ${test}
+
+exit 0

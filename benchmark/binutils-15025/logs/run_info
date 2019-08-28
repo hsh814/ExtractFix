@@ -7200,7 +7200,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: unknown type [0x1b03] section `.strtab'OUT >>>> _doprnt
 : No such file or directory
@@ -15387,7 +15387,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: invalid string offset 117901063 >= 308 for section `.dynstr'OUT >>>> _doprnt
 : No such file or directory
@@ -17682,7 +17682,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -17711,7 +17711,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -17719,6 +17719,18 @@ IN >>>> error_handler_internal
 OUT >>>> error_handler_internal
 : No such file or directory
 OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_section_from_elf_index
+: No such file or directory
+OUT >>>> bfd_section_from_elf_index
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
 : No such file or directory
 OUT >>>> bfd_elf_string_from_elf_section
 : No such file or directory
@@ -17840,23 +17852,11 @@ IN >>>> bfd_elf_sym_name
 : No such file or directory
 IN >>>> bfd_elf_string_from_elf_section
 : No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_section_from_elf_index
-: No such file or directory
-OUT >>>> bfd_section_from_elf_index
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
 IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -17877,7 +17877,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -17898,7 +17898,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -17923,7 +17923,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -17948,7 +17948,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -17981,7 +17981,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18006,7 +18006,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18031,7 +18031,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18056,7 +18056,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18081,7 +18081,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18106,7 +18106,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18131,7 +18131,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18156,7 +18156,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18177,7 +18177,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18198,158 +18198,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
-: No such file or directory
-./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
-: No such file or directory
-
-OUT >>>> error_handler_internal
-: No such file or directory
-OUT >>>> _bfd_error_handler
-: No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_section_from_elf_index
-: No such file or directory
-OUT >>>> bfd_section_from_elf_index
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-IN >>>> _bfd_error_handler
-: No such file or directory
-IN >>>> error_handler_internal
-: No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
-: No such file or directory
-./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
-: No such file or directory
-
-OUT >>>> error_handler_internal
-: No such file or directory
-OUT >>>> _bfd_error_handler
-: No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-IN >>>> _bfd_error_handler
-: No such file or directory
-IN >>>> error_handler_internal
-: No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
-: No such file or directory
-./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
-: No such file or directory
-
-OUT >>>> error_handler_internal
-: No such file or directory
-OUT >>>> _bfd_error_handler
-: No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-IN >>>> _bfd_error_handler
-: No such file or directory
-IN >>>> error_handler_internal
-: No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
-: No such file or directory
-./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
-: No such file or directory
-
-OUT >>>> error_handler_internal
-: No such file or directory
-OUT >>>> _bfd_error_handler
-: No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-IN >>>> _bfd_error_handler
-: No such file or directory
-IN >>>> error_handler_internal
-: No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
-: No such file or directory
-./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
-: No such file or directory
-
-OUT >>>> error_handler_internal
-: No such file or directory
-OUT >>>> _bfd_error_handler
-: No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-IN >>>> _bfd_error_handler
-: No such file or directory
-IN >>>> error_handler_internal
-: No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
-: No such file or directory
-./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
-: No such file or directory
-
-OUT >>>> error_handler_internal
-: No such file or directory
-OUT >>>> _bfd_error_handler
-: No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-IN >>>> _bfd_error_handler
-: No such file or directory
-IN >>>> error_handler_internal
-: No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
-: No such file or directory
-./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
-: No such file or directory
-
-OUT >>>> error_handler_internal
-: No such file or directory
-OUT >>>> _bfd_error_handler
-: No such file or directory
-OUT >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-OUT >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_sym_name
-: No such file or directory
-IN >>>> bfd_elf_string_from_elf_section
-: No such file or directory
-IN >>>> _bfd_error_handler
-: No such file or directory
-IN >>>> error_handler_internal
-: No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18374,7 +18223,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18395,7 +18244,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18408,10 +18257,6 @@ OUT >>>> bfd_elf_string_from_elf_section
 : No such file or directory
 OUT >>>> bfd_elf_sym_name
 : No such file or directory
-IN >>>> bfd_section_from_elf_index
-: No such file or directory
-OUT >>>> bfd_section_from_elf_index
-: No such file or directory
 IN >>>> bfd_elf_sym_name
 : No such file or directory
 IN >>>> bfd_elf_string_from_elf_section
@@ -18420,7 +18265,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18433,10 +18278,6 @@ OUT >>>> bfd_elf_string_from_elf_section
 : No such file or directory
 OUT >>>> bfd_elf_sym_name
 : No such file or directory
-IN >>>> bfd_section_from_elf_index
-: No such file or directory
-OUT >>>> bfd_section_from_elf_index
-: No such file or directory
 IN >>>> bfd_elf_sym_name
 : No such file or directory
 IN >>>> bfd_elf_string_from_elf_section
@@ -18445,7 +18286,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18458,10 +18299,6 @@ OUT >>>> bfd_elf_string_from_elf_section
 : No such file or directory
 OUT >>>> bfd_elf_sym_name
 : No such file or directory
-IN >>>> bfd_section_from_elf_index
-: No such file or directory
-OUT >>>> bfd_section_from_elf_index
-: No such file or directory
 IN >>>> bfd_elf_sym_name
 : No such file or directory
 IN >>>> bfd_elf_string_from_elf_section
@@ -18470,7 +18307,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18483,10 +18320,6 @@ OUT >>>> bfd_elf_string_from_elf_section
 : No such file or directory
 OUT >>>> bfd_elf_sym_name
 : No such file or directory
-IN >>>> bfd_section_from_elf_index
-: No such file or directory
-OUT >>>> bfd_section_from_elf_index
-: No such file or directory
 IN >>>> bfd_elf_sym_name
 : No such file or directory
 IN >>>> bfd_elf_string_from_elf_section
@@ -18495,7 +18328,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18508,10 +18341,6 @@ OUT >>>> bfd_elf_string_from_elf_section
 : No such file or directory
 OUT >>>> bfd_elf_sym_name
 : No such file or directory
-IN >>>> bfd_section_from_elf_index
-: No such file or directory
-OUT >>>> bfd_section_from_elf_index
-: No such file or directory
 IN >>>> bfd_elf_sym_name
 : No such file or directory
 IN >>>> bfd_elf_string_from_elf_section
@@ -18520,7 +18349,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18545,7 +18374,28 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
+: No such file or directory
+./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
+: No such file or directory
+
+OUT >>>> error_handler_internal
+: No such file or directory
+OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+IN >>>> _bfd_error_handler
+: No such file or directory
+IN >>>> error_handler_internal
+: No such file or directory
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18570,7 +18420,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18595,7 +18445,7 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory
@@ -18620,7 +18470,157 @@ IN >>>> _bfd_error_handler
 : No such file or directory
 IN >>>> error_handler_internal
 : No such file or directory
-/tmp/proj_work_dir_binutils-15025_1564755378/project/nm-new_with_func_tracer: IN >>>> _doprnt
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
+: No such file or directory
+./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
+: No such file or directory
+
+OUT >>>> error_handler_internal
+: No such file or directory
+OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_section_from_elf_index
+: No such file or directory
+OUT >>>> bfd_section_from_elf_index
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+IN >>>> _bfd_error_handler
+: No such file or directory
+IN >>>> error_handler_internal
+: No such file or directory
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
+: No such file or directory
+./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
+: No such file or directory
+
+OUT >>>> error_handler_internal
+: No such file or directory
+OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_section_from_elf_index
+: No such file or directory
+OUT >>>> bfd_section_from_elf_index
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+IN >>>> _bfd_error_handler
+: No such file or directory
+IN >>>> error_handler_internal
+: No such file or directory
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
+: No such file or directory
+./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
+: No such file or directory
+
+OUT >>>> error_handler_internal
+: No such file or directory
+OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_section_from_elf_index
+: No such file or directory
+OUT >>>> bfd_section_from_elf_index
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+IN >>>> _bfd_error_handler
+: No such file or directory
+IN >>>> error_handler_internal
+: No such file or directory
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
+: No such file or directory
+./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
+: No such file or directory
+
+OUT >>>> error_handler_internal
+: No such file or directory
+OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_section_from_elf_index
+: No such file or directory
+OUT >>>> bfd_section_from_elf_index
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+IN >>>> _bfd_error_handler
+: No such file or directory
+IN >>>> error_handler_internal
+: No such file or directory
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
+: No such file or directory
+./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
+: No such file or directory
+
+OUT >>>> error_handler_internal
+: No such file or directory
+OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_section_from_elf_index
+: No such file or directory
+OUT >>>> bfd_section_from_elf_index
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+IN >>>> _bfd_error_handler
+: No such file or directory
+IN >>>> error_handler_internal
+: No such file or directory
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
+: No such file or directory
+./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
+: No such file or directory
+
+OUT >>>> error_handler_internal
+: No such file or directory
+OUT >>>> _bfd_error_handler
+: No such file or directory
+OUT >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+OUT >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_section_from_elf_index
+: No such file or directory
+OUT >>>> bfd_section_from_elf_index
+: No such file or directory
+IN >>>> bfd_elf_sym_name
+: No such file or directory
+IN >>>> bfd_elf_string_from_elf_section
+: No such file or directory
+IN >>>> _bfd_error_handler
+: No such file or directory
+IN >>>> error_handler_internal
+: No such file or directory
+/tmp/proj_work_dir_binutils-15025_1565938950/project/nm-new_with_func_tracer: IN >>>> _doprnt
 : No such file or directory
 ./test_case: attempt to load strings from a non-string section (number 36)OUT >>>> _doprnt
 : No such file or directory

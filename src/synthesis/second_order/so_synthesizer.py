@@ -20,7 +20,7 @@ if __name__ == "__main__":
     config.is_overflow = False
     #if config.is_overflow:
     #    operators.use_signed_operator()
-    left_sketch, right_sketch = trans.trans(sys.argv[1], sys.argv[2])
+    sketches = trans.trans(sys.argv[1], sys.argv[2])
     synthesis_task = task.SynthesisTask("mid.sl")
     #import pprint as pp
     #pp.pprint(synthesis_task.constraint)
@@ -34,18 +34,30 @@ if __name__ == "__main__":
     #print("finish ", len(candidates))
     if len(candidates) == 0:
         #print(left_sketch, synthesis_task.function_list)
-        if left_sketch.strip()[-1] != "=" and len(synthesis_task.function_list) == 1 and \
-                        "condition" in synthesis_task.function_list:
+        if len(sketches) == 1 and len(synthesis_task.function_list) == 1 and \
+                        "condition1" in synthesis_task.function_list:
             #import pprint as pp
             #pp.pprint(synthesis_task.constraint)
-            candidates = [{"condition": synthesis_task.constraint[0][2]}]
+            candidates = [{"condition1": synthesis_task.constraint[0][2]}]
         else:
             candidates = synthesizer.solve(synthesis_task, False)
     assert len(candidates) > 0
     #result = condition.filter(candidates, synthesis_task)
     #if result is None:
     result = trivial.filter(candidates, synthesis_task)
-    #TODO: support multiline fix
+
+    for sketch in sketches:
+        sketch["patch"] = None
+        for name, res in result.items():
+            if name == sketch["func"].expr:
+                sketch["patch"] = sketch["left_sketch"] + trans.trans_to_cpp(res) + sketch["right_sketch"]
+    print("generated patch is: ")
+    patch_file = os.path.join(log_path, "patch")
+    with open(patch_file, "w+") as f:
+        for sketch in sketches:
+            print(sketch["patch"])
+            f.write(sketch["patch"])
+'''
     assert len(result) == 1
     patch = None
     for name, res in result.items():
@@ -55,5 +67,5 @@ if __name__ == "__main__":
 
     patch_file = os.path.join(log_path, "patch")
     with open(patch_file, 'w+') as f:
-        f.write(well_formed_patch)
+        f.write(well_formed_patch)'''
 
