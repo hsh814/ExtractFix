@@ -1,5 +1,0 @@
-(synth-fun condition ((s Int) (spp Int)) Bool ((Start Int (7 8 9 (+ Start Start) (- Start Start) s spp)) (StartBool Bool ((< Start Start) (<= Start Start) (and StartBool StartBool) (or StartBool StartBool) (not StartBool)))))
-(declare-var s Int)
-(declare-var spp Int)
-(constraint (=> (condition s spp) (and (< s spp) (< s 8))))
-(sketch condition (< s spp))

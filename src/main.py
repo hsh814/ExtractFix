@@ -140,7 +140,7 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
         sym_var_inserter = SymVarInserter.SymVarInserter(project_path, logger, crash_info)
         # insert symbolic variables at source code level
         sym_var_inserter.insert_sym_vars(fix_loc)
-        # compile the program to bc file and optimize it using mem2reg
+        # compile the program to bc file
         runtime.project_build(work_dir, logger, "to_bc")
         binary_full_path = os.path.join(project_path, binary_name+".bc")
         runtime.run_klee(work_dir, driver, binary_full_path, test_list, crash_info, logger, fix_loc)

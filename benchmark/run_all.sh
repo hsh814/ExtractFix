@@ -32,3 +32,8 @@
 ./main.py -s ../benchmark/coreutils-25003 -t test_case -c driver -b api_specific -n split -v
 ./main.py -s ../benchmark/coreutils-25023 -t test_case -c driver -b buffer_overflow -n echo -v
 ./main.py -s ../benchmark/coreutils-19784 -t test_case -c driver -b buffer_overflow -n make-prime-list -v
+
+# Jasper
+./main.py -s ../benchmark/jasper-8691 -t test_case -c driver -b divide_by_0 -n imginfo -v
+./main.py -s ../benchmark/jasper-8692 -t test_case -c driver -b divide_by_0 -n imginfo -v
+./main.py -s ../benchmark/jasper-9387 -t test_case -c driver -b integer_overflow -n imginfo -v
