@@ -1,0 +1,8 @@
+IN >>>> main
+: Success
+IN >>>> _malloc
+: Invalid argument
+OUT >>>> _malloc
+: Invalid argument
+OUT >>>> main
+: Invalid argument

@@ -1,0 +1,17 @@
+[
+   [
+      "control flow",
+      "stack_overflow.c",
+      "main",
+      24,
+      [ "content_size", "i" ]
+   ],
+   [
+      "data flow",
+      "stack_overflow.c",
+      "main",
+      21,
+      [ "i" ]
+   ]
+]
+

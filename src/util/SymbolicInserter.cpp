@@ -83,9 +83,7 @@ static Instruction* getInstFromDbgInst(DbgDeclareInst* dbgDecl){
 
 	if(MetadataAsValue* val = dyn_cast_or_null<MetadataAsValue>(dbgDecl->getOperand(0))){
 		if(ValueAsMetadata* valueAsMetadata = dyn_cast<ValueAsMetadata>(val->getMetadata())){
-
             Value* key = valueAsMetadata->getValue();
-    		
     		return dyn_cast_or_null<Instruction>(key);
    		}
    	}
@@ -184,7 +182,6 @@ namespace
             	if(F.getName().str() != InsertFunction){
                     continue;                    
                 }
-            	
 
 				fprintf(stderr, "\n\33[32mFUNCTION\33[0m %s\n", F.getName().str().c_str());
 				DominatorTree DT(F);
@@ -197,12 +194,9 @@ namespace
                 std::map<Value*, string> valueNameMap = collect_local_variable_metadata(F);
 
 				for (auto &BB: F) {
-
 				    for (auto &I: BB) {
-
                         fprintf(stderr, "\n\33[32m%d\33[0m ", index);
                         I.dump();
-
                         if(index + inserted == target){
                             fprintf(stderr, "\n\33[32mHIT\33[0m \n");
                             //I.dump();

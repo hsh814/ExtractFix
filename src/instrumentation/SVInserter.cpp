@@ -48,7 +48,6 @@ static llvm::cl::opt<string> mission("mission",
                                      llvm::cl::desc("the mission type"),
                                      llvm::cl::Required, llvm::cl::cat(SVCategory));
 
-
 static llvm::cl::opt<int> loc("loc",
                                  llvm::cl::desc("the line number of fix location"),
                                  llvm::cl::Required, llvm::cl::cat(SVCategory));
@@ -224,13 +223,11 @@ public:
         llvm::errs() << "** EndSourceFileAction for: "
                      << SM.getFileEntryForID(SM.getMainFileID())->getName() << "\n";
 
-        // Now emit the rewritten buffer.
         TheRewriter.getEditBuffer(SM.getMainFileID()).write(output);
     }
 
     std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
                                                    StringRef file) override {
-        // llvm::errs() << "** Creating AST consumer for: " << file << "\n";
         TheRewriter.setSourceMgr(CI.getSourceManager(), CI.getLangOpts());
         return llvm::make_unique<MyASTConsumer>(TheRewriter, CI);
     }

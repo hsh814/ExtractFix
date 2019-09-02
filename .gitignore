@@ -9,3 +9,4 @@ temp/
 benchmark/*/project
 
 **/.DS_Store
+venv

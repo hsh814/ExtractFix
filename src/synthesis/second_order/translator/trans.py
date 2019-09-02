@@ -185,7 +185,7 @@ def trans_normal_klee(constraint_file, sketch_file):
                          "right_sketch": right_sketch,
                          "is_negative": "negative" in sketch_lines[i + 1]})
     constraint = _parse_constraint(" ".join(all_inp))
-    #print(sketch, constraint)
+    # print(sketch, constraint)
     variable_table = {}
     private_variable_table = {}
     constant_table = {"Int": [], "Bool": []}
@@ -194,9 +194,9 @@ def trans_normal_klee(constraint_file, sketch_file):
     for sketch in sketches:
         sketch["sketch"].simplify()
 
-    #print("constraint")
+    # print("constraint")
     _collect_used_component(constraint, variable_table, constant_table, operator_list)
-    #print("sketch")
+    # print("sketch")
     for sketch in sketches:
         sketch["private_variable"] = {}
         _collect_used_component(sketch["sketch"], variable_table, constant_table, operator_list, sketch["private_variable"])
@@ -360,11 +360,13 @@ def trans_semfix(constraint_file, sketch_file):
         oup.write("\n".join(list(map(lambda x: _list_to_str(x), sl_result))))
     return sketches
 
+
 def trans(constraint_file, sketch_file):
     if config.is_semfix:
         return trans_semfix(constraint_file, sketch_file)
     else:
         return trans_normal_klee(constraint_file, sketch_file)
+
 
 def trans_to_cpp(patch):
     if type(patch) == list:

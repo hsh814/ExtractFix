@@ -1,0 +1,2 @@
+       for (i; i<content_size; i++)
+positive

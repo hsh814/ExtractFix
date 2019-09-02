@@ -35,7 +35,7 @@ add_subdirectory(util)
 add_subdirectory(sanitizer)
 add_subdirectory(instrumentation)
 
-configure_file(main.py main.py COPYONLY)
+configure_file(ExtractFix.py ExtractFix.py COPYONLY)
 configure_file(runtime.py runtime.py COPYONLY)
 configure_file(Global.py Global.py COPYONLY)
 configure_file(__init__.py __init__.py COPYONLY)

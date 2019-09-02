@@ -7,4 +7,4 @@ cost_limit = 5
 int_min = - 2 ** 31
 int_max = 2 ** 31 - 1
 is_overflow = False
-is_semfix = True
+is_semfix = False

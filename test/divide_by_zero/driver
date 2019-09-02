@@ -1,0 +1,6 @@
+binary=$1
+test=$2
+test2=$3
+${binary} $test $test2
+
+exit 0

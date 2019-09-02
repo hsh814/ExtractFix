@@ -1,0 +1,17 @@
+[
+   [
+      "control flow",
+      "heap_overflow.c",
+      "main",
+      30,
+      [ "content_size", "i", "LOWFAT_GLOBAL_MS__heap_overflow__malloc_7" ]
+   ],
+   [
+      "data flow",
+      "heap_overflow.c",
+      "main",
+      27,
+      [ "i", "LOWFAT_GLOBAL_MS__heap_overflow__malloc_7" ]
+   ]
+]
+

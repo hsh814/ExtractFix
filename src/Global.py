@@ -19,6 +19,7 @@
 ###########################################################################
 
 from enum import Enum
+import os
 
 
 class BugType(Enum):
@@ -62,6 +63,9 @@ class CrashInfo:
 
     def get_base_name(self):
         return self.base_name
+
+    def get_refined_name(self):
+        return os.path.join(self.file_path, self.file_name)
 
     def __str__(self):
         return str(self.__dict__)

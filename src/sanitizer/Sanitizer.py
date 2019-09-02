@@ -47,17 +47,18 @@ class BufferOverflowSanitizer(Sanitizer):
         binary_full_path = os.path.join(self.project_path, self.binary_name)
         runtime.run(self.work_dir, self.driver, binary_full_path, self.test_list, self.logger)
 
-        self.logger.info("successfully run lowfat to generate crash-free constraints")
+        if not os.path.isfile("/tmp/cfc.out"):
+            self.logger.fatal("failed to generate crash free constraints")
+            exit(2)
+        else:
+            self.logger.info("successfully run lowfat to generate crash-free constraints")
 
         crash_info = self.parse_crash_info()
         self.logger.debug("crash information is " + str(crash_info))
         return crash_info
 
     def parse_crash_info(self):
-        if not os.path.isfile("/tmp/cfc.out"):
-            self.logger.fatal("failed to generate crash free constraints")
-            exit(2)
-        f= open("/tmp/cfc.out", "r")
+        f = open("/tmp/cfc.out", "r")
         line = f.readline()
         loc_cfc = line.split("#")
         assert (len(loc_cfc) == 2)

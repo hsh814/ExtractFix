@@ -128,9 +128,9 @@ class SymVarInserter:
 
     def mv_original_file_back(self):
         for target_file, source_file in self.copied_files.iteritems():
-            command = "mv " + target_file + " " + source_file
+            command = "cp " + target_file + " " + source_file
             subprocess.check_output(command, shell=True)
 
-        command = "rm -rf /tmp/original_files/"
-        subprocess.check_output(command, shell=True)
+        # command = "rm -rf /tmp/original_files/"
+        # subprocess.check_output(command, shell=True)
 

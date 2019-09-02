@@ -1,6 +1,7 @@
 from util import common, operators
 import z3
 
+
 def parse_constraint(constraint, parsed_list, task, inp, hard_list):
     if type(constraint) == tuple:
         if constraint[0] == "Int":
@@ -42,6 +43,7 @@ def parse_constraint(constraint, parsed_list, task, inp, hard_list):
             assert False
     assert False
 
+
 def parse_function_with_input(expression, inp, is_symbolic=True):
     if type(expression) == tuple:
         if expression[0] == "Int":
@@ -61,6 +63,7 @@ def parse_function_with_input(expression, inp, is_symbolic=True):
         else:
             return operators.string2python[operator](arg)
     assert False
+
 
 def parse_constraint_with_function_and_input(constraint, function_list, task, symbolic_inp):
     #print("_parse_constraint_with_function", constraint)
@@ -90,6 +93,7 @@ def parse_constraint_with_function_and_input(constraint, function_list, task, sy
         else:
             return operators.string2z3[operator](arg)
     assert False
+
 
 def parse_constraint_with_function(constraint, function_list, task):
     var_table = {}

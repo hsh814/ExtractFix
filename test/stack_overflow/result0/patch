@@ -1,0 +1,4 @@
+24c24
+<        for (i; i<content_size; i++)
+---
+> for (i;(((i)<(content_size))&&((i)<(5))); i++)

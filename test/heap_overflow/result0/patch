@@ -1,0 +1,10 @@
+5a6
+> /*LOWFAT_GS*/ size_t LOWFAT_GLOBAL_MS__heap_overflow__malloc_7;
+7c8
+<     char* buf = (char*)malloc(size);
+---
+>     char* buf = (char*)malloc(( /*LOWFAT_GS*/ {LOWFAT_GLOBAL_MS__heap_overflow__malloc_7 = size; LOWFAT_GLOBAL_MS__heap_overflow__malloc_7;} ));
+29c30
+<        for (i; i<content_size; i++)
+---
+> for (i;(((i)<(content_size))&&((i)<(LOWFAT_GLOBAL_MS__heap_overflow__malloc_7))); i++)
