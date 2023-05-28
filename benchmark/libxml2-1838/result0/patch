@@ -1,1 +1,0 @@
-if (((((0)<(tlen))&&((xmlStrncmp(ctxtinputcur,ctxtname,tlen))==(0)))&&((tlen)<(LOWFAT_GLOBAL_MS__buf_xmlBufGrowInternal_486)))) {

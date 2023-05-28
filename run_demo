@@ -1,0 +1,3 @@
+#!/bin/bash
+cd build 
+./ExtractFix.py -s ../demo/libtiff-5321 -t test_case -c driver -b buffer_overflow -n tiffcrop -v

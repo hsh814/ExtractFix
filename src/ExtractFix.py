@@ -180,10 +180,14 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
             # directly use the crash-free-constraint as patch
             with open(patch_path, 'w') as f:
                 # TODO: negate constraint and add return statement
-                patch = crash_info.get_cfc()
+                ret = utils.infer_return_value(project_path, crash_info.get_function_name(),
+                                       crash_info.get_refined_name(), logger)
+                patch = "if(!"+crash_info.get_cfc()+") return " + ret + ";"
                 f.write(patch)
                 logger.info("Found plausible patch " + patch)
                 logger.info("generated patches are saved in " + log_path)
+                utils.apply_path(logger, project_path, source_path, fix_loc.get_refined_file_name(),
+                                 fix_loc.line_no-1, patch, patch_path, "insert")
         else:
             # invoke second-order synthesizer and save generated patch into file
             synthesizer = os.path.join(full_path, "synthesis", "second_order", "so_synthesizer.py")
@@ -195,8 +199,8 @@ def repair(source_path, binary_name, driver, test_list, bug_type, logger):
                 logger.debug("Found plausible patch: " + fix_line + " => " + patch)
             logger.info("generated patches are saved in " + log_path)
 
-        utils.apply_path(logger, project_path, source_path, fix_loc.get_refined_file_name(),
-                         fix_loc.line_no-1, patch, patch_path, "replace")
+            utils.apply_path(logger, project_path, source_path, fix_loc.get_refined_file_name(),
+                             fix_loc.line_no-1, patch, patch_path, "replace")
         sym_var_inserter.mv_original_file_back()
 
         index += 1

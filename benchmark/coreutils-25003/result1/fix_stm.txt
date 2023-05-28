@@ -1,1 +1,0 @@
-  end = (k == n) ? file_size : k * (file_size / n);

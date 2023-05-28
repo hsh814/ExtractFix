@@ -1,0 +1,2 @@
+../../tools/tiffcrop.c:readSeparateTilesIntoBuffer:996#(s < 8)
+srcbuffs#unsigned char*[]

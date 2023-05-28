@@ -1,1 +1,0 @@
-../../libtiff/tif_jpeg.c:JPEGSetupEncode:1646#(td->td_bitspersample <= 64)

@@ -1,5 +1,0 @@
-subject=$1
-test=$2
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:project/klee/.libs/ $subject $test
-
-exit 0

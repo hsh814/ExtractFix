@@ -1,5 +1,0 @@
-(And (Sle  limit
-           (Sub  err
-                 limit))
-      (Ult  nrows
-           256))

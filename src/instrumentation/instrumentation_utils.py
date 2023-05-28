@@ -1,7 +1,7 @@
 import os
 
 system_header = os.environ['C_INCLUDE_PATH'].split(":")
-system_header.append('/usr/local/lib/clang/6.0.1/include')
+system_header.append('/usr/lib/clang/6.0/include')
 
 
 def get_import_head_folders(project_base, system_header=[]):

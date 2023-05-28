@@ -1,7 +1,0 @@
-(Or (Not (Ult  i
-                size))
-     (Ule (Add 99647488
-               (Sub  size
-                     i))
-          (Add 99647488
-                i)))

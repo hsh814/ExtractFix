@@ -69,6 +69,7 @@ public:
                 llvm::outs() << "constant: " << oriStm << "\n";
             }
         }
+
         return true;
     }
 
@@ -137,19 +138,17 @@ int main(int argc, const char **argv) {
     ClangTool Tool(op.getCompilations(), op.getSourcePathList());
 
     int ret = Tool.run(newFrontendActionFactory<MyFrontendAction>().get());
-
-    if (ret==0){
+    /*if (ret==0){
         // write to file
         if(output.str().length() != 0){
             string fileName = op.getSourcePathList()[0];
             ofstream srcFile;
             srcFile.open(fileName);
-
             srcFile << output.str();
             srcFile.close();
         }
-    }
+    }*/
 
-    return ret;
+    return 0;
 }
 

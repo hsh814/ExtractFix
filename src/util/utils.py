@@ -93,13 +93,14 @@ def infer_return_value(project_dir, function_name, crash_file, logger):
 
     logger.debug("insert klee assume command: " + command)
     ret = "-1"
+
     try:
         ret = subprocess.check_output(command, cwd=project_dir, shell=True)
     except subprocess.CalledProcessError as e:
         logger.fatal("error, command line: " + command)
         exit(1)
 
-    logger.debug("return type is : " + str(ret))
+    # logger.debug("return type is : " + str(ret))
     return __infer_return_value(ret)
 
 
